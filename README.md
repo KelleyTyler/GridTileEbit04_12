@@ -32,11 +32,12 @@
  ```
  to build to webassembly(test)
  ```
-    Coming Soon
+    go run github.com/hajimehoshi/wasmserve@latest ./app/
+
  ```
  to build to WebAssembly (actual file):
  ```
-    Coming Soon
+    
  ```
  ---
  [//]: #
