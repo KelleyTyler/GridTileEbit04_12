@@ -165,7 +165,7 @@ func (cList *CoordList) RemoveCoord(coord CoordInts) {
 		temp := make(CoordList, 0)
 		// copy(temp, *cList)
 		for _, a := range *cList {
-			if a.IsEqual(coord) {
+			if !a.IsEqual(coord) {
 				temp = append(temp, a)
 			}
 		}
@@ -192,4 +192,14 @@ func (cList *CoordList) RemoveDuplicates() {
 		*cList = make(CoordList, len(temp))
 		copy(*cList, temp)
 	}
+}
+
+func (cList *CoordList) IfListContains(cord CoordInts) bool {
+	outer := false
+	for _, a := range *cList {
+		if a.IsEqual(cord) {
+			outer = true
+		}
+	}
+	return outer
 }

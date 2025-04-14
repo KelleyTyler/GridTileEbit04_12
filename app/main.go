@@ -10,9 +10,10 @@ import (
 )
 
 func main() {
-	game := &framework.Game{}
-	ebiten.SetWindowSize(640, 480)
+	game := framework.GetNewGame()
+	ebiten.SetWindowSize(game.G_Setting.WindowSizeX, game.G_Setting.WindowSizeY)
 	ebiten.SetWindowTitle("GTE_04_12")
+	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	if err := ebiten.RunGame(game); err != nil {
 		log.Fatal(err)
 	}

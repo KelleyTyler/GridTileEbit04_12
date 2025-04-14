@@ -17,9 +17,10 @@ func (cord *CoordInts) Add(cord0 CoordInts) {
 	cord.Y += cord0.Y
 }
 func (cord *CoordInts) AddToReturn(cord0 CoordInts) CoordInts {
-	cord.X += cord0.X
-	cord.Y += cord0.Y
-	return *cord
+	temp := *cord
+	temp.X += cord0.X
+	temp.Y += cord0.Y
+	return temp
 }
 
 func (cord *CoordInts) IsEqualTo(cord0 CoordInts) bool {
