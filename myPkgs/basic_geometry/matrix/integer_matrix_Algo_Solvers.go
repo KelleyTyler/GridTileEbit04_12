@@ -13,7 +13,13 @@ type MazeMaker struct {
 
 	DisplaySettings Integer_Matrix_Ebiten_DrawOptions
 	imat            *IntegerMatrix2D
+	//outstrng         string
+	Show_CurrentList bool
 }
+
+// func (mazeM *MazeMaker) ToggleShowCurrentList() {
+// 	mazeM.ShowCurrentList != mazeM.ShowCurrentList
+// }
 
 func (mazeM *MazeMaker) Init(dSettings Integer_Matrix_Ebiten_DrawOptions, intmatrix *IntegerMatrix2D) {
 	mazeM.CurrentList = make(coords.CoordList, 0)
@@ -39,4 +45,10 @@ func (mazeM *MazeMaker) RunPrimlike(ticks int) {
 			break
 		}
 	}
+}
+func (mazeM *MazeMaker) GetString() string {
+	outstrng := fmt.Sprintf("MAZEGEN:\n HAS IMAT:  %5t\n", mazeM.imat != nil)
+	outstrng += fmt.Sprintf("CurrentList: %3d\n", len(mazeM.CurrentList))
+	outstrng += fmt.Sprintf("%13s: %5t\n %13s: %5t\n", "HAS_STARTED", mazeM.HasStarted, "HAS_FINISHED", mazeM.HasFinished)
+	return outstrng
 }

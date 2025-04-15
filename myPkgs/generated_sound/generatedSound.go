@@ -30,6 +30,26 @@ func (aud *GeneratedSoundSet) Init01(GS *settings.GameSettings, sRate, bFreq int
 	aud.GSettings = GS
 	//aud.Init_Sub(0, 110, []float32{2.0}, []float32{0.250}) //<- with srate being 4800, and bfreq being 220 q being 60
 }
+
+// InitSoundSet(settings, 3200, 480)
+func InitSoundSet(GS *settings.GameSettings, sRate, bFreq int) (aud GeneratedSoundSet) {
+	aud.BaseFreq = bFreq
+	aud.SampleRate = sRate
+	aud.AudioContext = audio.NewContext(sRate)
+	//[]float32{2.0, 1.0, 0.5, 0.25, 0.125, 0.075}
+	// []float32{2.0, 1.0, 0.05, 0.025, 0.0125, 0.0075}
+	//[]float32{1.0, 0.05}, []float32{1.0, 0.05}
+	aud.GSettings = GS
+
+	return aud
+}
+
+func (aud *GeneratedSoundSet) PlayByte(bytes []byte) {
+	p := aud.AudioContext.NewPlayerF32FromBytes(bytes)
+	p.SetVolume(float64(aud.GSettings.UIAudioVolume) / 100)
+	p.Play()
+}
+
 func (aud *GeneratedSoundSet) PlayThing(num int) {
 	// f := int(freq)
 	p := aud.AudioContext.NewPlayerF32FromBytes(aud.Sounds[num])
@@ -123,4 +143,26 @@ func Soundwave_ToBytes(l, r []float32) []byte {
 		b[8*i+7] = byte(rv >> 24)
 	}
 	return b
+}
+
+type Basic_SoundSystem struct {
+	BaseFreq     int
+	SampleRate   int
+	AudioContext *audio.Context
+	GSettings    *settings.GameSettings
+}
+
+// InitSoundSet(settings, 3200, 480)
+func Get_Basic_SoundSystem(GS *settings.GameSettings, sRate, bFreq int) (aud Basic_SoundSystem) {
+	aud.BaseFreq = bFreq
+	aud.SampleRate = sRate
+	aud.AudioContext = audio.NewContext(sRate)
+	aud.GSettings = GS
+	return aud
+}
+
+func (aud *Basic_SoundSystem) PlayByte(bytes []byte) {
+	p := aud.AudioContext.NewPlayerF32FromBytes(bytes)
+	p.SetVolume(float64(aud.GSettings.UIAudioVolume) / 100)
+	p.Play()
 }

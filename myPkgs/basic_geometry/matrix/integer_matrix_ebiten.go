@@ -77,7 +77,7 @@ func (imat IntegerMatrix2D) DrawFullGridFromColors(screen *ebiten.Image, colors 
 	}
 	//vector.StrokeRect(screen, float32(OffsetX-0), float32(OffsetY-0), float32(test1X-0), float32(test1Y+0), 2.0, color.RGBA{210, 153, 100, 255}, true) //0, 179, 100, 255
 	if showBoardOL {
-		vector.StrokeRect(screen, float32(options.BoardPosition.X-3), float32(options.BoardMargin.Y-3), float32(test1X-options.BoardMargin.X-options.TileSpacing.X+6), float32(test1Y-options.BoardMargin.Y-options.TileSpacing.Y+6), 2.0, color.Black, true) //color.RGBA{0, 50, 50, 255}
+		vector.StrokeRect(screen, float32(options.BoardMargin.X-3), float32(options.BoardMargin.Y-3), float32(test1X-options.BoardMargin.X-options.TileSpacing.X+6), float32(test1Y-options.BoardMargin.Y-options.TileSpacing.Y+6), 2.0, color.Black, true) //color.RGBA{0, 50, 50, 255}
 
 	}
 }

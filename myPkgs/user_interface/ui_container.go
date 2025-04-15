@@ -1,4 +1,4 @@
-package userinterface
+package user_interface
 
 /*
 coming up with a UI interface that is a generic object;
