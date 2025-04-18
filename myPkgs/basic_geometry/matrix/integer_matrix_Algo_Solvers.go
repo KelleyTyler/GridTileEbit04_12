@@ -41,7 +41,8 @@ func (mazeM *MazeMaker) RunPrimlike(ticks int) {
 		if len(mazeM.CurrentList) > 0 {
 			mazeM.CurrentList, mazeM.Fails = mazeM.imat.PrimLike_Maze_Algorithm_Random(mazeM.Fails, mazeM.maxFails, mazeM.CurrentList, []int{1}, []int{4}, []int{-1}, [4]uint{1, 1, 1, 1}, true)
 		} else {
-			fmt.Printf("FINISHED!\n")
+			//fmt.Printf("FINISHED!\n")
+			mazeM.HasFinished = true
 			break
 		}
 	}

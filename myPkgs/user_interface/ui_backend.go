@@ -2,6 +2,7 @@ package user_interface
 
 import (
 	"bytes"
+	"image/color"
 	"log"
 
 	gensound "github.com/KelleyTyler/GridTileEbit04_12/myPkgs/generated_sound"
@@ -11,12 +12,25 @@ import (
 	"golang.org/x/image/font/gofont/goregular"
 )
 
+/*
+	type UI_Object_Style struct {
+		LabelColor       color.Color
+		PanelColor       color.Color
+		BorderColor      color.Color
+		BorderThickness  float32
+		TextColor        color.Color
+		Internal_Margins [4]uint8
+		TextSize         int
+	}
+*/
 type UI_Backend struct {
 	Settings                    *settings.GameSettings
 	SoundSystem                 *gensound.Basic_SoundSystem
 	Btn_Sounds                  [][]byte
 	Textsrcs                    []*text.GoTextFaceSource
 	Btn_Text_Mono, Btn_Text_Reg text.Face
+	BtnColors0, BtnColors1      []color.Color
+	Style                       UI_Object_Style
 }
 
 func GetUIBackend(settings *settings.GameSettings, gsounds *gensound.Basic_SoundSystem) UI_Backend {
@@ -52,9 +66,11 @@ func GetUIBackend(settings *settings.GameSettings, gsounds *gensound.Basic_Sound
 		Source: bckend.Textsrcs[1],
 		Size:   10,
 	}
-
+	// bckend.BtnColors0 = []color.Color{color.RGBA{20, 100, 50, 255}, color.RGBA{75, 125, 75, 255}, color.RGBA{100, 150, 100, 255}}
+	// bckend.BtnColors1 = []color.Color{color.RGBA{100, 25, 25, 255}, color.RGBA{150, 100, 100, 255}, color.RGBA{200, 150, 150, 255}}
 	// bckend.Btn_Text_Mono
 	bckend.InitSounds()
+	bckend.Style = Get_UI_Object_Style(1)
 	return bckend
 }
 
@@ -77,16 +93,7 @@ func (uiBack *UI_Backend) InitSounds() {
 }
 
 /*
-func (ui_Helper *UI_Helper) InitSounds() { //1200
-
-		ui_Helper.Btn_Sounds = append(ui_Helper.Btn_Sounds, Soundwave_CreateSound(3200, 220, 0, 110, []float32{1.0}, []float32{0.0750000}))
-		ui_Helper.Btn_Sounds = append(ui_Helper.Btn_Sounds, Soundwave_CreateSound(3200, 220, 10, 110, []float32{1.0}, []float32{0.0750000}))
-		ui_Helper.Btn_Sounds = append(ui_Helper.Btn_Sounds, Soundwave_CreateSound(3200, 220, 15, 110, []float32{1.0}, []float32{0.0750000}))
-		ui_Helper.Btn_Sounds = append(ui_Helper.Btn_Sounds, Soundwave_CreateSound(3200, 220, 20, 110, []float32{1.0}, []float32{0.0750000}))
-		ui_Helper.Btn_Sounds = append(ui_Helper.Btn_Sounds, Soundwave_CreateSound(3200, 220, 25, 110, []float32{1.0}, []float32{0.0750000}))
-		ui_Helper.Btn_Sounds = append(ui_Helper.Btn_Sounds, Soundwave_CreateSound(3200, 220, 25, 110, []float32{1.0}, []float32{0.0750000}))
-	}
-*/
+ */
 func (uiBack *UI_Backend) GetTextFace(textnum, size int) *text.Face {
 	var textOut text.Face
 	textOut = &text.GoTextFace{
