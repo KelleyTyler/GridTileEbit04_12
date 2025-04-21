@@ -195,3 +195,9 @@ const(
 )
 
 ```
+
+### some other thoughts;
+
+change 'Parent' (pointer) to "Context"; because these things will exist in a context;
+
+fonts might need to be hadled through some kind of 'Rich Text' struct or interface that allows them to be manipulated to have 'italics/bolds/etc.';

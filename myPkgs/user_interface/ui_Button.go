@@ -394,6 +394,19 @@ func (btn *UI_Button) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode 
 	return false
 	// if()
 }
+
+func (btn *UI_Button) DeToggle() {
+	// fmt.Printf("DETOGGLE %t\n", btn.IsToggled)
+	if btn.IsToggled {
+		btn.IsToggled = false
+		btn.State = 0
+		btn.Redraw()
+		if btn.Parent != nil {
+			// fmt.Printf("%t------DEACTIVATE\n", btn.Parent != nil)
+			btn.Parent.Redraw()
+		}
+	}
+}
 func (btn *UI_Button) GetState() uint8 {
 	if btn.Btn_Type == 10 {
 		if btn.IsToggled {

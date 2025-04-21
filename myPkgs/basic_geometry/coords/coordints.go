@@ -49,3 +49,7 @@ func (cord *CoordInts) GetHypotenuseDistance_Int(cord0 CoordInts) int {
 	xx, yy := cord.GetDifferences_TwoInts(cord0)
 	return int(math.Sqrt(float64(math.Pow(float64(xx), 2) + math.Pow(float64(yy), 2))))
 }
+func (cord *CoordInts) GetHypotenuseDistance_Float(cord0 CoordInts) float64 {
+	xx, yy := cord.GetDifferences_TwoInts(cord0)
+	return math.Sqrt(float64(math.Pow(float64(xx), 2) + math.Pow(float64(yy), 2)))
+}

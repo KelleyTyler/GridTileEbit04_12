@@ -114,6 +114,7 @@ func (prim *UI_Object_Primitive) Init_Parents(parent UI_Object) error {
 }
 
 func (prim *UI_Object_Primitive) Draw(screen *ebiten.Image) error {
+	prim.Redraw()
 	ops := ebiten.DrawImageOptions{}
 	scale := 1.0
 	ops.GeoM.Reset()

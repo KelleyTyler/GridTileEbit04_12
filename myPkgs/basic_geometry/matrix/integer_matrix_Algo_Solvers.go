@@ -24,7 +24,7 @@ type MazeMaker struct {
 func (mazeM *MazeMaker) Init(dSettings Integer_Matrix_Ebiten_DrawOptions, intmatrix *IntegerMatrix2D) {
 	mazeM.CurrentList = make(coords.CoordList, 0)
 	mazeM.Fails = 0
-	mazeM.maxFails = 10
+	mazeM.maxFails = 18
 	mazeM.HasStarted = false
 	mazeM.HasFinished = false
 	mazeM.imat = intmatrix
@@ -36,10 +36,10 @@ func (mazeM *MazeMaker) Init(dSettings Integer_Matrix_Ebiten_DrawOptions, intmat
 	// mazeM.DisplaySettings.ShowTileLines = []bool{true, true, true}
 }
 
-func (mazeM *MazeMaker) RunPrimlike(ticks int) {
+func (mazeM *MazeMaker) RunPrimlike(ticks int, floorvals, wallvals, filterFor []int, margin [4]uint, diage bool) {
 	for range ticks {
 		if len(mazeM.CurrentList) > 0 {
-			mazeM.CurrentList, mazeM.Fails = mazeM.imat.PrimLike_Maze_Algorithm_Random(mazeM.Fails, mazeM.maxFails, mazeM.CurrentList, []int{1}, []int{4}, []int{-1}, [4]uint{1, 1, 1, 1}, true)
+			mazeM.CurrentList, mazeM.Fails = mazeM.imat.PrimLike_Maze_Algorithm_Random(mazeM.Fails, mazeM.maxFails, mazeM.CurrentList, floorvals, wallvals, filterFor, margin, diage)
 		} else {
 			//fmt.Printf("FINISHED!\n")
 			mazeM.HasFinished = true

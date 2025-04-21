@@ -19,6 +19,8 @@ type GameSettings struct {
 	UIAudioVolume          int `json:"ui_audio_volume,"`
 	GameBoardX             int `json:"game_board_x,"`
 	GameBoardY             int `json:"game_board_y,"`
+	GameBoardXMax          int `json:"game_board_x_max,"`
+	GameBoardYMax          int `json:"game_board_y_max,"`
 	GameBoardTileX         int `json:"game_board_tile_x,"`
 	GameBoardTileY         int `json:"game_board_tile_y,"`
 	GameBoardTile_Margin_X int `json:"game_board_tile_margin_x,"`
@@ -83,6 +85,8 @@ func GetSettingsFromBakedIn() GameSettings {
 		UIAudioVolume:          100,
 		GameBoardX:             32,
 		GameBoardY:             32,
+		GameBoardXMax:          128,
+		GameBoardYMax:          128,
 		GameBoardTileX:         16,
 		GameBoardTileY:         16,
 		GameBoardTile_Margin_X: 2,
