@@ -59,7 +59,13 @@ This file is for marking down my thoughts or intentions for possible future deve
 - ### ETC.;
 
 ---
+## Some Other Thoughts
 
+- should move things like 'integer_matrix_ebiten' to some kind of interface;
+
+- 
+
+---
  ## Pathfinding (cont.)
  Pathfinding should follow the ***Dijkstra’s Algorithm*** or the ***A\* Algorithm***.
  this means that we need a few things for a "node" in a linked list
@@ -154,12 +160,12 @@ Pathfinding Nodes would have to also have some kind of basic array structure tha
     }
 
 
-    func Pathfind_Phase1 (start, target coords.CoordInts, imat mat.IntMatrix, ... ) (path_is_found bool, PotentialPaths []*Node){
+    func Pathfind_Phase1 (start, target coords.CoordInts, imat mat.IntMatrix, ... ) (path_is_found bool, PotentialPaths []*ImatNode){
         
         path_is_found= false
-        OpenList:=make([]*Node,0)
-        ClosedList:=make([]*Node,0)
-        BlockedList:=make([]*Node,0)
+        OpenList:=make([]*ImatNode,0)
+        ClosedList:=make([]*ImatNode,0)
+        BlockedList:=make([]*ImatNode,0)
         var max_fails int = 100
         var curr_fails int =0
         var isFinished bool = false
@@ -169,7 +175,7 @@ Pathfinding Nodes would have to also have some kind of basic array structure tha
         //ClosedList.ClosedList = ClosedList.append(Get_New_Node(start, start, end))//*pseudocode or not I'm not sure I even want this.
         OpenList.append 
         for !isFinished{
-            Openlist,ClosedList,BlockedList,isFinished,curr_fails,err = Pathfind_Phase1_Tick(Openlist, ClosedList, BlockedList,imat, isFinished,curr_fails, max_fails)
+            Openlist,ClosedList,BlockedList,isFinished,curr_fails,err = Pathfind_Phase1_Tick(Openlist, ClosedList, BlockedList,imat, isFinished,curr_fails, max_fails, imat,walls []int)
             if err!=nil{
                 log.fatal(fmt.Errorf("Pathfinding Error"))
             }
@@ -178,13 +184,13 @@ Pathfinding Nodes would have to also have some kind of basic array structure tha
         return potentialPaths
     }
     //-- this is the actual tick by tick process;
-    func Pathfind_Phase1_Tick(start,end coords.CoordInts, openlist,closedlist,blockedlist []*Node, pathfound bool,curr_fails, max_fails int, imat mat.IntegerMatrix2d ... ) (oList,cList,bList []*Node, pfound bool,fails int, err error){ <--unsure if these are pass by reference or not 
-        oList:=make([]*Node,len(openlist))
-        cList:=make([]*Node,len(closedlist))
-        bList:=make([]*Node,len(blockedlist))
+    func Pathfind_Phase1_Tick(start,end coords.CoordInts, openlist,closedlist,blockedlist []*ImatNode, pathfound bool,curr_fails, max_fails int, imat mat.IntegerMatrix2d, walls []int ) (oList,cList,bList []*ImatNode, pfound bool,fails int, err error){ //<--unsure if these are pass by reference or not 
+        oList=make([]*ImatNode,len(openlist))
+        cList=make([]*ImatNode,len(closedlist))
+        bList=make([]*ImatNode,len(blockedlist))
         copy(oList, openlist)
-        copy(clist, closedlist)
-        copy(blist, blockedlist)
+        copy(cList, closedlist)
+        copy(bList, blockedlist)
         pfound = pathfound
         fails = curr_fails
         pfound_phase2 = false (the path needs to be found more)
@@ -221,13 +227,13 @@ Pathfinding Nodes would have to also have some kind of basic array structure tha
         return oList,cList,bList, pfound, nil
     }
     //--this is to clean up and add stuff to the blockedlist
-    func Pathfind_Phase1_Tick_Blocked_List_Manager(openlist,closedlist,blockedlist []*Node) (oList,cList,bList []*Node, error){ <--unsure if these are pass by reference or not 
-        oList:=make([]*Node,len(openlist))
-        cList:=make([]*Node,len(closedlist))
-        bList:=make([]*Node,len(blockedlist))
+    func Pathfind_Phase1_Tick_Blocked_List_Manager(openlist,closedlist,blockedlist []*ImatNode) (oList,cList,bList []*ImatNode, error){ //<--unsure if these are pass by reference or not 
+        oList=make([]*ImatNode,len(openlist))
+        cList=make([]*ImatNode,len(closedlist))
+        bList=make([]*ImatNode,len(blockedlist))
         copy(oList, openlist)
-        copy(clist, closedlist)
-        copy(blist, blockedlist)
+        copy(cList, closedlist)
+        copy(bList, blockedlist)
         
         //---------------------- Prep Done
         for len(oList)>0{

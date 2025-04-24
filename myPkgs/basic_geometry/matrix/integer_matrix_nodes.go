@@ -28,6 +28,8 @@ type ImatNode struct {
 // 	}
 // }
 
+/*
+ */
 func GetNode(start, point, target coords.CoordInts, imat IntegerMatrix2D, parent *ImatNode) ImatNode {
 	temp := ImatNode{
 		Start:    start,
@@ -44,6 +46,8 @@ func GetNode(start, point, target coords.CoordInts, imat IntegerMatrix2D, parent
 	return temp
 }
 
+/*
+ */
 func (node *ImatNode) GetInteration() int {
 	if node.Prev != nil {
 		node.Iteration = node.Prev.GetInteration() + 1
@@ -54,6 +58,8 @@ func (node *ImatNode) GetInteration() int {
 	}
 }
 
+/*
+ */
 func (node *ImatNode) GetDistances(starting, ending coords.CoordInts, straightLine bool) (toStart, toEnd int) {
 	if straightLine {
 		//get the hypotenuse
@@ -67,6 +73,8 @@ func (node *ImatNode) GetDistances(starting, ending coords.CoordInts, straightLi
 	return toStart, toEnd
 }
 
+/*
+ */
 func (node *ImatNode) SetChildrenOfParents_Recursive() {
 	if node.Prev != nil {
 		node.Prev.SetChildrenOfParents_Recursive()
@@ -75,12 +83,16 @@ func (node *ImatNode) SetChildrenOfParents_Recursive() {
 
 }
 
+/*
+ */
 func (node *ImatNode) SetChildrenOfParents() {
 	if node.Prev != nil {
 		node.Prev.Next = node
 	}
 }
 
+/*
+ */
 func (node *ImatNode) GetFValue() (fVal float64) {
 	fVal = node.GetGValue() + node.GetHValue()
 	return fVal
@@ -94,17 +106,22 @@ func (node *ImatNode) GetGValue() (gVal float64) {
 	return gVal
 }
 
+/*
+ */
 func (node *ImatNode) GetHValue() (hVal float64) {
-	hVal = node.Target.GetHypotenuseDistance_Float(node.Position)
+	hVal = node.Target.GetHypotenuseDistance_Float(node.Target)
 	return hVal
 }
 
+/*
+ */
 func (node *ImatNode) GetMovementDistanceToStart() (m_dist_to_start float64) {
-
 	m_dist_to_start = float64(node.Iteration)
 	return
 }
 
+/*
+ */
 func (node *ImatNode) Swap(node2 *ImatNode) {
 	tempChild := node.Next
 	tempParent := node.Prev
@@ -155,25 +172,68 @@ func (node *ImatNode) GetTail() *ImatNode {
 // 	return
 // }
 
-// func (node *ImatNode) FlipOrder() {
-// 	if node.Prev != nil {
-// 		if node.Next != nil {
-// 			temp := node.Next
-// 			node.Next = node.Prev
-// 			node.Next.FlipOrder()
-// 			node.Prev = temp
-// 		} else {
-// 			node.Next = node.Prev
-// 			node.Next.FlipOrder()
-// 		}
-// 	}else{
-// 		f
-// 	}
-// }
+/*
+This sets;
 
-// // func (node *ImatNode) fliporderHelper() {
 
-// // }
+*/
+func (node *ImatNode) Set_Heads_Tails_On_Up() {
+	if node.Prev != nil {
+		node.Prev.Next = node
+		node.Prev.Set_Heads_Tails_On_Up()
+	}
+}
+
+/*
+
+ */
+func (node *ImatNode) FlipOrder() {
+	// node.fliporderHelper(false)
+	tempHead := node.GetHead()
+	tempHead.fliporderHelper(true)
+}
+
+/*
+
+ */
+func (node *ImatNode) fliporderHelper(FromHead bool) {
+	if FromHead {
+		if node.Next != nil {
+			temp := node.Prev
+			node.Prev = node.Next
+			node.Next = temp
+			node.Prev.fliporderHelper(true)
+		}
+	} else if node.Prev != nil {
+		node.Prev.fliporderHelper(false)
+
+	} else {
+		if node.Next != nil {
+			node.Prev = node.Next
+			node.Prev.fliporderHelper(true)
+		}
+	}
+}
+
+/*
+
+ */
+func (node *ImatNode) PrintFromHead() {
+
+}
+func (node ImatNode) GetNode() ImatNode {
+	return node
+}
+
+// type NodeComparisonType int
+
+// const (
+// 	TotallyEqual NodeComparisonType = iota
+// 	SamePostion
+// 	SameParent
+// 	Same
+// )
+
 // func flipImatOrder(head *ImatNode) {
 
 // }

@@ -86,6 +86,9 @@ func (nSelect *UI_Num_Select) Init_Parents(parent UI_Object) error {
 	nSelect.Parent.Redraw()
 	return nil
 }
+
+/*
+ */
 func (nSelect *UI_Num_Select) SetVals(defVal, interator, min, max int, middlebtn uint8) {
 	nSelect.MaxValue = max
 	nSelect.MinValue = min
@@ -256,9 +259,10 @@ func (nSelect *UI_Num_Select) Update_Ret_State_Redraw_Status() (uint8, bool, err
 
 	return nSelect.State, export_redraw, nil
 }
-func (nSelect *UI_Num_Select) SetPosition(Position coords.CoordInts) {
-	nSelect.Position = Position
-}
+
+/*
+ */
+func (nSelect *UI_Num_Select) SetPosition(Position coords.CoordInts) { nSelect.Position = Position }
 
 /*
 Update_Ret_State_Redraw_Status

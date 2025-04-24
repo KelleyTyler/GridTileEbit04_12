@@ -53,3 +53,17 @@ func (mazeM *MazeMaker) GetString() string {
 	outstrng += fmt.Sprintf("%13s: %5t\n %13s: %5t\n", "HAS_STARTED", mazeM.HasStarted, "HAS_FINISHED", mazeM.HasFinished)
 	return outstrng
 }
+
+type Pathfinding_Solver struct {
+	Start, Target           coords.CoordInts
+	Path                    coords.CoordList
+	HasStarted, HasFinished bool
+	DisplayOptions          Integer_Matrix_Ebiten_DrawOptions
+	Imat                    *IntegerMatrix2D
+	ShowPath                bool
+}
+
+func (pfind *Pathfinding_Solver) Init(intmatrix *IntegerMatrix2D, dOps Integer_Matrix_Ebiten_DrawOptions) {
+	pfind.DisplayOptions = dOps
+	pfind.Imat = intmatrix
+}

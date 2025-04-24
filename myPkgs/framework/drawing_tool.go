@@ -1,9 +1,14 @@
 package framework
 
 import (
+	"fmt"
+	"image/color"
+	"slices"
+
 	"github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/coords"
 	mat "github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/matrix"
 	"github.com/KelleyTyler/GridTileEbit04_12/myPkgs/misc"
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type Drawing_Tool struct {
@@ -55,7 +60,7 @@ func (dTool *Drawing_Tool) DrawLineToGrid(value int) (ret bool) {
 	}
 	return
 }
-func (dTool *Drawing_Tool) DrawRectangleToGrid(value int) (ret bool) {
+func (dTool *Drawing_Tool) DrawRectangleToGrid(lineValue, fillvalue int) (ret bool) {
 	ret = false
 	if dTool.CurrPoints >= dTool.MaxPoints {
 		c0, c1 := dTool.GetFirstTwoPoints()
@@ -77,8 +82,14 @@ func (dTool *Drawing_Tool) DrawRectangleToGrid(value int) (ret bool) {
 		for i := y0; i <= y1; i++ {
 			for j := x0; j <= x1; j++ {
 				temp := coords.CoordInts{X: j, Y: i}
-				if dTool.Imat.IsValidCoords(temp) {
-					dTool.Imat.SetValAtCoord(temp, value)
+				if i == y0 || j == x0 || i == y1 || j == x1 {
+					if dTool.Imat.IsValidCoords(temp) && lineValue != -1 {
+						dTool.Imat.SetValAtCoord(temp, lineValue)
+					}
+				} else {
+					if dTool.Imat.IsValidCoords(temp) && fillvalue != -1 {
+						dTool.Imat.SetValAtCoord(temp, fillvalue)
+					}
 				}
 			}
 		}
@@ -134,10 +145,10 @@ func (dTool *Drawing_Tool) DrawCircleToGrid_Bresenham_Walls(value int, walls []i
 			tList := c0.GetACirclePointsFromCenter(i)
 
 			for _, c := range tList {
-				dTool.DrawLineToGrid_Stop_At_Walls_CoordInts(dTool.Imat, c0, c, value, walls)
-				// if dTool.Imat.IsValidCoords(c) {
-				// 	dTool.Imat.SetValAtCoord(c, value)
-				// }
+				// dTool.DrawLineToGrid_Stop_At_Walls_CoordInts(dTool.Imat, c0, c, value, walls)
+				if dTool.Imat.IsValidCoords(c) {
+					dTool.Imat.SetValAtCoord(c, value)
+				}
 			}
 		}
 
@@ -185,4 +196,111 @@ func (dTool *Drawing_Tool) DrawLineToGrid_Stop_At_Walls_CoordInts(imat *mat.Inte
 		ret = true
 	}
 	return
+}
+
+type Pathfind_Tester struct {
+	Start, Target                                                coords.CoordInts
+	ClosedList, OpenList, BlockedList                            []*mat.ImatNode
+	IsReady, HasStarted, IsFinished, IsStartInput, IsTargetInput bool
+
+	ShowOnScreen          bool
+	ShowOnScreenOptions   uint8
+	GridOptions           mat.Integer_Matrix_Ebiten_DrawOptions
+	IMat                  *mat.IntegerMatrix2D
+	max_fails, curr_fails int
+}
+
+func (pfind *Pathfind_Tester) Init(imat *mat.IntegerMatrix2D, options mat.Integer_Matrix_Ebiten_DrawOptions) {
+	pfind.IMat = imat
+	pfind.Reset()
+	pfind.GridOptions = options
+	pfind.GridOptions.TileLineColors = []color.Color{color.Black, color.Black, color.Black}
+
+}
+func (pfind *Pathfind_Tester) Reset() {
+	pfind.IsTargetInput = false
+	pfind.IsStartInput = false
+	pfind.IsFinished = false
+	pfind.IsReady = false
+	pfind.HasStarted = false
+	pfind.ClosedList = make([]*mat.ImatNode, 0)
+	pfind.OpenList = make([]*mat.ImatNode, 0)
+	pfind.BlockedList = make([]*mat.ImatNode, 0)
+	pfind.max_fails = 100
+	pfind.curr_fails = 0
+	fmt.Printf("RESET PFIND TEST \n")
+}
+
+func (pfind *Pathfind_Tester) InputCoords(coord coords.CoordInts) {
+	if !pfind.IsStartInput {
+		pfind.Start = coord
+
+		fmt.Printf("START INPUT\n")
+		pfind.IsStartInput = true
+	} else if !pfind.IsTargetInput {
+		if !coord.IsEqual(pfind.Start) {
+			pfind.Target = coord
+			pfind.IsTargetInput = true
+			pfind.IsReady = true
+			pfind.IsFinished = false
+			fmt.Printf("END INPUT\n")
+
+		}
+	}
+}
+
+// -----replicating the process we've seen before;
+func (pfind *Pathfind_Tester) Process() error {
+	var err error
+	if pfind.IsReady {
+		if !pfind.HasStarted {
+			fmt.Printf("STARTING!\n")
+			startnode := mat.GetNode(pfind.Start, pfind.Start, pfind.Target, *pfind.IMat, nil)
+			pfind.ClosedList = append(pfind.ClosedList, &startnode)
+			temp := mat.NodeList_GetNeighbors_4_Filtered_Hypentenuse(&startnode, pfind.Start, pfind.Target, pfind.IMat, []int{0, 1}, []int{9, 10}, [4]uint{1, 1, 1, 1})
+			pfind.OpenList = append(pfind.OpenList, temp...)
+			fmt.Printf("STARTUP! %d %d \n", len(pfind.ClosedList), len(pfind.OpenList))
+
+			// pfind.OpenList, pfind.ClosedList, pfind.BlockedList, pfind.IsFinished, pfind.curr_fails, err = mat.Pathfind_Phase1_Tick(pfind.Start, pfind.Target, pfind.OpenList, pfind.ClosedList, pfind.BlockedList, pfind.IsFinished, pfind.curr_fails, pfind.max_fails, *pfind.IMat, []int{0, 1}, []int{9, 10}, [4]uint{1, 1, 1, 1})
+			pfind.HasStarted = true
+		} else {
+			if len(pfind.OpenList) < 1 {
+				mat.NodeList_SortByFValue_Ascending(pfind.ClosedList, pfind.Start, pfind.Target)
+				// slices.Reverse(pfind.ClosedList)
+				temp := mat.NodeList_GetNeighbors_4_Filtered_Hypentenuse(pfind.ClosedList[0], pfind.Start, pfind.Target, pfind.IMat, []int{0, 1}, []int{9, 10}, [4]uint{1, 1, 1, 1})
+				pfind.OpenList = append(pfind.OpenList, temp...)
+				mat.NodeList_SortByFValue_Ascending(pfind.OpenList, pfind.Start, pfind.Target)
+				slices.Reverse(pfind.OpenList)
+			}
+
+			pfind.OpenList, pfind.ClosedList, pfind.BlockedList, pfind.IsFinished, pfind.curr_fails, err = mat.Pathfind_Phase1_Tick(pfind.Start, pfind.Target, pfind.OpenList, pfind.ClosedList, pfind.BlockedList, pfind.IsFinished, pfind.curr_fails, pfind.max_fails, *pfind.IMat, []int{0, 1}, []int{9, 10}, [4]uint{1, 1, 1, 1})
+			fmt.Printf("RUNNING! %d %d \n", len(pfind.ClosedList), len(pfind.OpenList))
+		}
+	}
+	return err
+}
+func (pfind *Pathfind_Tester) Draw(screen *ebiten.Image, drawOpts *mat.Integer_Matrix_Ebiten_DrawOptions) {
+	pfind.GridOptions = *drawOpts
+	pfind.GridOptions.TileLineColors = []color.Color{color.Black, color.Black, color.Black}
+
+	if pfind.IsStartInput {
+		pfind.IMat.DrawAGridTile_With_Lines(screen, pfind.Start, color.RGBA{128, 255, 0, 255}, &pfind.GridOptions)
+
+	}
+	if pfind.IsTargetInput {
+		pfind.IMat.DrawAGridTile_With_Lines(screen, pfind.Target, color.RGBA{255, 128, 0, 255}, &pfind.GridOptions)
+	}
+
+	if len(pfind.ClosedList) > 1 {
+		for _, node := range pfind.ClosedList {
+			pfind.IMat.DrawAGridTile_With_Lines(screen, node.Position, color.RGBA{255, 24, 125, 255}, &pfind.GridOptions)
+
+		}
+	}
+	if len(pfind.OpenList) > 1 {
+		for _, node := range pfind.OpenList {
+			pfind.IMat.DrawAGridTile_With_Lines(screen, node.Position, color.RGBA{125, 128, 255, 255}, &pfind.GridOptions)
+
+		}
+	}
 }

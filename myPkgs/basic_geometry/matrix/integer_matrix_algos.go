@@ -155,16 +155,16 @@ func (imat *IntegerMatrix2D) PrimMazeGenCell_CheckingRules(cord coords.CoordInts
 	// if (!ss) && ((!ne && nw) || (ne && !nw)) { //(nn && ee && ww && !ss) && ((!ne && se && sw && nw) || (ne && se && sw && !nw))
 	// 	return false
 	// }
-	if (nn) && ((se && !sw) || (!se && sw)) {
+	if (nn) && ((se && !sw) || (!se && sw) || (se && sw)) {
 		return false
 	}
-	if (ee) && ((!sw && nw) || (sw && !nw)) {
+	if (ee) && ((!sw && nw) || (sw && !nw) || (ne && nw)) {
 		return false
 	}
-	if (ww) && ((!se && ne) || (!ne && se)) {
+	if (ww) && ((!se && ne) || (!ne && se) || (ne && se)) {
 		return false
 	}
-	if (ss) && ((!ne && nw) || (ne && !nw)) { //(nn && ee && ww && !ss) && ((!ne && se && sw && nw) || (ne && se && sw && !nw))
+	if (ss) && ((!se && nw) || (ne && !nw) || (ne && nw)) { //(nn && ee && ww && !ss) && ((!ne && se && sw && nw) || (ne && se && sw && !nw))
 		return false
 	}
 	return true

@@ -201,3 +201,95 @@ const(
 change 'Parent' (pointer) to "Context"; because these things will exist in a context;
 
 fonts might need to be hadled through some kind of 'Rich Text' struct or interface that allows them to be manipulated to have 'italics/bolds/etc.';
+
+
+
+## Interfaces that might make sense;
+
+Requirements: UI-Objects;
+
+
+--> tell parent that they need to refresh;
+--> tell parent when they are minimized;
+--> have a means by which to self-delete;
+--> have a means by which to pass data back and forth; said data not being necessarily the same across all forms of ui-object;
+
+
+how will a 'text' prompting window work? like will it require it to always exist but only sometimes be active? a simpler solution than having it be something that can just pop up but one that is also a bit... subpar??
+
+will there need to be some kind of init?
+
+UI_Init_Options?
+
+x-mode buttons; with options to 'loop' or 'back and fourth', to have lists that cycle ?
+
+## Backends;
+
+
+```
+type UI_Object_Type int
+const(
+	barebones = iota //or something like that
+	button
+	text field
+
+)UI_Object_Type
+
+type Basic_UI_Object struct{
+	//blah blah blah...
+	backend *UI_Backend
+	layer uint8
+	ui_id string
+	type UI_Object_Type
+}
+
+type UI_Object interface{
+
+}
+```
+The ulitmate 'backend' would include some kind of event system and event 'router'; 
+```
+Game_Backend{
+	User_Interface []UI_Object //this is just a big list of pointers
+	Audio_System //Some kind of audio system
+	Texturemap tilemap //
+	UI_Styles//--< this should include several default sizes for windows, buttons, 
+	Typefaces//--< Ideally this should include means by which to get variations of a single font (so italics, BOLD text)
+	UI_QUEUE func()
+	touch_event_queue
+	click_event_queue
+	//--->
+}
+
+```
+### click-touch handler;
+ basically there needs to be somethng that can handle touch events in the UI where the UI will overlap (such as drop-down menus among other things)..
+ this cannot be/should-not-be handled through 'load order' alone; though that's a solution that isn't ideal either;
+
+ so I have a 'button_panel' with a dropdown menu;
+ this dropdown menu extends outside the button window over another button_panel; and more importantly over another button;
+ who has priority here? how is that decided?
+
+ a priority queue might be a measure but how to implement that?
+ --> idea; implement it through having a 'layer' integer; that is used to sort/resort the 'queue' and can be used to lock down the other objects being displayed;
+ --> thus allowing for some kind of 'tag-out/lock out' system for lack of a better/catchy phrase.
+ -->Problem how to implement this?
+ I don't want a hundred bespoke little things like 'button group numbers' or whatever for every kind of object interface.
+ I want
+ {dropdownmenu.active:true}-->{dropdownmenu.parent.setpriority}-->{dropdownmenu.parent.parent.setpriority}
+
+ perhaps having some kind of 'priority container' with a mandatory 'priority container cleared'.. this might also solve the problem of overlapping when not intented;
+
+ //then again teh problems of overlapping would be solved by having 'layers' and having some kind of big draw queue;
+// a system that was simultaniously like LIFO for drawing and FIFO for events/click-handling would be good here..
+//-->
+
+```
+//type Game_Event interface? struct?
+type Game_Event struct{
+	timestamp_id//not sure what data for this..
+
+}
+```
+having a queue of these might make some stuff slightly better.. but it seems like an awful lot of work infrastructurally for what is going to be fairly minor overall
+

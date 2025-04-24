@@ -353,7 +353,7 @@ void bresenham(int x1, int y1, int x2, int y2)
 	    }
 	}
 */
-func StraightDiagonal(c1 CoordInts, c2 CoordInts) (outlist CoordList) {
+func Straight_Diagonal(c1 CoordInts, c2 CoordInts) (outlist CoordList) {
 	outlist = make(CoordList, 0)
 	x1 := c1.X
 	y1 := c1.Y
