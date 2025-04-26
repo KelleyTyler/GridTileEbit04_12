@@ -128,6 +128,13 @@ func (nSelect *UI_Num_Select) Redraw() {
 }
 
 /*
+allows for the seleciton of middle button modes
+*/
+func (nSelect *UI_Num_Select) SetMiddlebuttonMode(mode uint8, additionalLabels []string) {
+	nSelect.MiddleButtonMode = mode
+}
+
+/*
  */
 func (nSelect *UI_Num_Select) Update() error {
 	nSelect.State = 0

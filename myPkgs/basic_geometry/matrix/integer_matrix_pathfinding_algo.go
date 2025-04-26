@@ -43,24 +43,28 @@ func Pathfind_Phase1(start, target coords.CoordInts, imat IntegerMatrix2D, floor
 	var curr_fails int = 0
 	var isFinished bool = false
 	var err error = nil
-
+	var EndNode *ImatNode = nil
 	//beware pseudocode
 	//ClosedList.ClosedList = ClosedList.append(Get_New_Node(start, start, end))//*pseudocode or not I'm not sure I even want this.
 	// OpenList.append
 	for !isFinished {
-		OpenList, ClosedList, BlockedList, isFinished, curr_fails, err = Pathfind_Phase1_Tick(start, target, OpenList, ClosedList, BlockedList, isFinished, curr_fails, max_fails, imat, floors, walls, margins)
+		OpenList, ClosedList, BlockedList, isFinished, EndNode, curr_fails, err = Pathfind_Phase1_Tick(start, target, OpenList, ClosedList, BlockedList, isFinished, curr_fails, max_fails, imat, floors, walls, margins)
 		if err != nil {
 			log.Fatal(fmt.Errorf("pathfinding error"))
 		}
 	}
 
 	if isFinished {
-		PotentialPaths = append(PotentialPaths, ClosedList...)
+		if EndNode != nil {
+			EndNode.Set_Heads_Tails_On_Up()
+		}
+
+		// PotentialPaths = append(PotentialPaths, ClosedList...)
 	}
 
 	return path_is_found, PotentialPaths
 }
-func Pathfind_Phase1_Tick(start, target coords.CoordInts, openlist, closedlist, blockedlist []*ImatNode, pathfound bool, curr_fails, max_fails int, imat IntegerMatrix2D, floors, walls []int, margins [4]uint) (oList, cList, bList []*ImatNode, pFound bool, fails int, err error) { //<--unsure if these are pass by reference or not
+func Pathfind_Phase1_Tick(start, target coords.CoordInts, openlist, closedlist, blockedlist []*ImatNode, pathfound bool, curr_fails, max_fails int, imat IntegerMatrix2D, floors, walls []int, margins [4]uint) (oList, cList, bList []*ImatNode, pFound bool, pFoundNode *ImatNode, fails int, err error) { //<--unsure if these are pass by reference or not
 	oList = make([]*ImatNode, len(openlist))
 	cList = make([]*ImatNode, len(closedlist))
 	bList = make([]*ImatNode, len(blockedlist))
@@ -70,28 +74,37 @@ func Pathfind_Phase1_Tick(start, target coords.CoordInts, openlist, closedlist, 
 	pFound = pathfound
 	fails = curr_fails
 	err = nil
-	oList = NodeList_SortByFValue_Ascending_toReturn(oList, start, target)
+	oList = NodeList_SortByFValue_Desc_toReturn(oList, start, target)
+	// slices.Reverse(oList)
 	//pfound_phase2 = false //(the path needs to be found more)
 	//---------------------- Prep Done
 	var pointQ *ImatNode
-	for len(oList) > 0 {
+	if len(oList) > 0 {
 		pointQ, oList = NodeList_PopFromFront(oList)
-		fmt.Printf("Point Q is %s", pointQ.Position.ToString())
-		if err != nil {
-			return oList, cList, bList, false, fails, err
-		}
+
+		// if err != nil {
+		// 	return oList, cList, bList, false, fails, err
+		// }
 		if pointQ != nil {
-			if pointQ.Position.IsEqualTo(start) {
-				fmt.Printf("This is start\n")
-				// pFound = true
+			//fmt.Printf("Point Q is %s\t", pointQ.Position.ToString())
+			if pointQ.Position.IsEqualTo(target) {
+				//fmt.Printf("HIT TARGET\n")
+				pFoundNode = pointQ
+				pFound = true
+				return oList, cList, bList, pFound, pFoundNode, fails, err
+
 			} else if imat.IsValidCoords(pointQ.Position) && !misc.IsNumInIntArray(imat.GetValueOnCoord(pointQ.Position), walls) {
-				fmt.Printf("Point Q is Valid \n")
+				//fmt.Printf("Point Q is Valid %7.2f %7.2f\n", pointQ.GetFValue(), pointQ.GetHValue())
 				temp_successors := NodeList_GetNeighbors_4_Filtered_Hypentenuse(pointQ, start, target, &imat, floors, walls, margins)
 				//filter temp_successors into openlist
+				temp_successors = NodeList_FILTER_LIST(temp_successors, oList)
+				temp_successors = NodeList_FILTER_LIST(temp_successors, cList)
 				for _, suc := range temp_successors {
 					if !NodeList_ContainsPoint(suc.Position, cList) && !NodeList_ContainsPoint(suc.Position, bList) {
-						cList = append(cList, suc)
-						fmt.Printf("Success--------\n")
+						// cList = append(cList, suc)
+						oList = append(oList, suc)
+
+						// fmt.Printf("Success--------\n")
 					}
 
 				}
@@ -108,24 +121,32 @@ func Pathfind_Phase1_Tick(start, target coords.CoordInts, openlist, closedlist, 
 					}
 				}
 				if override_cList {
-					cList = append(cList, pointQ)
+					if !pointQ.Position.IsEqual(start) {
+
+						cList = append(cList, pointQ)
+					}
 				}
 			} else {
-				fmt.Printf("Point Q isNOT Valid \n")
+				fmt.Printf("Point Q is NOT Valid \n")
 
 			}
 
-			oList = NodeList_SortByFValue_Ascending_toReturn(oList, start, target) //f_value being sum of distance to and from
+			oList = NodeList_SortByFValue_Desc_toReturn(oList, start, target) //f_value being sum of distance to and from
 			oList = NodeList_RemoveDuplicates_ToReturn(oList)
+			cList = NodeList_RemoveDuplicates_ToReturn(cList)
+			//------NEEDS WORK
 			oList, cList, bList, err = Pathfind_Phase1_Tick_Blocked_List_Manager(oList, cList, bList, start, target, &imat, floors, walls, margins)
 			if err != nil {
-				return oList, cList, bList, false, fails, err
+				return oList, cList, bList, false, nil, fails, err
 			}
+			oList = NodeList_FILTER_LIST(oList, bList)
+			cList = NodeList_FILTER_LIST(cList, bList)
+
 		}
 
 	}
 
-	return oList, cList, bList, pFound, fails, err
+	return oList, cList, bList, pFound, nil, fails, err
 }
 func Pathfind_Phase1_Tick_Blocked_List_Manager(openlist, closedlist, blockedlist []*ImatNode, start, target coords.CoordInts, imat *IntegerMatrix2D, floors, walls []int, margins [4]uint) (oList, cList, bList []*ImatNode, err error) {
 	oList = make([]*ImatNode, len(openlist))
@@ -145,12 +166,28 @@ func Pathfind_Phase1_Tick_Blocked_List_Manager(openlist, closedlist, blockedlist
 					numb++
 				}
 			}
-			if numb < 2 && !NodeList_ContainsPoint(nod.Position, bList) {
+			if numb < 1 && !NodeList_ContainsPoint(nod.Position, bList) {
 				bList = append(bList, nod)
 				//remove from openlist
 			}
 		}
 	}
-
+	oList = NodeList_FILTER_LIST(oList, bList)
+	for _, nod := range cList {
+		if !nod.Position.IsEqual(target) && !nod.Position.IsEqual(start) {
+			temp := NodeList_GetNeighbors_4_Filtered_Hypentenuse(nod, start, target, imat, floors, walls, margins)
+			numb := 0
+			for _, point := range temp {
+				if !misc.IsNumInIntArray(imat.GetValueOnCoord(point.Position), walls) && !NodeList_ContainsPoint(point.Position, bList) {
+					numb++
+				}
+			}
+			if numb < 1 && !NodeList_ContainsPoint(nod.Position, bList) {
+				bList = append(bList, nod)
+				//remove from openlist
+			}
+		}
+	}
+	cList = NodeList_FILTER_LIST(cList, bList)
 	return oList, cList, bList, nil
 }

@@ -8,6 +8,9 @@ type ImatNode struct {
 	Next                    *ImatNode //make this an array??? (see argument Against such an action)
 	Iteration               int
 	ValueOnGrid             int
+	F_Value                 float64
+	G_Value                 float64
+	H_Value                 float64
 }
 
 /*ARGUEMENTS AGAINST ARRAY FOR "ImatNode.NEXT:"
@@ -42,8 +45,17 @@ func GetNode(start, point, target coords.CoordInts, imat IntegerMatrix2D, parent
 	if parent != nil {
 		temp.Prev = parent
 		temp.Iteration = temp.GetInteration()
+		temp.G_Value = temp.GetGValue()
+		temp.H_Value = temp.GetHValue()
+		temp.F_Value = temp.GetFValue()
+
 	}
 	return temp
+}
+
+func GetNodePTR(start, point, target coords.CoordInts, imat IntegerMatrix2D, parent *ImatNode) *ImatNode {
+	temp := GetNode(start, point, target, imat, parent)
+	return &temp
 }
 
 /*
@@ -102,6 +114,7 @@ func (node *ImatNode) GetFValue() (fVal float64) {
 	this is the cost-so-far so the movement distance to start;
 */
 func (node *ImatNode) GetGValue() (gVal float64) {
+	// gVal = node.Position.GetHypotenuseDistance_Float(node.Start) //this is a faster result
 	gVal = node.GetMovementDistanceToStart()
 	return gVal
 }
@@ -109,7 +122,7 @@ func (node *ImatNode) GetGValue() (gVal float64) {
 /*
  */
 func (node *ImatNode) GetHValue() (hVal float64) {
-	hVal = node.Target.GetHypotenuseDistance_Float(node.Target)
+	hVal = node.Position.GetHypotenuseDistance_Float(node.Target)
 	return hVal
 }
 

@@ -1,6 +1,7 @@
 package matrix
 
 import (
+	"fmt"
 	"image/color"
 
 	coords "github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/coords"
@@ -25,6 +26,17 @@ type Integer_Matrix_Ebiten_DrawOptions struct {
 	TileLineThickness []float32
 	AABody            bool
 	AALines           bool
+}
+
+func (Opts Integer_Matrix_Ebiten_DrawOptions) GetOptsPtr() (optsPtr *Integer_Matrix_Ebiten_DrawOptions) {
+	return &Opts
+}
+func (Opts Integer_Matrix_Ebiten_DrawOptions) ToString() (outString string) {
+	outString = fmt.Sprintf("Tile Size: %3d, %3d TileSpacing %3d %3d", Opts.TileSize.X, Opts.TileSize.Y, Opts.TileSpacing.X, Opts.TileSpacing.Y)
+	return outString
+}
+func (Opts Integer_Matrix_Ebiten_DrawOptions) GetOptsByValue() (optsByValue Integer_Matrix_Ebiten_DrawOptions) {
+	return Opts
 }
 
 /*
@@ -145,3 +157,18 @@ func (imat IntMatrix) GetCoordOfMouseEvent(Raw_Mouse_X int, Raw_Mouse_Y int, Off
 }
 
 */
+
+// func (imat IntegerMatrix2D) DrawAGridTile_With_Lines_Strings(screen *ebiten.Image, coord coords.CoordInts, strng string, clr0 color.Color, options *Integer_Matrix_Ebiten_DrawOptions) {
+// 	vector.DrawFilledRect(screen, float32((options.TileSize.X*coord.X)+(options.TileSpacing.X*coord.X)+options.BoardMargin.X), float32((options.TileSize.Y*coord.Y)+(options.TileSpacing.Y*coord.Y)+options.BoardMargin.Y), float32(options.TileSize.X), float32(options.TileSize.Y), clr0, options.AABody)
+// 	TileCoord := coords.CoordInts{X: options.TileSize.X * coord.X, Y: options.TileSize.Y * coord.Y}
+// 	// TileSpace := CoordInts{X: options.TileSpacing.X * coord.X, Y: options.TileSpacing.Y * coord.Y}
+// 	if options.ShowTileLines[0] {
+// 		vector.StrokeRect(screen, float32((options.TileSize.X*coord.X)+(options.TileSpacing.X*coord.X)+options.BoardMargin.X), float32((options.TileSize.Y*coord.Y)+(options.TileSpacing.Y*coord.Y)+options.BoardMargin.Y), float32(options.TileSize.X), float32(options.TileSize.Y), options.TileLineThickness[0], options.TileLineColors[0], options.AALines)
+// 	}
+// 	if options.ShowTileLines[1] {
+// 		vector.StrokeLine(screen, float32((TileCoord.X)+(options.TileSpacing.X*coord.X)+options.BoardMargin.X), float32((TileCoord.Y)+(options.TileSpacing.Y*coord.Y)+options.BoardMargin.Y), float32((options.TileSize.X*coord.X)+(options.TileSpacing.X*coord.X)+options.BoardMargin.X+options.TileSize.X), float32((options.TileSize.Y*coord.Y)+(options.TileSpacing.Y*coord.Y)+options.BoardMargin.Y+options.TileSize.Y), options.TileLineThickness[0], options.TileLineColors[1], options.AALines)
+// 	}
+// 	if options.ShowTileLines[2] {
+// 		vector.StrokeLine(screen, float32((TileCoord.X)+(options.TileSpacing.X*coord.X)+options.BoardMargin.X), float32((TileCoord.Y)+(options.TileSpacing.Y*coord.Y)+options.BoardMargin.Y+options.TileSize.Y), float32((options.TileSize.X*coord.X)+(options.TileSpacing.X*coord.X)+options.BoardMargin.X+options.TileSize.X), float32((options.TileSize.Y*coord.Y)+(options.TileSpacing.Y*coord.Y)+options.BoardMargin.Y), options.TileLineThickness[0], options.TileLineColors[2], options.AALines)
+// 	}
+// }

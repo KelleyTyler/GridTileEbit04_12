@@ -23,7 +23,6 @@ type Game struct {
 	lbl00 ui.UI_Label
 	// btn00b                    ui.UI_Button
 	primitive ui.UI_Object_Primitive
-	bPanel    ui.UI_ButtonPanel
 }
 
 func GetNewGame() *Game {
@@ -34,17 +33,17 @@ func GetNewGame() *Game {
 	gBoardSize := coords.CoordInts{X: game.G_Setting.GameBoardX, Y: game.G_Setting.GameBoardY}
 	gBoardTileSize := coords.CoordInts{X: game.G_Setting.GameBoardTileX, Y: game.G_Setting.GameBoardTileY}
 	gBoardTileSpacing := coords.CoordInts{X: game.G_Setting.GameBoardTile_Margin_X, Y: game.G_Setting.GameBoardTile_Margin_Y} //158
-	game.Board.Init(&game.Backend, coords.CoordInts{X: 158, Y: 42}, coords.CoordInts{X: 4, Y: 4}, gBoardSize, gBoardTileSize, gBoardTileSpacing)
-	num := game.Backend.Settings.ScreenResX - 208 //70 //-136
-	game.bPanel.Init("Panel00", &game.Backend, coords.CoordInts{X: num, Y: 18}, coords.CoordInts{X: 204, Y: 600}, nil)
-	game.bPanel.AddButtons_Row_TypeA([]string{"b00", "b01", "b02", "b03", "b04", "b05"}, coords.CoordInts{X: 2, Y: 68}, coords.CoordInts{X: 32, Y: 32}, []uint8{0, 0, 0, 0, 10, 10})
+	num := game.Backend.Settings.ScreenResX - 208                                                                             //70 //-136
 	game.primitive.Init([]string{"Primitive 00"}, &game.Backend, nil, coords.CoordInts{X: num, Y: 4}, coords.CoordInts{X: 204, Y: 632})
 	game.lbl00.Init([]string{"lbl_02", "Primitve00"}, &game.Backend, nil, coords.CoordInts{X: 0, Y: 0}, coords.CoordInts{X: 204, Y: 32})
+
 	game.lbl00.TextAlignMode = 10
 	game.lbl00.Redraw()
+	game.Board.Init(&game.Backend, &game.primitive, coords.CoordInts{X: 158, Y: 42}, coords.CoordInts{X: 4, Y: 4}, gBoardSize, gBoardTileSize, gBoardTileSpacing)
+
 	game.primitive.Redraw()
 	game.lbl00.Init_Parents(&game.primitive)
-	game.Board.SetParents(&game.primitive)
+	// game.Board.SetParents(&game.primitive)
 	game.primitive.Redraw()
 
 	return &game
