@@ -369,11 +369,11 @@ type Pathfind_Tester struct {
 
 	max_fails, curr_fails int
 	//------- User Interface and User Interface Buttons
-	Button_Panel_Label                                       ui.UI_Label
-	Button_Select_Points, Button_Pathfind_Tick, Button_Reset ui.UI_Button
-	Button_Pathfind_Auto                                     ui.UI_Button
-
-	tickCount int
+	Button_Panel_Label                                                                      ui.UI_Label
+	Button_Select_Points, Button_Pathfind_Tick, Button_Reset                                ui.UI_Button
+	Button_Pathfind_Auto                                                                    ui.UI_Button
+	Button_SHOW_OPENLIST, Button_SHOW_CLOSEDLIST, Button_SHOW_BLOCKEDLIST, Button_SHOW_PATH ui.UI_Button
+	tickCount                                                                               int
 }
 
 func (pfind *Pathfind_Tester) Init(imat *mat.IntegerMatrix2D, backend *ui.UI_Backend, options *mat.Integer_Matrix_Ebiten_DrawOptions) {
@@ -416,6 +416,21 @@ func (pfind *Pathfind_Tester) UI_Init(parent ui.UI_Object, pfindBtnRow int) {
 	pfind.Button_Pathfind_Auto.Btn_Type = 10
 	pfind.Button_Pathfind_Auto.Init_Parents(parent)
 
+	pfind.Button_SHOW_OPENLIST.Init([]string{"pfind_Auto", "SHOW\nO_LIST"}, pfind.UI_Backend, nil, coords.CoordInts{X: 4, Y: pfindBtnRow + 102}, coords.CoordInts{X: 48, Y: 32})
+	pfind.Button_SHOW_OPENLIST.Btn_Type = 10
+	pfind.Button_SHOW_OPENLIST.Init_Parents(parent)
+
+	pfind.Button_SHOW_CLOSEDLIST.Init([]string{"pfind_Auto", "SHOW\nC_LIST"}, pfind.UI_Backend, nil, coords.CoordInts{X: 53, Y: pfindBtnRow + 102}, coords.CoordInts{X: 48, Y: 32})
+	pfind.Button_SHOW_CLOSEDLIST.Btn_Type = 10
+	pfind.Button_SHOW_CLOSEDLIST.Init_Parents(parent)
+
+	pfind.Button_SHOW_BLOCKEDLIST.Init([]string{"pfind_Auto", "SHOW\nB_LIST"}, pfind.UI_Backend, nil, coords.CoordInts{X: 103, Y: pfindBtnRow + 102}, coords.CoordInts{X: 48, Y: 32})
+	pfind.Button_SHOW_BLOCKEDLIST.Btn_Type = 10
+	pfind.Button_SHOW_BLOCKEDLIST.Init_Parents(parent)
+
+	pfind.Button_SHOW_PATH.Init([]string{"pfind_Auto", "SHOW\nPATH"}, pfind.UI_Backend, nil, coords.CoordInts{X: 152, Y: pfindBtnRow + 102}, coords.CoordInts{X: 48, Y: 32})
+	pfind.Button_SHOW_PATH.Btn_Type = 10
+	pfind.Button_SHOW_PATH.Init_Parents(parent)
 }
 
 func (pfind *Pathfind_Tester) OnValidMouseClickOnGameBoard(pos_X, pos_Y int) (overlay_change, board_change bool) {
@@ -433,15 +448,21 @@ func (pfind *Pathfind_Tester) OnValidMouseClickOnGameBoard(pos_X, pos_Y int) (ov
 func (pfind *Pathfind_Tester) Update_Passive() (overlay_change bool) {
 	overlay_change = false
 	if pfind.Button_Pathfind_Tick.GetState() == 2 {
-		pfind.Process()
+		// fmt.Printf("BUTTON TICK\n")
+		// pfind.Process(1)
+		go pfind.Process02()
 		overlay_change = true
 	}
 	if pfind.Button_Reset.GetState() == 2 {
+		fmt.Printf("RESET BUTTON\n")
+
 		pfind.Reset()
 		overlay_change = true
 	}
 	if pfind.Button_Pathfind_Auto.GetState() == 2 {
-		pfind.Process()
+		// fmt.Printf("AUTO TICK\n")
+
+		pfind.Process(110)
 		overlay_change = true
 	}
 	return overlay_change
@@ -470,71 +491,89 @@ func (pfind *Pathfind_Tester) InputCoords(coord coords.CoordInts) {
 }
 
 // -----replicating the process we've seen before;
-func (pfind *Pathfind_Tester) Process() error {
+func (pfind *Pathfind_Tester) Process(ticks int) error {
 	var err error
 
 	// fmt.Printf("ENDNODE %t %t %t %t\n\n", pfind.EndNode != nil, pfind.HasStarted, pfind.IsFinished, pfind.IsReady)
 
 	if pfind.IsReady {
-		if !pfind.HasStarted {
-			fmt.Printf("STARTING!\n")
-			startnode := mat.GetNode(pfind.Start, pfind.Start, pfind.Target, *pfind.IMat, nil)
-			pfind.ClosedList = append(pfind.ClosedList, &startnode)
-			temp := mat.NodeList_GetNeighbors_4_Filtered_Hypentenuse(&startnode, pfind.Start, pfind.Target, pfind.IMat, []int{0, 1}, []int{9, 10}, [4]uint{1, 1, 1, 1})
-			mat.NodeList_SortByFValue_DESC(temp, pfind.Start, pfind.Target)
-			pfind.OpenList = append(pfind.OpenList, temp...)
-			fmt.Printf("STARTUP! %d %d \n", len(pfind.ClosedList), len(pfind.OpenList))
+		for range ticks {
+			if !pfind.HasStarted {
+				fmt.Printf("STARTING!\n")
+				startnode := mat.GetNode(pfind.Start, pfind.Start, pfind.Target, *pfind.IMat, nil)
+				pfind.ClosedList = append(pfind.ClosedList, &startnode)
+				temp := mat.NodeList_GetNeighbors_4_Filtered_Hypentenuse(&startnode, pfind.Start, pfind.Target, pfind.IMat, []int{0, 1}, []int{9, 10}, [4]uint{1, 1, 1, 1})
+				mat.NodeList_SortByFValue_DESC(temp, pfind.Start, pfind.Target)
+				pfind.OpenList = append(pfind.OpenList, temp...)
+				fmt.Printf("STARTUP! %d %d \n", len(pfind.ClosedList), len(pfind.OpenList))
 
-			// pfind.OpenList, pfind.ClosedList, pfind.BlockedList, pfind.IsFinished, pfind.curr_fails, err = mat.Pathfind_Phase1_Tick(pfind.Start, pfind.Target, pfind.OpenList, pfind.ClosedList, pfind.BlockedList, pfind.IsFinished, pfind.curr_fails, pfind.max_fails, *pfind.IMat, []int{0, 1}, []int{9, 10}, [4]uint{1, 1, 1, 1})
-			pfind.HasStarted = true
-		} else {
-			if !pfind.IsFinished {
-				if len(pfind.OpenList) > 0 {
-					// mat.NodeList_SortByHValue_Ascending(pfind.ClosedList)
-					// mat.NodeList_SortByFValue_Ascending(pfind.ClosedList, pfind.Start, pfind.Target)
-					pfind.ClosedList = mat.NodeList_SortByFValue_Desc_toReturn(pfind.ClosedList, pfind.Start, pfind.Target)
-					// slices.Reverse(pfind.ClosedList)
-					temp := mat.NodeList_GetNeighbors_4_Filtered_Hypentenuse(pfind.ClosedList[0], pfind.Start, pfind.Target, pfind.IMat, []int{0, 1}, []int{9, 10}, [4]uint{1, 1, 1, 1})
-					temp = mat.NodeList_FILTER_LIST(temp, pfind.OpenList)
-					temp = mat.NodeList_FILTER_LIST(temp, pfind.ClosedList)
-					pfind.OpenList = append(pfind.OpenList, temp...)
-					//fmt.Printf("TICK!----\n")
-
-					// mat.NodeList_SortByFValue_Ascending(pfind.OpenList, pfind.Start, pfind.Target)
-					// slices.Reverse(pfind.OpenList)
-				}
-
-				pfind.OpenList, pfind.ClosedList, pfind.BlockedList, pfind.IsFinished, pfind.EndNode, pfind.curr_fails, err = mat.Pathfind_Phase1_Tick(pfind.Start, pfind.Target, pfind.OpenList, pfind.ClosedList, pfind.BlockedList, pfind.IsFinished, pfind.curr_fails, pfind.max_fails, *pfind.IMat, []int{0, 1}, []int{9, 10}, [4]uint{1, 1, 1, 1})
-				//fmt.Printf("RUNNING! %d %d \n", len(pfind.ClosedList), len(pfind.OpenList))
-				pfind.tickCount++
+				// pfind.OpenList, pfind.ClosedList, pfind.BlockedList, pfind.IsFinished, pfind.curr_fails, err = mat.Pathfind_Phase1_Tick(pfind.Start, pfind.Target, pfind.OpenList, pfind.ClosedList, pfind.BlockedList, pfind.IsFinished, pfind.curr_fails, pfind.max_fails, *pfind.IMat, []int{0, 1}, []int{9, 10}, [4]uint{1, 1, 1, 1})
+				pfind.HasStarted = true
 			} else {
-				fmt.Printf("FOUND! %t---- TICKS: %d\n\n", pfind.EndNode != nil, pfind.tickCount)
-				// if pfind.EndNode != nil {
+				if !pfind.IsFinished {
+					if len(pfind.OpenList) > 0 {
+						// mat.NodeList_SortByHValue_Ascending(pfind.ClosedList)
+						// mat.NodeList_SortByFValue_Ascending(pfind.ClosedList, pfind.Start, pfind.Target)
+						pfind.ClosedList = mat.NodeList_SortByFValue_Desc_toReturn(pfind.ClosedList, pfind.Start, pfind.Target)
+						// slices.Reverse(pfind.ClosedList)
+						temp := mat.NodeList_GetNeighbors_4_Filtered_Hypentenuse(pfind.ClosedList[0], pfind.Start, pfind.Target, pfind.IMat, []int{0, 1}, []int{9, 10}, [4]uint{1, 1, 1, 1})
+						temp = mat.NodeList_FILTER_LIST(temp, pfind.OpenList)
+						temp = mat.NodeList_FILTER_LIST(temp, pfind.ClosedList)
+						pfind.OpenList = append(pfind.OpenList, temp...)
+						//fmt.Printf("TICK!----\n")
 
-				// 	pfind.EndNode.Set_Heads_Tails_On_Up()
-				// }
-				pfind.EndNode.Set_Heads_Tails_On_Up() //<---- for some reason the whole thing fucking freezes if this is put into any kind of storage;
-				if pfind.Button_Pathfind_Auto.GetState() == 2 {
-					pfind.Button_Pathfind_Auto.DeToggle()
+						// mat.NodeList_SortByFValue_Ascending(pfind.OpenList, pfind.Start, pfind.Target)
+						// slices.Reverse(pfind.OpenList)
+					}
+
+					pfind.OpenList, pfind.ClosedList, pfind.BlockedList, pfind.IsFinished, pfind.EndNode, pfind.curr_fails, err = mat.Pathfind_Phase1_Tick(pfind.Start, pfind.Target, pfind.OpenList, pfind.ClosedList, pfind.BlockedList, pfind.IsFinished, pfind.curr_fails, pfind.max_fails, *pfind.IMat, []int{0, 1}, []int{9, 10}, [4]uint{1, 1, 1, 1})
+					//fmt.Printf("RUNNING! %d %d \n", len(pfind.ClosedList), len(pfind.OpenList))
+					pfind.tickCount++
+				} else {
+					fmt.Printf("FOUND! %t---- TICKS: %d", pfind.EndNode != nil, pfind.tickCount)
+					// fmt.Printf("FOUND! %t---- TICKS: %d\n\n", pfind.EndNode != nil, pfind.tickCount)
+
+					if pfind.EndNode != nil {
+						fmt.Printf(" length: %d", pfind.EndNode.GetInteration())
+						pfind.EndNode.Set_Heads_Tails_On_Up()
+					}
+					fmt.Printf("\n")
+					// pfind.EndNode.Set_Heads_Tails_On_Up() //<---- for some reason the whole thing fucking freezes if this is put into any kind of storage;
+					if pfind.Button_Pathfind_Auto.GetState() == 2 {
+						pfind.Button_Pathfind_Auto.DeToggle()
+					}
+					break
 				}
 			}
 		}
 	}
 	return err
 }
+
+func (pfind *Pathfind_Tester) Process02() error {
+	var err error
+	// isDone := false
+	// fmt.Printf("ENDNODE %t %t %t %t\n\n", pfind.EndNode != nil, pfind.HasStarted, pfind.IsFinished, pfind.IsReady)
+
+	if pfind.IsReady {
+		pfind.IsFinished, pfind.EndNode = mat.Pathfind_Phase1A(pfind.Start, pfind.Target, *pfind.IMat, []int{0, 1}, []int{9, 10}, [4]uint{1, 1, 1, 1})
+	}
+	return err
+}
+
 func (pfind *Pathfind_Tester) Draw(screen *ebiten.Image, drawOpts *mat.Integer_Matrix_Ebiten_DrawOptions) {
 	pfind.GridOptions = *drawOpts
 	pfind.GridOptions.TileLineColors = []color.Color{color.Black, color.Black, color.Black}
 
 	if pfind.IsStartInput {
-		pfind.IMat.DrawAGridTile_With_Lines(screen, pfind.Start, color.RGBA{128, 255, 0, 255}, &pfind.GridOptions)
+		pfind.IMat.DrawAGridTile_With_Lines(screen, pfind.Start, color.RGBA{128, 255, 128, 255}, &pfind.GridOptions)
 
 	}
 	if pfind.IsTargetInput {
 		pfind.IMat.DrawAGridTile_With_Lines(screen, pfind.Target, color.RGBA{255, 128, 0, 255}, &pfind.GridOptions)
 	}
 
-	if len(pfind.ClosedList) > 1 {
+	if len(pfind.ClosedList) > 1 && pfind.Button_SHOW_CLOSEDLIST.GetState() != 2 {
 		pfind.IMat.NodeList_DrawList(screen, pfind.ClosedList, []color.Color{color.RGBA{255, 24, 125, 255}, color.RGBA{200, 24, 100, 255}, color.RGBA{180, 24, 70, 255}}, &pfind.GridOptions)
 
 		// for _, node := range pfind.ClosedList {
@@ -542,7 +581,7 @@ func (pfind *Pathfind_Tester) Draw(screen *ebiten.Image, drawOpts *mat.Integer_M
 
 		// }
 	}
-	if len(pfind.OpenList) > 1 {
+	if len(pfind.OpenList) > 1 && pfind.Button_SHOW_OPENLIST.GetState() != 2 {
 		// for _, node := range pfind.OpenList {
 		// 	pfind.IMat.DrawAGridTile_With_Lines(screen, node.Position, color.RGBA{125, 128, 255, 255}, &pfind.GridOptions)
 
@@ -550,10 +589,10 @@ func (pfind *Pathfind_Tester) Draw(screen *ebiten.Image, drawOpts *mat.Integer_M
 		pfind.IMat.NodeList_DrawList(screen, pfind.OpenList, []color.Color{color.RGBA{125, 128, 255, 255}, color.RGBA{100, 108, 222, 255}, color.RGBA{100, 108, 200, 255}}, &pfind.GridOptions)
 
 	}
-	if len(pfind.BlockedList) > 1 {
+	if len(pfind.BlockedList) > 1 && pfind.Button_SHOW_BLOCKEDLIST.GetState() != 2 {
 		pfind.IMat.NodeList_DrawList(screen, pfind.BlockedList, []color.Color{color.RGBA{75, 255, 75, 255}, color.RGBA{50, 255, 50, 255}, color.RGBA{25, 255, 25, 255}}, &pfind.GridOptions)
 	}
-	if pfind.EndNode != nil {
+	if pfind.EndNode != nil && pfind.Button_SHOW_PATH.GetState() != 2 { //Button_SHOW_PATH
 		// pfind.IMat.DrawAGridTile_With_Lines(screen, pfind.EndNode.Position, color.RGBA{255, 255, 255, 255}, &pfind.GridOptions)
 		pfind.IMat.ImatNode_Draw(screen, pfind.EndNode, []color.Color{color.RGBA{255, 255, 255, 255}, color.RGBA{155, 155, 155, 255}, color.RGBA{75, 75, 75, 255}}, &pfind.GridOptions)
 	}

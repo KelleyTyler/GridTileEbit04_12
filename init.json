@@ -5,12 +5,12 @@
     "screen_res_x": 960,
     "screen_res_y": 640,
     "ui_audio_volume": 100,
-    "game_board_x": 32,
-    "game_board_y": 32,
+    "game_board_x": 64,
+    "game_board_y": 64,
     "game_board_x_max": 128,
     "game_board_y_max": 128,
     "game_board_tile_x":8,
     "game_board_tile_y":8,
-    "game_board_tile_margin_x":2,
-    "game_board_tile_margin_y":2
+    "game_board_tile_margin_x":0,
+    "game_board_tile_margin_y":0
 }

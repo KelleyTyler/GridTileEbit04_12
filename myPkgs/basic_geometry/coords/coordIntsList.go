@@ -269,11 +269,11 @@ func BresenhamLine(c1 CoordInts, c2 CoordInts) CoordList {
 			outList = BresenhamLine_High(c1, c2)
 		}
 	}
-	if !outList[0].IsEqualTo(c1) {
+	if !outList[0].IsEqual(c1) {
 		outList = append(outList, c1)
 		//outList.PushToFront(c1)
 	}
-	if !outList[len(outList)-1].IsEqualTo(c2) {
+	if !outList[len(outList)-1].IsEqual(c2) {
 		outList = append(outList, c2)
 	}
 	return outList

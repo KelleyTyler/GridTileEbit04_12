@@ -131,6 +131,9 @@ func (imat *IntegerMatrix2D) ClearMatrix_To(value int) {
 	}
 }
 
+/*
+This returns 4 coorints, and 4 ints, representing either the values on or the 'validity' of each of the directions
+*/
 func (imat IntegerMatrix2D) GetNeighborsAndValues_Cardinal(c coords.CoordInts, margins [4]uint) ([4]coords.CoordInts, [4]int) {
 	outlist := [4]coords.CoordInts{}
 	valList := [4]int{}

@@ -57,9 +57,6 @@ type GameBoard struct {
 	NumSelect_MapSize_Y     ui.UI_Num_Select
 	//========================
 	// GridmapPallet01 ui.UI_Button
-
-	pFindButton_SetPoints, pFindButton_Tick, pFindButton_Reset ui.UI_Button
-
 	drawTool Drawing_Tool
 
 	pfindTest Pathfind_Tester
@@ -204,9 +201,6 @@ func (gb *GameBoard) Update() {
 
 				gb.BoardOverlayChanges, gb.BoardChanges = gb.drawTool.OnValidMouseClickOnGameBoard(tempX, tempY)
 
-				if gb.pFindButton_SetPoints.GetState() == 2 {
-					gb.pfindTest.InputCoords(coords.CoordInts{X: tempX, Y: tempY})
-				}
 				gb.pfindTest.OnValidMouseClickOnGameBoard(tempX, tempY)
 				// fmt.Printf("IS ON TILE %d %d\n", tempX, tempY)
 			}
@@ -274,9 +268,6 @@ func (gb *GameBoard) UI_INIT() {
 	gb.NumSelect_Tile_Margin_Y.SetVals(0, 1, 0, 16, 0)
 	//-------------------------------------------------------------------------------------------------
 
-	lblNum02 := 306 //272
-	moonbood := lblNum02 + 34
-
 	//----------------------------------------------------------------------------------------------------------------------------------
 
 	gb.MazeTextBox.Init([]string{"maze_gen_label", "MAZE GENERATOR"}, gb.UI_Backend, nil, coords.CoordInts{X: 70, Y: 204}, coords.CoordInts{X: 130, Y: 66})
@@ -289,11 +280,6 @@ func (gb *GameBoard) UI_INIT() {
 	gb.NumSelect_MazeGen_00.Init([]string{"n_map_btn", "mazeGen00"}, gb.UI_Backend, nil, coords.CoordInts{X: 70, Y: 272}, coords.CoordInts{X: 64, Y: 32})
 	gb.NumSelect_MazeGen_00.SetVals(0, 1, 0, 16, 0)
 	//-----------------------------------------------------
-	pfindBtnRow := moonbood + 128 //468
-	gb.pFindButton_SetPoints.Init([]string{"pfind_setPoints", "SET\nPOINTS"}, gb.UI_Backend, nil, coords.CoordInts{X: 4, Y: pfindBtnRow}, coords.CoordInts{X: 64, Y: 32})
-	gb.pFindButton_Tick.Init([]string{"pfind_setPoints", "TICK"}, gb.UI_Backend, nil, coords.CoordInts{X: 70, Y: pfindBtnRow}, coords.CoordInts{X: 64, Y: 32})
-
-	gb.pFindButton_Reset.Init([]string{"pfind_setPoints", "RESET"}, gb.UI_Backend, nil, coords.CoordInts{X: 136, Y: pfindBtnRow}, coords.CoordInts{X: 64, Y: 32})
 
 }
 
@@ -325,15 +311,7 @@ func (gb *GameBoard) UI_UPDATE() {
 			gb.MazeGen.HasFinished = false
 		}
 	}
-	if gb.pFindButton_Reset.GetState() == 2 {
-		gb.pfindTest.Reset()
-	}
-	if gb.pFindButton_Tick.GetState() == 2 {
-		gb.pfindTest.Process()
-		if gb.pfindTest.HasStarted {
-			gb.BoardOverlayChanges = true
-		}
-	}
+
 	if gb.pfindTest.Update_Passive() {
 		gb.BoardOverlayChanges = true
 	}
@@ -366,16 +344,12 @@ func (gb *GameBoard) SetParents(parent ui.UI_Object) {
 	gb.Maze_Selection_Button.Btn_Type = 10
 
 	gb.drawTool.InitUI(parent, 306)
-	gb.pfindTest.UI_Init(parent, 504)
+	gb.pfindTest.UI_Init(parent, 444)
 	gb.MazeGenLabel.TextAlignMode = 10
 	gb.MazeGenLabel.Redraw()
 
 	//--------------------------------
-	gb.pFindButton_Reset.Init_Parents(parent)
-	gb.pFindButton_SetPoints.Init_Parents(parent)
-	gb.pFindButton_Tick.Init_Parents(parent)
-	gb.pFindButton_SetPoints.Btn_Type = 10
-	// gb.pFindButton_Tick.Btn_Type = 10
+
 }
 
 func (gb *GameBoard) NewBoard(new_Bsize coords.CoordInts) {
@@ -427,12 +401,12 @@ func (gb *GameBoard) MouseMove() {
 			gb.BoardOptions.BoardPosition.X -= x2
 			gb.mapMoveVector = coords.CoordInts{X: x0, Y: y0}
 			gb.BoardChanges = true
-			gb.BoardOverlayChanges = true
+			// gb.BoardOverlayChanges = true
 		}
 	} else {
 		if inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 			gb.BoardOptions.BoardPosition = gb.BoardOptions.BoardMargin
-			gb.BoardOverlayChanges = true
+			// gb.BoardOverlayChanges = true
 
 		}
 	}

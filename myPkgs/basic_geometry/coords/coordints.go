@@ -23,9 +23,6 @@ func (cord *CoordInts) AddToReturn(cord0 CoordInts) CoordInts {
 	return temp
 }
 
-func (cord *CoordInts) IsEqualTo(cord0 CoordInts) bool {
-	return cord.X == cord0.X && cord.Y == cord0.Y
-}
 func (cord CoordInts) IsEqual(cord0 CoordInts) bool {
 	return cord.X == cord0.X && cord.Y == cord0.Y
 }

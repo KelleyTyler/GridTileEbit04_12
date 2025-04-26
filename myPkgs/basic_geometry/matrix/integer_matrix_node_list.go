@@ -1,6 +1,7 @@
 package matrix
 
 import (
+	"fmt"
 	"slices"
 
 	"github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/coords"
@@ -21,6 +22,8 @@ func NodeList_ContainsPoint(point coords.CoordInts, S []*ImatNode) bool {
 /*
  */
 func NodeList_SortByFValue_Ascending(list []*ImatNode, start, target coords.CoordInts) {
+	ZEROS := 0
+
 	slices.SortFunc(list, func(a, e *ImatNode) int {
 		aVal := a.GetFValue()
 		eVal := e.GetFValue()
@@ -36,12 +39,16 @@ func NodeList_SortByFValue_Ascending(list []*ImatNode, start, target coords.Coor
 			} else if a_HVal < e_HVal {
 				return -1
 			} else {
+				ZEROS++
 				return 0
 			}
 		}
 	})
+	fmt.Printf("ZEROS: %d --------\n", ZEROS)
+
 }
 func NodeList_SortByFValue_DESC(list []*ImatNode, start, target coords.CoordInts) {
+	ZEROS := 0
 	slices.SortFunc(list, func(a, e *ImatNode) int {
 		aVal := a.GetFValue()
 		eVal := e.GetFValue()
@@ -57,10 +64,14 @@ func NodeList_SortByFValue_DESC(list []*ImatNode, start, target coords.CoordInts
 			} else if a_HVal < e_HVal {
 				return -1
 			} else {
+				ZEROS++
+				// fmt.Printf("--------\n")
 				return 0
 			}
 		}
 	})
+	fmt.Printf("ZEROS: %d --------\n", ZEROS)
+
 }
 
 func NodeList_SortByHValue_Ascending(list []*ImatNode) {
@@ -201,7 +212,7 @@ func NodeList_GetNeighbors_8_Filtered_Hypentenuse(node *ImatNode, start, target 
 	templist_coord, _ := imat.GetNeighborsAndValues_8(node.Position, margins)
 	for _, c := range templist_coord {
 		if node.Prev != nil {
-			if !c.IsEqualTo(node.Prev.Position) {
+			if !c.IsEqual(node.Prev.Position) {
 				if !misc.IsNumInIntArray(imat.GetValueOnCoord(c), walls) {
 					temp := GetNode(start, c, target, *imat, node)
 					retlist = append(retlist, &temp)
@@ -220,7 +231,7 @@ func NodeList_GetNeighbors_8_Filtered_Hypentenuse(node *ImatNode, start, target 
 }
 
 /*
-returns up to 8 nodes;
+returns up to 4 nodes;
 distances are assigned based on hypotenuse distance;
 */
 func NodeList_GetNeighbors_4_Filtered_Hypentenuse(node *ImatNode, start, target coords.CoordInts, imat *IntegerMatrix2D, floors, walls []int, margins [4]uint) (retlist []*ImatNode) {
@@ -229,7 +240,7 @@ func NodeList_GetNeighbors_4_Filtered_Hypentenuse(node *ImatNode, start, target 
 	templist_coord, _ := imat.GetNeighborsAndValues_Cardinal(node.Position, margins)
 	for _, c := range templist_coord {
 		if node.Prev != nil {
-			if !c.IsEqualTo(node.Prev.Position) {
+			if !c.IsEqual(node.Prev.Position) {
 				if !misc.IsNumInIntArray(imat.GetValueOnCoord(c), walls) {
 					temp := GetNode(start, c, target, *imat, node)
 					temp.Target = target
@@ -256,6 +267,23 @@ func NodeList_GetNeighbors_4_Filtered_Hypentenuse(node *ImatNode, start, target 
 			}
 		}
 
+	}
+	return retlist
+}
+
+/*
+returns 4 nodes;
+distances are assigned based on hypotenuse distance;
+*/
+func NodeList_GetNeighbors_4A_Filtered_Hypentenuse(node *ImatNode, start, target coords.CoordInts, imat *IntegerMatrix2D, floors, walls []int, margins [4]uint) (retlist [4]*ImatNode) {
+	// retlist
+	//templist_int
+	templist_coord, vals := imat.GetNeighborsAndValues_Cardinal(node.Position, margins)
+	for i, c := range templist_coord {
+		temp := GetNode(start, c, target, *imat, node)
+		temp.ValueOnGrid = vals[i]
+		temp.Target = target
+		retlist[i] = &temp
 	}
 	return retlist
 }
