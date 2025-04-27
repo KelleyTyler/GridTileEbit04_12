@@ -198,6 +198,8 @@ func (btn *UI_Button) Update() error {
 	}
 	return nil
 }
+
+/*This is going to be removed when I revise UI_OBJECT's and similar things*/
 func (btn *UI_Button) Update_Any() (any, error) {
 
 	if btn.IsCursorInBounds() {
@@ -308,6 +310,7 @@ func (btn *UI_Button) Update_Ret_State_Redraw_Status() (uint8, bool, error) {
 
 /*
 This is a nice compromise in many respects;
+what I'm attempting to do here is ensure that the buttons will be redrawn properly and are not going to need to have additional measures placed on them;
 */
 func (btn *UI_Button) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode int) (uint8, bool, error) {
 	to_redraw := false
@@ -360,6 +363,7 @@ func (btn *UI_Button) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Po
 	}
 	return btn.GetState(), to_redraw, nil
 }
+
 func (btn *UI_Button) IsCursorInBounds() bool {
 	if btn.IsVisible && btn.IsActive {
 		Mouse_Pos_X, Mouse_Pos_Y := ebiten.CursorPosition()

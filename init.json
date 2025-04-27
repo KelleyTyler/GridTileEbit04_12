@@ -11,6 +11,6 @@
     "game_board_y_max": 128,
     "game_board_tile_x":8,
     "game_board_tile_y":8,
-    "game_board_tile_margin_x":0,
-    "game_board_tile_margin_y":0
+    "game_board_tile_margin_x":3,
+    "game_board_tile_margin_y":3
 }

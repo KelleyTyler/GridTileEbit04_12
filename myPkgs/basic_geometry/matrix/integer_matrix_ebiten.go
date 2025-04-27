@@ -26,6 +26,17 @@ type Integer_Matrix_Ebiten_DrawOptions struct {
 	TileLineThickness []float32
 	AABody            bool
 	AALines           bool
+	//--------------------------------
+	/*
+		BONUS OPTIONS:
+		SubDivisions (basically allowing the grid to be divided up into little bitty segments)
+
+	*/
+
+	SubDiv_00_Size_X, SubDiv_00_Size_Y     uint8
+	SubDiv_00_Offset_X, SubDiv_00_Offset_Y uint8
+	SubDiv_00_Line_thickness               float32
+	SubDiv_00_Line_Colors                  color.Color
 }
 
 func (Opts Integer_Matrix_Ebiten_DrawOptions) GetOptsPtr() (optsPtr *Integer_Matrix_Ebiten_DrawOptions) {
@@ -38,6 +49,61 @@ func (Opts Integer_Matrix_Ebiten_DrawOptions) ToString() (outString string) {
 func (Opts Integer_Matrix_Ebiten_DrawOptions) GetOptsByValue() (optsByValue Integer_Matrix_Ebiten_DrawOptions) {
 	return Opts
 }
+func (Opts *Integer_Matrix_Ebiten_DrawOptions) Update_Opts_From_Argument(UpOps Integer_Matrix_Ebiten_DrawOptions) {
+	Opts.TileSize = UpOps.TileSize
+	Opts.TileSpacing = UpOps.TileSpacing
+	Opts.BoardMargin = UpOps.BoardMargin
+	Opts.BoardPosition = UpOps.BoardPosition
+}
+
+/* This Returns the Most Basic Form Of these, likely useful for the many 'draw grid with lines' requests;*/
+func (options *Integer_Matrix_Ebiten_DrawOptions) Modify_Coord_For_Options(coord coords.CoordInts) (x0, y0, x1, y1 float64) {
+	// TileCoord := coords.CoordInts{X: options.TileSize.X * coord.X, Y: options.TileSize.Y * coord.Y}
+	x0 = float64(options.TileSize.X*coord.X) + float64(options.TileSpacing.X*coord.X) + float64(options.BoardMargin.X)
+	// float_X0_Spacing := float64(options.TileSpacing.X * coord.X)
+	y0 = float64(options.TileSize.Y*coord.Y) + float64(options.TileSpacing.Y*coord.Y) + float64(options.BoardMargin.Y)
+	// float_Y0_Spacing := float64(options.TileSpacing.Y * coord.Y)
+	//-------------------------------------------------------
+	x1 = x0 + float64(options.TileSize.X)
+	// float_X1_Spacing := float64(options.TileSpacing.X * coord.X)
+	y1 = y0 + float64(options.TileSize.Y)
+	// float_Y1_Spacing := float64(options.TileSpacing.Y * coord.Y)
+	return x0, y0, x1, y1
+}
+
+/* This is the Advanced Version */
+func (options *Integer_Matrix_Ebiten_DrawOptions) Modify_Coord_For_Options_ADVCED(coord coords.CoordInts) (x0, y0, x1, y1 float64) {
+
+	var bonus_X float64 = 0.0
+	var bonus_Y float64 = 0.0
+	if coord.X > int(options.SubDiv_00_Offset_X) {
+		x_pos_corrected_for_sDiv_offset := coord.X - int(options.SubDiv_00_Offset_X)
+		num_of_S_Div_Behind := 0
+		if options.SubDiv_00_Size_X > 0 {
+			num_of_S_Div_Behind = x_pos_corrected_for_sDiv_offset / int(options.SubDiv_00_Size_X)
+		}
+		bonus_X = float64(num_of_S_Div_Behind) * float64(options.SubDiv_00_Line_thickness)
+	}
+	if coord.Y > int(options.SubDiv_00_Offset_Y) {
+		y_pos_corrected_for_sDiv_offset := coord.Y - int(options.SubDiv_00_Offset_Y)
+		num_of_S_Div_Behind := 0
+		if options.SubDiv_00_Size_Y > 0 {
+			num_of_S_Div_Behind = y_pos_corrected_for_sDiv_offset / int(options.SubDiv_00_Size_Y)
+		}
+		bonus_Y = float64(num_of_S_Div_Behind) * float64(options.SubDiv_00_Line_thickness)
+	}
+	// TileCoord := coords.CoordInts{X: options.TileSize.X * coord.X, Y: options.TileSize.Y * coord.Y}
+	x0 = float64(options.TileSize.X*coord.X) + float64(options.TileSpacing.X*coord.X) + float64(options.BoardMargin.X) + bonus_X
+	// float_X0_Spacing := float64(options.TileSpacing.X * coord.X)
+	y0 = float64(options.TileSize.Y*coord.Y) + float64(options.TileSpacing.Y*coord.Y) + float64(options.BoardMargin.Y) + bonus_Y
+	// float_Y0_Spacing := float64(options.TileSpacing.Y * coord.Y)
+	//-------------------------------------------------------
+	x1 = x0 + float64(options.TileSize.X)
+	// float_X1_Spacing := float64(options.TileSpacing.X * coord.X)
+	y1 = y0 + float64(options.TileSize.Y)
+	// float_Y1_Spacing := float64(options.TileSpacing.Y * coord.Y)
+	return x0, y0, x1, y1
+}
 
 /*
 ShowTileLines     []bool
@@ -48,19 +114,23 @@ ShowTileLines     []bool
 */
 
 func (imat IntegerMatrix2D) DrawAGridTile_With_Lines(screen *ebiten.Image, coord coords.CoordInts, clr0 color.Color, options *Integer_Matrix_Ebiten_DrawOptions) {
-	vector.DrawFilledRect(screen, float32((options.TileSize.X*coord.X)+(options.TileSpacing.X*coord.X)+options.BoardMargin.X), float32((options.TileSize.Y*coord.Y)+(options.TileSpacing.Y*coord.Y)+options.BoardMargin.Y), float32(options.TileSize.X), float32(options.TileSize.Y), clr0, options.AABody)
-	TileCoord := coords.CoordInts{X: options.TileSize.X * coord.X, Y: options.TileSize.Y * coord.Y}
+
+	x0, y0, x1, y1 := options.Modify_Coord_For_Options(coord)
+
+	vector.DrawFilledRect(screen, float32(x0), float32(y0), float32(options.TileSize.X), float32(options.TileSize.Y), clr0, options.AABody)
+	// TileCoord := coords.CoordInts{X: options.TileSize.X * coord.X, Y: options.TileSize.Y * coord.Y}
 	// TileSpace := CoordInts{X: options.TileSpacing.X * coord.X, Y: options.TileSpacing.Y * coord.Y}
 	if options.ShowTileLines[0] {
-		vector.StrokeRect(screen, float32((options.TileSize.X*coord.X)+(options.TileSpacing.X*coord.X)+options.BoardMargin.X), float32((options.TileSize.Y*coord.Y)+(options.TileSpacing.Y*coord.Y)+options.BoardMargin.Y), float32(options.TileSize.X), float32(options.TileSize.Y), options.TileLineThickness[0], options.TileLineColors[0], options.AALines)
+		vector.StrokeRect(screen, float32(x0), float32(y0), float32(options.TileSize.X), float32(options.TileSize.Y), options.TileLineThickness[0], options.TileLineColors[0], options.AALines)
 	}
 	if options.ShowTileLines[1] {
-		vector.StrokeLine(screen, float32((TileCoord.X)+(options.TileSpacing.X*coord.X)+options.BoardMargin.X), float32((TileCoord.Y)+(options.TileSpacing.Y*coord.Y)+options.BoardMargin.Y), float32((options.TileSize.X*coord.X)+(options.TileSpacing.X*coord.X)+options.BoardMargin.X+options.TileSize.X), float32((options.TileSize.Y*coord.Y)+(options.TileSpacing.Y*coord.Y)+options.BoardMargin.Y+options.TileSize.Y), options.TileLineThickness[0], options.TileLineColors[1], options.AALines)
+		vector.StrokeLine(screen, float32(x0), float32(y0), float32(x1), float32(y1), options.TileLineThickness[0], options.TileLineColors[1], options.AALines)
 	}
 	if options.ShowTileLines[2] {
-		vector.StrokeLine(screen, float32((TileCoord.X)+(options.TileSpacing.X*coord.X)+options.BoardMargin.X), float32((TileCoord.Y)+(options.TileSpacing.Y*coord.Y)+options.BoardMargin.Y+options.TileSize.Y), float32((options.TileSize.X*coord.X)+(options.TileSpacing.X*coord.X)+options.BoardMargin.X+options.TileSize.X), float32((options.TileSize.Y*coord.Y)+(options.TileSpacing.Y*coord.Y)+options.BoardMargin.Y), options.TileLineThickness[0], options.TileLineColors[2], options.AALines)
+		vector.StrokeLine(screen, float32(x0), float32(y1), float32(x1), float32(y0), options.TileLineThickness[0], options.TileLineColors[2], options.AALines)
 	}
 }
+
 func (imat IntegerMatrix2D) DrawCoordListWithLines(screen *ebiten.Image, cList coords.CoordList, colors []color.Color, options Integer_Matrix_Ebiten_DrawOptions) {
 	if len(colors) == 1 {
 		for _, a := range cList {
@@ -74,23 +144,31 @@ func (imat IntegerMatrix2D) DrawFullGridFromColors(screen *ebiten.Image, colors 
 	test1Y := ((len(imat) * options.TileSize.Y) + (len(imat) * options.TileSpacing.Y)) + options.BoardMargin.Y
 	for y, _ := range imat {
 		for x, b := range imat[y] {
+			//----Draw Lines Here??
+			x0, y0, _, _ := options.Modify_Coord_For_Options(coords.CoordInts{X: x, Y: y})
+
 			if b < len(colors) {
-				vector.DrawFilledRect(screen, float32((options.TileSize.X*x)+(options.TileSpacing.X*x)+options.BoardMargin.X), float32((options.TileSize.Y*y)+(options.TileSpacing.Y*y)+options.BoardMargin.Y), float32(options.TileSize.X), float32(options.TileSize.Y), colors[b], options.AABody)
+				// vector.DrawFilledRect(screen, float32((options.TileSize.X*x)+(options.TileSpacing.X*x)+options.BoardMargin.X), float32((options.TileSize.Y*y)+(options.TileSpacing.Y*y)+options.BoardMargin.Y), float32(options.TileSize.X), float32(options.TileSize.Y), colors[b], options.AABody)
+				vector.DrawFilledRect(screen, float32(x0), float32(y0), float32(options.TileSize.X), float32(options.TileSize.Y), colors[b], options.AABody)
 
 			} else {
-				vector.DrawFilledRect(screen, float32((options.TileSize.X*x)+(options.TileSpacing.X*x)+options.BoardMargin.X), float32((options.TileSize.Y*y)+(options.TileSpacing.Y*y)+options.BoardMargin.Y), float32(options.TileSize.X), float32(options.TileSize.Y), colors[0], options.AABody)
+				// vector.DrawFilledRect(screen, float32((options.TileSize.X*x)+(options.TileSpacing.X*x)+options.BoardMargin.X), float32((options.TileSize.Y*y)+(options.TileSpacing.Y*y)+options.BoardMargin.Y), float32(options.TileSize.X), float32(options.TileSize.Y), colors[0], options.AABody)
+				vector.DrawFilledRect(screen, float32(x0), float32(y0), float32(options.TileSize.X), float32(options.TileSize.Y), colors[0], options.AABody)
 
 			}
 			// color0 := color.RGBA{12, 12, 12, 100} //color.Black
 			if options.ShowTileLines[0] {
-				vector.StrokeRect(screen, float32((options.TileSize.X*x)+(options.TileSpacing.X*x)+options.BoardMargin.X), float32((options.TileSize.Y*y)+(options.TileSpacing.Y*y)+options.BoardMargin.Y), float32(options.TileSize.X), float32(options.TileSize.Y), options.TileLineThickness[0], options.TileLineColors[0], options.AALines)
+				vector.StrokeRect(screen, float32(x0), float32(y0), float32(options.TileSize.X), float32(options.TileSize.Y), options.TileLineThickness[0], options.TileLineColors[0], options.AALines)
+
+				// vector.StrokeRect(screen, float32((options.TileSize.X*x)+(options.TileSpacing.X*x)+options.BoardMargin.X), float32((options.TileSize.Y*y)+(options.TileSpacing.Y*y)+options.BoardMargin.Y), float32(options.TileSize.X), float32(options.TileSize.Y), options.TileLineThickness[0], options.TileLineColors[0], options.AALines)
 			}
 		}
 	}
 	//vector.StrokeRect(screen, float32(OffsetX-0), float32(OffsetY-0), float32(test1X-0), float32(test1Y+0), 2.0, color.RGBA{210, 153, 100, 255}, true) //0, 179, 100, 255
 	if showBoardOL {
-		vector.StrokeRect(screen, float32(options.BoardMargin.X-3), float32(options.BoardMargin.Y-3), float32(test1X-options.BoardMargin.X-options.TileSpacing.X+6), float32(test1Y-options.BoardMargin.Y-options.TileSpacing.Y+6), 2.0, color.White, true) //color.RGBA{0, 50, 50, 255}
-
+		buffernum00 := 4
+		buffernum01 := 2 * buffernum00
+		vector.StrokeRect(screen, float32(options.BoardMargin.X-buffernum00), float32(options.BoardMargin.Y-buffernum00), float32(test1X-options.BoardMargin.X-options.TileSpacing.X+buffernum01), float32(test1Y-options.BoardMargin.Y-options.TileSpacing.Y+buffernum01), 2.0, color.White, true) //color.RGBA{0, 50, 50, 255}
 	}
 }
 

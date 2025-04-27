@@ -39,6 +39,7 @@ func (mazeM *MazeMaker) Init(dSettings Integer_Matrix_Ebiten_DrawOptions, intmat
 func (mazeM *MazeMaker) RunPrimlike(ticks int, floorvals, wallvals, filterFor []int, margin [4]uint, diage bool) {
 	for range ticks {
 		if len(mazeM.CurrentList) > 0 {
+			mazeM.HasStarted = true
 			mazeM.CurrentList, mazeM.Fails = mazeM.imat.PrimLike_Maze_Algorithm_Random(mazeM.Fails, mazeM.maxFails, mazeM.CurrentList, floorvals, wallvals, filterFor, margin, diage)
 		} else {
 			//fmt.Printf("FINISHED!\n")
@@ -47,6 +48,7 @@ func (mazeM *MazeMaker) RunPrimlike(ticks int, floorvals, wallvals, filterFor []
 		}
 	}
 }
+
 func (mazeM *MazeMaker) GetString() string {
 	outstrng := fmt.Sprintf("MAZEGEN:\n HAS IMAT:  %5t\n", mazeM.imat != nil)
 	outstrng += fmt.Sprintf("CurrentList: %3d\n", len(mazeM.CurrentList))

@@ -165,12 +165,34 @@ func (lbl *UI_Label) Update_Ret_State_Redraw_Status() (uint8, bool, error) {
 func (lbl *UI_Label) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode int) (uint8, bool, error) {
 	return 0, false, nil
 }
-func (lbl *UI_Label) GetState() uint8        { return 0 }                 //
-func (lbl *UI_Label) ToString() string       { return "This is a Label" } //
-func (lbl *UI_Label) IsInit() bool           { return false }             //
-func (lbl *UI_Label) GetID() string          { return lbl.id }            //
-func (lbl *UI_Label) GetType() string        { return "UI_Label" }        //
-func (lbl *UI_Label) IsCursorInBounds() bool { return false }             //
+func (lbl *UI_Label) GetState() uint8  { return 0 }                 //
+func (lbl *UI_Label) ToString() string { return "This is a Label" } //
+func (lbl *UI_Label) IsInit() bool     { return false }             //
+func (lbl *UI_Label) GetID() string    { return lbl.id }            //
+func (lbl *UI_Label) GetType() string  { return "UI_Label" }        //
+func (lbl *UI_Label) IsCursorInBounds() bool {
+
+	cX, cY := ebiten.CursorPosition()
+	var x0, y0, x1, y1 int
+	if lbl.Parent != nil {
+		px, py := lbl.Parent.GetPosition_Int()
+		x0 = lbl.Position.X + px
+		y0 = lbl.Position.Y + py
+		x1 = lbl.Position.X + lbl.Dimensions.X + px
+		y1 = lbl.Position.Y + lbl.Dimensions.Y + py
+		// x0 = ui_win.Position.X + ui_win.ParentPos.X
+		// y0 = ui_win.Position.Y + ui_win.ParentPos.X
+		// x1 = ui_win.Position.X + ui_win.ParentPos.X + ui_win.Dimensions.X
+		// y1 = ui_win.Position.Y + ui_win.ParentPos.Y + ui_win.Dimensions.Y
+	} else {
+		x0 = lbl.Position.X
+		y0 = lbl.Position.Y
+		x1 = lbl.Position.X + lbl.Dimensions.X
+		y1 = lbl.Position.Y + lbl.Dimensions.Y
+	}
+	return (cX > x0 && cX < x1) && (cY > y0 && cY < y1)
+	// return false
+} //
 func (lbl *UI_Label) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode int) bool {
 	return false
 }                                                  //

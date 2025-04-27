@@ -27,12 +27,11 @@ type GameBoard struct {
 	ticker                   int
 	ticker_max               int
 
-	MazeGen      mat.MazeMaker
-	MazeGenLabel ui.UI_Label
-	MazeTextBox  ui.UI_Label
-
 	mapMove       bool
 	mapMoveVector coords.CoordInts
+
+	SavePath           string
+	GameBoard_UI_STATE uint8 // 10 is the normal 30 is 'loading window up' 40 is 'Save Window Up'
 
 	Reset_Map_Btn         ui.UI_Button
 	New_Map_Button        ui.UI_Button
@@ -41,11 +40,6 @@ type GameBoard struct {
 	Save_Map_Button       ui.UI_Button
 	NumSelect_ResetNumber ui.UI_Num_Select
 	//------
-	Maze_Selection_Button ui.UI_Button
-	Maze_Gen_Button       ui.UI_Button
-	MazeGenBtn00          ui.UI_Button
-	MazeGenBtn01          ui.UI_Button
-	NumSelect_MazeGen_00  ui.UI_Num_Select
 
 	//  ui.UI_Button
 	// ui.UI_Button
@@ -55,10 +49,12 @@ type GameBoard struct {
 	NumSelect_Tile_Margin_Y ui.UI_Num_Select
 	NumSelect_MapSize_X     ui.UI_Num_Select
 	NumSelect_MapSize_Y     ui.UI_Num_Select
+
+	Window_Save, Window_Load ui.UI_Window
 	//========================
 	// GridmapPallet01 ui.UI_Button
-	drawTool Drawing_Tool
-
+	drawTool  Drawing_Tool
+	mazeTool  Maze_Tool
 	pfindTest Pathfind_Tester
 }
 
@@ -86,6 +82,8 @@ func (gb *GameBoard) Init(backend *ui.UI_Backend, UI_Panel_Parent ui.UI_Object, 
 	gb.Position = position
 	gb.IMat.Init(BoardSize.Y, BoardSize.X, 10)
 	gb.UI_Backend = backend
+	gb.SavePath = "bin/Output"
+	gb.GameBoard_UI_STATE = 10
 	gb.BoardOptions = mat.Integer_Matrix_Ebiten_DrawOptions{
 		BoardPosition:     boardMargin,
 		BoardMargin:       boardMargin,
@@ -95,7 +93,7 @@ func (gb *GameBoard) Init(backend *ui.UI_Backend, UI_Panel_Parent ui.UI_Object, 
 		TileLineColors:    []color.Color{color.Black, color.Black, color.Black},
 		TileLineThickness: []float32{1.0, 1.0, 1.0},
 	}
-	gb.ResetBoard(tilesize, tilespacing)
+	gb.Redraw_Board_New_Params(tilesize, tilespacing)
 	/*
 		 []color.Color{
 		 color.RGBA{55, 55, 75, 255},
@@ -161,83 +159,73 @@ func (gb *GameBoard) Init(backend *ui.UI_Backend, UI_Panel_Parent ui.UI_Object, 
 		TileLineColors:    []color.Color{color.RGBA{150, 150, 150, 255}, color.RGBA{180, 40, 40, 255}, color.RGBA{180, 40, 40, 255}},
 		TileLineThickness: []float32{1.0, 1.0, 1.0},
 	}
-	gb.MazeGen.Init(tempBoardOps, &gb.IMat)
+
 	gb.mapMove = false
 	gb.mapMoveVector = coords.CoordInts{X: 0, Y: 0}
 	gb.UI_INIT()
+	gb.mazeTool.Init(&gb.IMat, backend, 4, &gb.BoardOptions)
 	gb.drawTool.Init(&gb.IMat, backend, 2, tempBoardOps)
 	gb.pfindTest.Init(&gb.IMat, gb.UI_Backend, &gb.drawTool.DisplaySettings)
 	gb.SetParents(UI_Panel_Parent)
 
 }
 
+// GameBoard_UI_STATE
 func (gb *GameBoard) Update() {
 
-	if gb.ticker > gb.ticker_max {
-		gb.BoardChanges = true
-		gb.BoardOverlayChanges = true
-		gb.ticker = 0
+	if gb.GameBoard_UI_STATE == 10 {
+		gb.MouseMove()
+		xx, yy := ebiten.CursorPosition()
+		if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
 
-		gb.MazeTextBox.Text = gb.MazeGen.CurrentList.ToString()
-		gb.MazeTextBox.Redraw()
-		if gb.MazeTextBox.Parent != nil {
-			gb.MazeTextBox.Parent.Redraw()
+			if gb.IsCursorInBounds() {
+				tempX, tempY, isOnTile := gb.IMat.GetCoordOfMouseEvent(xx, yy, gb.Position.X, gb.Position.Y, gb.BoardOptions)
+				if isOnTile {
+
+					// gb.BoardOverlayChanges, gb.BoardChanges =
+					if b, a := gb.drawTool.OnValidMouseClickOnGameBoard(tempX, tempY); a || b {
+						if !gb.BoardChanges && a {
+							gb.BoardChanges = true
+						}
+						if !gb.BoardOverlayChanges && b {
+							gb.BoardOverlayChanges = true
+						}
+					}
+					if b, a := gb.pfindTest.OnValidMouseClickOnGameBoard(tempX, tempY); a || b {
+						if !gb.BoardChanges && a {
+							gb.BoardChanges = true
+						}
+						if !gb.BoardOverlayChanges && b {
+							gb.BoardOverlayChanges = true
+						}
+					}
+					// fmt.Printf("IS ON TILE %d %d\n", tempX, tempY)
+					if b, a := gb.mazeTool.OnValidMouseClickOnGameBoard(tempX, tempY); a || b {
+						if !gb.BoardChanges && a {
+							gb.BoardChanges = true
+						}
+						if !gb.BoardOverlayChanges && b {
+							gb.BoardOverlayChanges = true
+						}
+					}
+				}
+			} else {
+				// fmt.Printf("cursor out of bounds\n")
+			}
+		}
+		if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton2) && gb.IsCursorInBounds() { //or if touchinput??
+			gb.mapMove = true
+			gb.mapMoveVector = coords.CoordInts{X: xx, Y: yy}
+		}
+		if inpututil.IsMouseButtonJustReleased(ebiten.MouseButton2) && gb.mapMove { //or if touchinput??
+
+			gb.mapMove = false
+			gb.mapMoveVector = coords.CoordInts{X: xx, Y: yy}
 		}
 	} else {
-		gb.ticker++
-	}
-	gb.MouseMove()
-	xx, yy := ebiten.CursorPosition()
-	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
-
-		if gb.IsCursorInBounds() {
-			tempX, tempY, isOnTile := gb.IMat.GetCoordOfMouseEvent(xx, yy, gb.Position.X, gb.Position.Y, gb.BoardOptions)
-			if isOnTile {
-				if gb.Maze_Selection_Button.GetState() == 2 {
-					gb.MazeGen.CurrentList = append(gb.MazeGen.CurrentList, coords.CoordInts{X: tempX, Y: tempY})
-					gb.UI_Backend.PlaySound(4)
-					gb.BoardOverlayChanges = true
-				}
-
-				gb.BoardOverlayChanges, gb.BoardChanges = gb.drawTool.OnValidMouseClickOnGameBoard(tempX, tempY)
-
-				gb.pfindTest.OnValidMouseClickOnGameBoard(tempX, tempY)
-				// fmt.Printf("IS ON TILE %d %d\n", tempX, tempY)
-			}
-		} else {
-			// fmt.Printf("cursor out of bounds\n")
-		}
-	}
-	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton2) && gb.IsCursorInBounds() { //or if touchinput??
-		gb.mapMove = true
-		gb.mapMoveVector = coords.CoordInts{X: xx, Y: yy}
-	}
-	if inpututil.IsMouseButtonJustReleased(ebiten.MouseButton2) && gb.mapMove { //or if touchinput??
-
-		gb.mapMove = false
-		gb.mapMoveVector = coords.CoordInts{X: xx, Y: yy}
+		gb.Save_Load_Update()
 	}
 	gb.UI_UPDATE()
-
-}
-
-func (gb *GameBoard) MazeGenPassthrough() {
-	if len(gb.MazeGen.CurrentList) > 0 {
-		gb.MazeGen.RunPrimlike(32, []int{0}, []int{9}, []int{-1}, [4]uint{1, 1, 1, 1}, gb.MazeGenBtn00.GetState() != 2)
-
-		if gb.MazeGen.HasFinished {
-			// fmt.Printf("done\n")
-			// gb.Maze_Gen_Button.State = 0
-			// gb.Maze_Gen_Button.IsToggled = false
-			gb.MazeGen.HasStarted = false
-			// gb.Maze_Gen_Button.Redraw()
-			// gb.Maze_Gen_Button.Parent.Redraw()
-
-			// gb.d
-		}
-		gb.BoardChanges = true
-		gb.BoardOverlayChanges = true
-	}
 
 }
 
@@ -247,9 +235,7 @@ func (gb *GameBoard) UI_INIT() {
 	gb.Save_Map_Button.Init([]string{"r_map_btn", "SAVE\nMAP"}, gb.UI_Backend, nil, coords.CoordInts{X: 4, Y: 34}, coords.CoordInts{X: 64, Y: 32})
 	gb.NumSelect_ResetNumber.Init([]string{"n_map_btn", "mazeGen00"}, gb.UI_Backend, nil, coords.CoordInts{X: 70, Y: 34}, coords.CoordInts{X: 64, Y: 32})
 	gb.NumSelect_ResetNumber.SetVals(10, 1, 0, 10, 0)
-	// gb.NumSelect_ResetNumber
 	gb.New_Map_Button.Init([]string{"n_map_btn", "New Map"}, gb.UI_Backend, nil, coords.CoordInts{X: 70, Y: 68}, coords.CoordInts{X: 64, Y: 32})
-
 	gb.NumSelect_MapSize_X.Init([]string{"n_map_btn", "Map X"}, gb.UI_Backend, nil, coords.CoordInts{X: 4, Y: 68}, coords.CoordInts{X: 64, Y: 32}) //coords.CoordInts{X: 4, Y: 72}, coords.CoordInts{X: 68, Y: 36}
 	gb.NumSelect_MapSize_X.SetVals(len(gb.IMat[0]), 1, 8, gb.UI_Backend.Settings.GameBoardXMax, 0)
 	gb.NumSelect_MapSize_Y.Init([]string{"n_map_btn", "Map Y"}, gb.UI_Backend, nil, coords.CoordInts{X: 136, Y: 68}, coords.CoordInts{X: 64, Y: 32})
@@ -266,71 +252,62 @@ func (gb *GameBoard) UI_INIT() {
 	gb.Redraw_Tiles_Button.Init([]string{"r_map_btn", "Redraw\nTiles"}, gb.UI_Backend, nil, coords.CoordInts{X: 70, Y: 68 + 68}, coords.CoordInts{X: 64, Y: 32})
 	gb.NumSelect_Tile_Margin_Y.Init([]string{"n_map_btn", "TileMY"}, gb.UI_Backend, nil, coords.CoordInts{X: 136, Y: 68 + 68}, coords.CoordInts{X: 64, Y: 32})
 	gb.NumSelect_Tile_Margin_Y.SetVals(0, 1, 0, 16, 0)
-	//-------------------------------------------------------------------------------------------------
 
-	//----------------------------------------------------------------------------------------------------------------------------------
-
-	gb.MazeTextBox.Init([]string{"maze_gen_label", "MAZE GENERATOR"}, gb.UI_Backend, nil, coords.CoordInts{X: 70, Y: 204}, coords.CoordInts{X: 130, Y: 66})
-	gb.MazeGenLabel.Init([]string{"maze_gen_label", "MAZE GENERATOR"}, gb.UI_Backend, nil, coords.CoordInts{X: 0, Y: 170}, coords.CoordInts{X: 204, Y: 32})
-	gb.Maze_Selection_Button.Init([]string{"maze_gen_btn", "Select\nPoints"}, gb.UI_Backend, nil, coords.CoordInts{X: 4, Y: 204}, coords.CoordInts{X: 64, Y: 32})
-	gb.Maze_Gen_Button.Init([]string{"maze_gen_btn", "Gen\nPrimlike"}, gb.UI_Backend, nil, coords.CoordInts{X: 4, Y: 238}, coords.CoordInts{X: 64, Y: 32})
-	gb.MazeGenBtn00.Init([]string{"maze_gen_btn", "MazeGen00"}, gb.UI_Backend, nil, coords.CoordInts{X: 4, Y: 272}, coords.CoordInts{X: 64, Y: 32})
-	gb.MazeGenBtn00.Btn_Type = 10
-	gb.MazeGenBtn01.Init([]string{"maze_gen_btn", "MazeGen00"}, gb.UI_Backend, nil, coords.CoordInts{X: 136, Y: 272}, coords.CoordInts{X: 64, Y: 32})
-	gb.NumSelect_MazeGen_00.Init([]string{"n_map_btn", "mazeGen00"}, gb.UI_Backend, nil, coords.CoordInts{X: 70, Y: 272}, coords.CoordInts{X: 64, Y: 32})
-	gb.NumSelect_MazeGen_00.SetVals(0, 1, 0, 16, 0)
-	//-----------------------------------------------------
-
+	gb.Window_Save.Init([]string{"window_save", "SAVE WINDOW"}, gb.UI_Backend, nil, coords.CoordInts{X: 55, Y: 150}, coords.CoordInts{X: 256, Y: 256})
+	gb.Window_Save.Redraw()
+	gb.Window_Load.Init([]string{"window_load", "LOAD WINDOW"}, gb.UI_Backend, nil, coords.CoordInts{X: 55, Y: 150}, coords.CoordInts{X: 256, Y: 256})
+	gb.Window_Load.Redraw()
 }
 
 func (gb *GameBoard) UI_UPDATE() {
 	// strng :=
 	// g.MazeTextBox.
-	if gb.Reset_Map_Btn.State == 2 {
+	if gb.Reset_Map_Btn.GetState() == 2 {
 		gb.IMat.ClearMatrix_To(gb.NumSelect_ResetNumber.CurrValue)
-		gb.MazeGen.CurrentList = make(coords.CoordList, 0)
+		gb.mazeTool.Reset(gb.BoardOptions)
 		gb.drawTool.Clear()
 	}
-	if gb.Redraw_Tiles_Button.State == 2 {
+	if gb.Redraw_Tiles_Button.GetState() == 2 {
 		fmt.Printf("REDRAW TILES BTN PRESSED\n")
-		gb.ResetBoard(coords.CoordInts{X: gb.NumSelect_TileSize_X.CurrValue, Y: gb.NumSelect_TileSize_Y.CurrValue}, coords.CoordInts{X: gb.NumSelect_Tile_Margin_X.CurrValue, Y: gb.NumSelect_Tile_Margin_Y.CurrValue})
+		gb.Redraw_Board_New_Params(coords.CoordInts{X: gb.NumSelect_TileSize_X.CurrValue, Y: gb.NumSelect_TileSize_Y.CurrValue}, coords.CoordInts{X: gb.NumSelect_Tile_Margin_X.CurrValue, Y: gb.NumSelect_Tile_Margin_Y.CurrValue})
 
 	}
 	if gb.New_Map_Button.GetState() == 2 {
 		//gb.NumSelect_ResetNumber
 		gb.NewBoard(coords.CoordInts{X: gb.NumSelect_MapSize_X.CurrValue, Y: gb.NumSelect_MapSize_Y.CurrValue})
-		gb.ResetBoard(coords.CoordInts{X: gb.NumSelect_TileSize_X.CurrValue, Y: gb.NumSelect_TileSize_Y.CurrValue}, coords.CoordInts{X: gb.NumSelect_Tile_Margin_X.CurrValue, Y: gb.NumSelect_Tile_Margin_Y.CurrValue})
+		gb.Redraw_Board_New_Params(coords.CoordInts{X: gb.NumSelect_TileSize_X.CurrValue, Y: gb.NumSelect_TileSize_Y.CurrValue}, coords.CoordInts{X: gb.NumSelect_Tile_Margin_X.CurrValue, Y: gb.NumSelect_Tile_Margin_Y.CurrValue})
 
 	}
-	if gb.Maze_Gen_Button.GetState() >= 2 {
-		gb.MazeGenPassthrough()
-		if gb.MazeGen.HasFinished {
-			gb.Maze_Gen_Button.DeToggle()
-			gb.Maze_Selection_Button.DeToggle()
-			// gb.Maze_Gen_Button.Parent.Redraw()
-			gb.MazeGen.HasFinished = false
+
+	if b, a := gb.mazeTool.Update_Passive(); a || b {
+		if !gb.BoardChanges && a {
+			gb.BoardChanges = true
 		}
+		if !gb.BoardOverlayChanges && b {
+			gb.BoardOverlayChanges = true
+		}
+	}
+
+	if gb.Save_Map_Button.GetState() == 2 {
+		gb.Save_Button_Pressed()
+	}
+	if gb.Load_Map_Button.GetState() == 2 {
+		gb.Load_Button_Pressed()
 	}
 
 	if gb.pfindTest.Update_Passive() {
 		gb.BoardOverlayChanges = true
+		gb.BoardChanges = true
+
 	}
+
 }
 func (gb *GameBoard) SetParents(parent ui.UI_Object) {
 	gb.Load_Map_Button.Init_Parents(parent)
 	gb.Save_Map_Button.Init_Parents(parent)
 	gb.NumSelect_ResetNumber.Init_Parents(parent)
 	//-----------------------
-	gb.MazeTextBox.Init_Parents(parent)
-	gb.MazeGenLabel.Init_Parents(parent)
-	gb.Maze_Selection_Button.Init_Parents(parent)
-	gb.Maze_Gen_Button.Init_Parents(parent)
-	gb.MazeGenBtn00.Init_Parents(parent)
-	gb.MazeGenBtn01.Init_Parents(parent)
-	gb.NumSelect_MazeGen_00.Init_Parents(parent)
-
 	gb.New_Map_Button.Init_Parents(parent)
-
 	gb.Reset_Map_Btn.Init_Parents(parent) //MazeGenBtn00
 	//------
 	gb.NumSelect_MapSize_X.Init_Parents(parent)
@@ -340,22 +317,20 @@ func (gb *GameBoard) SetParents(parent ui.UI_Object) {
 	gb.NumSelect_Tile_Margin_X.Init_Parents(parent)
 	gb.NumSelect_Tile_Margin_Y.Init_Parents(parent)
 	gb.Redraw_Tiles_Button.Init_Parents(parent)
-	gb.Maze_Gen_Button.Btn_Type = 10
-	gb.Maze_Selection_Button.Btn_Type = 10
 
+	gb.mazeTool.UI_Init(parent, 170)
 	gb.drawTool.InitUI(parent, 306)
 	gb.pfindTest.UI_Init(parent, 444)
-	gb.MazeGenLabel.TextAlignMode = 10
-	gb.MazeGenLabel.Redraw()
 
 	//--------------------------------
-
+	// gb.Window_Save.Init_Parents(parent)
 }
 
 func (gb *GameBoard) NewBoard(new_Bsize coords.CoordInts) {
 	gb.IMat.Init(new_Bsize.X, new_Bsize.Y, gb.NumSelect_ResetNumber.CurrValue)
 }
-func (gb *GameBoard) ResetBoard(new_tsize, new_t_spacing coords.CoordInts) {
+
+func (gb *GameBoard) Redraw_Board_New_Params(new_tsize, new_t_spacing coords.CoordInts) {
 	gb.BoardOptions.BoardPosition = gb.BoardOptions.BoardMargin
 	gb.BoardOptions = mat.Integer_Matrix_Ebiten_DrawOptions{
 		BoardPosition:     gb.BoardOptions.BoardPosition,
@@ -374,9 +349,7 @@ func (gb *GameBoard) ResetBoard(new_tsize, new_t_spacing coords.CoordInts) {
 	gb.Img = ebiten.NewImage(590, 590)
 	gb.Board_Buffer_Img = ebiten.NewImage(xx, yy)
 	gb.Board_Overlay_Buffer_Img = ebiten.NewImage(xx, yy) //644
-
-	gb.MazeGen.DisplaySettings.TileSize = new_tsize
-	gb.MazeGen.DisplaySettings.TileSpacing = new_t_spacing
+	gb.mazeTool.Redef(gb.BoardOptions)
 	gb.drawTool.DisplaySettings.TileSize = new_tsize
 	gb.drawTool.DisplaySettings.TileSpacing = new_t_spacing
 	gb.BoardOverlayChanges = true
@@ -420,10 +393,19 @@ func (gb *GameBoard) Draw(screen *ebiten.Image) {
 	gb.Img.Fill(color.RGBA{20, 20, 20, 255})
 	gb.Img.DrawImage(gb.Board_Buffer_Img, &ops)
 	gb.Img.DrawImage(gb.Board_Overlay_Buffer_Img, &ops)
-
 	ops.GeoM.Reset()
 	ops.GeoM.Translate(float64(gb.Position.X-gb.BoardOptions.BoardMargin.X), float64(gb.Position.Y-gb.BoardOptions.BoardMargin.Y))
 	screen.DrawImage(gb.Img, &ops)
+	ops.GeoM.Reset()
+	if gb.GameBoard_UI_STATE == 40 {
+		gb.Window_Save.Draw(screen)
+		// screen.DrawImage(gb.Window_Save.Image, &ops)
+	}
+	if gb.GameBoard_UI_STATE == 30 {
+		gb.Window_Load.Draw(screen)
+
+		// screen.DrawImage(gb.Window_Load.Image, &ops)
+	}
 }
 
 func (gb *GameBoard) Redraw() {
@@ -441,16 +423,11 @@ func (gb *GameBoard) Redraw() {
 func (gb *GameBoard) DrawOverlay() {
 	gb.Board_Overlay_Buffer_Img.Clear()
 
-	if len(gb.MazeGen.CurrentList) > 0 {
-		gb.IMat.DrawCoordListWithLines(gb.Board_Overlay_Buffer_Img, gb.MazeGen.CurrentList, []color.Color{color.RGBA{0, 150, 150, 255}}, gb.MazeGen.DisplaySettings)
-	}
 	if len(gb.drawTool.Points) > 0 {
 		gb.IMat.DrawCoordListWithLines(gb.Board_Overlay_Buffer_Img, gb.drawTool.Points, []color.Color{color.RGBA{0, 150, 150, 255}}, gb.drawTool.DisplaySettings)
 	}
 	gb.pfindTest.Draw(gb.Board_Overlay_Buffer_Img, &gb.drawTool.DisplaySettings)
-	// if gb.pfindTest.ShowOnScreen {
-
-	// }
+	gb.mazeTool.Draw(gb.Board_Overlay_Buffer_Img, gb.BoardOptions)
 }
 func (gb *GameBoard) ToString() string {
 	gb.outMsg = fmt.Sprintf("GAMEBOARD:\n Position: %s\n", gb.BoardOptions.BoardPosition.ToString())

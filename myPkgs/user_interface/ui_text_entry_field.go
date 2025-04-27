@@ -58,6 +58,7 @@ type UI_TextEntryField struct {
 	Scale               float32
 }
 
+/**/
 func (tef *UI_TextEntryField) Init(idLabels []string, backend *UI_Backend, style *UI_Object_Style, Position, Dimensions coords.CoordInts) error {
 	tef.Position = Position
 	tef.Dimensions = Dimensions
@@ -68,28 +69,49 @@ func (tef *UI_TextEntryField) Init(idLabels []string, backend *UI_Backend, style
 		tef.Style = &tef.Backend.Style
 	}
 	return nil
-}                                                                  //--
-func (tef *UI_TextEntryField) Init_Parents(Parent UI_Object) error { return nil } //--
-func (tef *UI_TextEntryField) Draw(screen *ebiten.Image) error     { return nil } //--
-func (tef *UI_TextEntryField) Redraw()                             {}             //--
-func (tef *UI_TextEntryField) Update() error                       { return nil } //--
-func (tef *UI_TextEntryField) Update_Unactive() error              { return nil } //
+}
 
+/**/
+func (tef *UI_TextEntryField) Init_Parents(Parent UI_Object) error {
+
+	return nil
+}
+
+/**/
+func (tef *UI_TextEntryField) Draw(screen *ebiten.Image) error { return nil } //--
+/**/
+func (tef *UI_TextEntryField) Redraw() {
+
+} //--
+/*
+ */
+func (tef *UI_TextEntryField) Update() error { return nil } //--
+/**/
+func (tef *UI_TextEntryField) Update_Unactive() error { return nil } //
+/**/
 func (tef *UI_TextEntryField) Update_Any() (any, error) { return 0, nil }
+
+/**/
 func (tef *UI_TextEntryField) Update_Ret_State_Redraw_Status() (uint8, bool, error) {
 	return 0, false, nil
 }
+
+/**/
 func (tef *UI_TextEntryField) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode int) (uint8, bool, error) {
 	return 0, false, nil
 }
 
+/**/
 func (tef *UI_TextEntryField) IsCursorInBounds() bool {
 	return false
-} //
+}
+
+/**/
 func (tef *UI_TextEntryField) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode int) bool {
 	return false
 }
 
+/**/
 func (tef *UI_TextEntryField) GetPosition_Int() (int, int) {
 	if tef.Parent != nil {
 		xx, yy := tef.Parent.GetPosition_Int()

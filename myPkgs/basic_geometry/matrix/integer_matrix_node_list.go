@@ -1,7 +1,6 @@
 package matrix
 
 import (
-	"fmt"
 	"slices"
 
 	"github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/coords"
@@ -22,7 +21,7 @@ func NodeList_ContainsPoint(point coords.CoordInts, S []*ImatNode) bool {
 /*
  */
 func NodeList_SortByFValue_Ascending(list []*ImatNode, start, target coords.CoordInts) {
-	ZEROS := 0
+	// ZEROS := 0
 
 	slices.SortFunc(list, func(a, e *ImatNode) int {
 		aVal := a.GetFValue()
@@ -39,16 +38,16 @@ func NodeList_SortByFValue_Ascending(list []*ImatNode, start, target coords.Coor
 			} else if a_HVal < e_HVal {
 				return -1
 			} else {
-				ZEROS++
+				// ZEROS++
 				return 0
 			}
 		}
 	})
-	fmt.Printf("ZEROS: %d --------\n", ZEROS)
+	// fmt.Printf("ZEROS: %d --------\n", ZEROS)
 
 }
 func NodeList_SortByFValue_DESC(list []*ImatNode, start, target coords.CoordInts) {
-	ZEROS := 0
+	// ZEROS := 0
 	slices.SortFunc(list, func(a, e *ImatNode) int {
 		aVal := a.GetFValue()
 		eVal := e.GetFValue()
@@ -64,13 +63,13 @@ func NodeList_SortByFValue_DESC(list []*ImatNode, start, target coords.CoordInts
 			} else if a_HVal < e_HVal {
 				return -1
 			} else {
-				ZEROS++
+				// ZEROS++
 				// fmt.Printf("--------\n")
 				return 0
 			}
 		}
 	})
-	fmt.Printf("ZEROS: %d --------\n", ZEROS)
+	// fmt.Printf("ZEROS: %d --------\n", ZEROS)
 
 }
 

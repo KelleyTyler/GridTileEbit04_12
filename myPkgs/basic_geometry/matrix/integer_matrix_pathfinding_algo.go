@@ -21,34 +21,42 @@ func Pathfind_Phase1A(start, target coords.CoordInts, imat IntegerMatrix2D, floo
 	ClosedList := make([]*ImatNode, 0)
 	BlockedList := make([]*ImatNode, 0)
 
-	var max_fails int = 10000
+	var max_fails int = 25500
 	var curr_fails int = 0
 	var isFinished bool = false
+	var closedList_LastLength int = 0
 	var err error = nil
+	fmt.Printf("PATHFINDER\n")
+
 	EndNode = nil
 	justStart := true
 	startNode := GetNodePTR(start, start, target, imat, nil)
 	ClosedList = append(ClosedList, startNode)
 	// ClosedList = NodeList_SortByFValue_Desc_toReturn(OpenList, start, target)
 	temp := NodeList_GetNeighbors_4_Filtered_Hypentenuse(startNode, start, target, &imat, floors, walls, margins)
-	// temp = NodeList_SortByFValue_Desc_toReturn(temp, start, target)
-	NodeList_SortByFValue_DESC(temp, start, target)
-	OpenList = append(OpenList, temp...)
-	OpenList = NodeList_SortByFValue_Desc_toReturn(OpenList, start, target)
+	if len(temp) > 0 {
+		temp = NodeList_SortByFValue_Desc_toReturn(temp, start, target)
+		NodeList_SortByFValue_DESC(temp, start, target)
+		OpenList = append(OpenList, temp...)
+		OpenList = NodeList_SortByFValue_Desc_toReturn(OpenList, start, target)
+	} else {
+		fmt.Printf("ERROR ERROR ERRROR")
+		return false, nil
+	}
 	//beware pseudocode
 	//ClosedList.ClosedList = ClosedList.append(Get_New_Node(start, start, end))//*pseudocode or not I'm not sure I even want this.
 	// OpenList.append
 	for !isFinished && curr_fails < max_fails {
 		if !justStart {
-			ClosedList = NodeList_SortByFValue_Desc_toReturn(ClosedList, start, target)
+			// ClosedList = NodeList_SortByFValue_Desc_toReturn(ClosedList, start, target)
 			temp := NodeList_GetNeighbors_4_Filtered_Hypentenuse(ClosedList[0], start, target, &imat, floors, walls, margins)
 			temp = NodeList_FILTER_LIST(temp, ClosedList)
 			temp = NodeList_FILTER_LIST(temp, OpenList)
 			temp = NodeList_SortByFValue_Desc_toReturn(temp, start, target)
 
 			OpenList = append(OpenList, temp...)
-			// OpenList = NodeList_SortByFValue_Desc_toReturn(OpenList, start, target)
-			// ClosedList = NodeList_SortByFValue_Desc_toReturn(OpenList, start, target)
+			OpenList = NodeList_SortByFValue_Desc_toReturn(OpenList, start, target)
+			ClosedList = NodeList_SortByFValue_Desc_toReturn(OpenList, start, target)
 
 		} else {
 			justStart = false
@@ -57,16 +65,28 @@ func Pathfind_Phase1A(start, target coords.CoordInts, imat IntegerMatrix2D, floo
 		if err != nil {
 			log.Fatal(fmt.Errorf("pathfinding error"))
 		}
-		curr_fails++
+
+		if len(ClosedList) == closedList_LastLength {
+			curr_fails++
+
+		} else {
+			closedList_LastLength = len(ClosedList)
+		}
 	}
 
 	if isFinished {
-		fmt.Printf("FINISHED! %d\n", curr_fails)
+		fmt.Printf("FINISHED! %d\t%d\t%d\n", curr_fails, len(ClosedList), len(BlockedList))
 		if EndNode != nil {
 			EndNode.Set_Heads_Tails_On_Up()
 		}
-
+		path_is_found = true
 		// PotentialPaths = append(PotentialPaths, ClosedList...)
+	} else {
+		fmt.Printf("FAILED! %d\t%d\t%d\n", curr_fails, len(ClosedList), len(BlockedList))
+		// EndNode, ClosedList = NodeList_PopFromFront(ClosedList)
+		// EndNode.Set_Heads_Tails_On_Up()
+		// return path_is_found, EndNode
+
 	}
 
 	return path_is_found, EndNode
@@ -164,10 +184,10 @@ func Pathfind_Phase1_Tick(start, target coords.CoordInts, openlist, closedlist, 
 			oList = NodeList_RemoveDuplicates_ToReturn(oList)
 			cList = NodeList_RemoveDuplicates_ToReturn(cList)
 			//------NEEDS WORK
-			// oList, cList, bList, err = Pathfind_Phase1_Tick_Blocked_List_Manager(oList, cList, bList, start, target, &imat, floors, walls, margins)
-			// if err != nil {
-			// 	return oList, cList, bList, false, nil, fails, err
-			// }
+			oList, cList, bList, err = Pathfind_Phase1_Tick_Blocked_List_Manager(oList, cList, bList, start, target, &imat, floors, walls, margins)
+			if err != nil {
+				return oList, cList, bList, false, nil, fails, err
+			}
 			oList = NodeList_FILTER_LIST(oList, bList)
 			cList = NodeList_FILTER_LIST(cList, bList)
 
@@ -196,25 +216,25 @@ func Pathfind_Phase1_Tick_Blocked_List_Manager(openlist, closedlist, blockedlist
 				temp := NodeList_GetNeighbors_4A_Filtered_Hypentenuse(nod, start, target, imat, floors, walls, margins) //<-----problem
 				numb := 0
 				for _, point := range temp {
-					if !misc.IsNumInIntArray(imat.GetValueOnCoord(point.Position), walls) && !NodeList_ContainsPoint(point.Position, bList) {
-						numb++
+					if !misc.IsNumInIntArray(imat.GetValueOnCoord(point.Position), walls) {
+						numb++ // && !NodeList_ContainsPoint(point.Position, bList)
 					}
 				}
-				if numb < 1 && !NodeList_ContainsPoint(nod.Position, bList) {
+				if numb < 2 && !NodeList_ContainsPoint(nod.Position, bList) {
 					bList = append(bList, nod)
 					//remove from openlist
 				}
 			}
 		}
 		oList = NodeList_FILTER_LIST(oList, bList)
-		if len(cList) > 50 {
+		if len(cList) > 10 {
 			for _, nod := range cList {
 				if !nod.Position.IsEqual(target) && !nod.Position.IsEqual(start) {
 					temp := NodeList_GetNeighbors_4A_Filtered_Hypentenuse(nod, start, target, imat, floors, walls, margins)
 					numb := 0
 					for _, point := range temp {
 						if !misc.IsNumInIntArray(imat.GetValueOnCoord(point.Position), walls) && !NodeList_ContainsPoint(point.Position, bList) {
-							numb++
+							numb++ //&& !NodeList_ContainsPoint(point.Position, bList)
 						}
 					}
 					if numb < 2 && !NodeList_ContainsPoint(nod.Position, bList) {
