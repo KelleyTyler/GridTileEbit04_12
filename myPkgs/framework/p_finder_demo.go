@@ -54,6 +54,7 @@ func (pfind *Pathfind_Tester) Reset() {
 	pfind.curr_fails = 0
 	fmt.Printf("RESET PFIND TEST \n")
 	pfind.tickCount = 0
+
 }
 
 func (pfind *Pathfind_Tester) UI_Init(parent ui.UI_Object, pfindBtnRow int) {
@@ -104,11 +105,17 @@ func (pfind *Pathfind_Tester) OnValidMouseClickOnGameBoard(pos_X, pos_Y int) (ov
 
 func (pfind *Pathfind_Tester) Update_Passive() (overlay_change bool) {
 	overlay_change = false
+
 	if pfind.Button_Pathfind_Tick.GetState() == 2 {
 		// fmt.Printf("BUTTON TICK\n")
 		// pfind.Process(1)
+		// go pfind.Process02()
+		// pfind.Process02A()
+		// fmt.Printf("BUTTON TICK\n")
 		go pfind.Process02()
-		overlay_change = true
+
+		return true
+		// defer
 	}
 	if pfind.Button_Reset.GetState() == 2 {
 		fmt.Printf("RESET BUTTON\n")
@@ -224,7 +231,15 @@ func (pfind *Pathfind_Tester) Process02() error {
 	}
 	return err
 }
+func (pfind *Pathfind_Tester) Process02A() error {
+	var err error
+	// isDone := false
+	// fmt.Printf("ENDNODE %t %t %t %t\n\n", pfind.EndNode != nil, pfind.HasStarted, pfind.IsFinished, pfind.IsReady)
+	go pfind.Process02()
+	fmt.Printf("ENDNODE %t %t %t %t\n\n", pfind.EndNode != nil, pfind.HasStarted, pfind.IsFinished, pfind.IsReady)
 
+	return err
+}
 func (pfind *Pathfind_Tester) Draw(screen *ebiten.Image, drawOpts *mat.Integer_Matrix_Ebiten_DrawOptions) {
 	pfind.GridOptions = *drawOpts
 	pfind.GridOptions.TileLineColors = []color.Color{color.Black, color.Black, color.Black}

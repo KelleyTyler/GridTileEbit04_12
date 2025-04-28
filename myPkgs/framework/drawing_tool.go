@@ -80,7 +80,7 @@ func (dTool *Drawing_Tool) InitUI(parent ui.UI_Object, yValue int) {
 	dTool.NSelect_LineColor.Init_Parents(parent)
 
 	dTool.NSelect_CircleRadius.Init([]string{"nselect_Circ_rad", "CircleRadius"}, dTool.UI_Backend, nil, coords.CoordInts{X: 70, Y: yValue + 34}, coords.CoordInts{X: 64, Y: 32})
-	dTool.NSelect_CircleRadius.SetVals(0, 1, 0, 10, 0)
+	dTool.NSelect_CircleRadius.SetVals(0, 1, 0, 32, 0)
 	dTool.NSelect_CircleRadius.Init_Parents(parent)
 
 	dTool.NSelect_FillColor.Init([]string{"nselect_fill_color", "Fill Color"}, dTool.UI_Backend, nil, coords.CoordInts{X: 136, Y: yValue + 34}, coords.CoordInts{X: 64, Y: 32})

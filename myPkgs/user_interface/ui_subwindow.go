@@ -25,6 +25,7 @@ type UI_Subwindow struct {
 	Backend                 *UI_Backend
 	Style                   *UI_Object_Style
 	WindowName              string
+
 	//-------------------------Needs Content
 }
 
@@ -51,6 +52,7 @@ type UI_Window struct {
 	Dimensions_Alt      coords.CoordInts
 	IsVisible, IsActive bool
 	State               uint8 //should be a const
+	Status              uint8
 	Backend             *UI_Backend
 	obj_id, PanelName   string
 	Style               *UI_Object_Style
@@ -64,6 +66,11 @@ type UI_Window struct {
 	// IsMovable bool
 	IsMoving bool
 	oldMouse coords.CoordInts
+
+	Button_Submit UI_Button
+
+	Textfield UI_TextEntryField
+	// tObject   UI_Object
 }
 
 func (ui_win *UI_Window) Init(idLabels []string, backend *UI_Backend, style *UI_Object_Style, Position, Dimensions coords.CoordInts) error {
@@ -89,17 +96,29 @@ func (ui_win *UI_Window) Init(idLabels []string, backend *UI_Backend, style *UI_
 	if !ui_win.init {
 		ui_win.init = true
 	}
-	ui_win.Window_Label.Init([]string{"window_label00", idLabels[1]}, backend, nil, coords.CoordInts{X: 0, Y: 0}, coords.CoordInts{X: Dimensions.X, Y: 18})
+	ui_win.Window_Label.Init([]string{"window_label00", idLabels[1]}, backend, nil, coords.CoordInts{X: 0, Y: 0}, coords.CoordInts{X: Dimensions.X, Y: 32})
 	ui_win.Window_Label.Init_Parents(ui_win)
 	ui_win.Window_Label.TextAlignMode = 10
 	ui_win.Window_Label.Redraw()
 	ui_win.Redraw()
 
-	ui_win.CloseButton.Init([]string{"window_close_button", "X"}, backend, nil, coords.CoordInts{X: Dimensions.X - 18, Y: 1}, coords.CoordInts{X: 16, Y: 16})
+	ui_win.CloseButton.Init([]string{"window_close_button", "X"}, backend, nil, coords.CoordInts{X: Dimensions.X - 32, Y: 0}, coords.CoordInts{X: 32, Y: 32})
 	ui_win.CloseButton.Init_Parents(ui_win)
 	ui_win.CloseButton.Redraw()
 	ui_win.Redraw()
+	//---------------------------------- This Needs To be 'dealt with' somehow; not sure 'how' but 'somehow'
+	// ui_win.tObject = ui_win.textfield
+	ui_win.Textfield.Init([]string{"window_textfield", ""}, backend, nil, coords.CoordInts{X: 9, Y: 48}, coords.CoordInts{X: Dimensions.X - 18, Y: ui_win.Window_Label.Dimensions.Y * 1})
+	ui_win.Textfield.Init_Parents(ui_win)
+	ui_win.Textfield.Redraw()
+	ui_win.Redraw()
 
+	ui_win.Button_Submit.Init([]string{"window_submit_button", "Submit"}, backend, nil, coords.CoordInts{X: (Dimensions.X / 2) - 32, Y: Dimensions.Y - 40}, coords.CoordInts{X: 64, Y: 32})
+	ui_win.Button_Submit.Init_Parents(ui_win)
+	ui_win.Button_Submit.Redraw()
+	ui_win.Redraw()
+
+	ui_win.State = 0
 	ui_win.oldMouse = coords.CoordInts{X: 0, Y: 0}
 	return nil
 }
@@ -120,29 +139,22 @@ func (ui_win *UI_Window) Init_Parents(parent UI_Object) error {
 	return nil
 }
 
-func (ui_win *UI_Window) Update_Ret_State_Redraw_Status() (uint8, bool, error) {
-	return 0, false, nil
-
-}
-
-func (ui_win *UI_Window) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode int) (uint8, bool, error) {
-	return 0, false, nil
-}
-
 /*
  */
 func (ui_win *UI_Window) Draw(screen *ebiten.Image) error {
-	ops := ebiten.DrawImageOptions{}
-	scale := 1.0
-	ops.GeoM.Reset()
-	ops.GeoM.Translate(float64(ui_win.Position.X)*scale, float64(ui_win.Position.Y)*scale)
-	screen.DrawImage(ui_win.Image, &ops)
+	if ui_win.IsVisible {
+		ops := ebiten.DrawImageOptions{}
+		scale := 1.0
+		ops.GeoM.Reset()
+		ops.GeoM.Translate(float64(ui_win.Position.X)*scale, float64(ui_win.Position.Y)*scale)
+		screen.DrawImage(ui_win.Image, &ops)
+	}
 	return nil
 }
 func (ui_win *UI_Window) Redraw() {
 	ui_win.Image.Fill(ui_win.Style.BorderColor)
 	lineThick := ui_win.Style.BorderThickness
-	vector.DrawFilledRect(ui_win.Image, lineThick, lineThick, float32(ui_win.Dimensions.X)-lineThick*2, float32(ui_win.Dimensions.Y)-lineThick*2, ui_win.Style.PanelColor, true)
+	vector.DrawFilledRect(ui_win.Image, lineThick, lineThick, float32(ui_win.Dimensions.X)-lineThick*2, float32(ui_win.Dimensions.Y)-lineThick*2, ui_win.Style.PanelColor, true) //
 	if len(ui_win.Children) > 0 {
 		for i := 0; i < len(ui_win.Children); i++ {
 			err := ui_win.Children[i].Draw(ui_win.Image)
@@ -155,6 +167,7 @@ func (ui_win *UI_Window) Redraw() {
 func (ui_win *UI_Window) Update() error {
 	if ui_win.IsActive {
 		xx, yy := ebiten.CursorPosition()
+		ui_win.Textfield.IsActive = true
 		// fmt.Printf("BEEP %3d %3d\n", xx, yy)
 		ui_win.MouseMove()
 		if ui_win.IsCursorInBounds_Label() && inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
@@ -167,6 +180,14 @@ func (ui_win *UI_Window) Update() error {
 		// else { ui_win.IsCursorInBounds_Label
 		// 	fmt.Printf("%3d %3d\n", xx, yy)
 		// }
+
+		if ui_win.CloseButton.GetState() == 2 {
+			ui_win.State = 90
+			// ui_win.IsActive = false
+			// ui_win.IsVisible = false
+			ui_win.IsMoving = false
+			ui_win.oldMouse = coords.CoordInts{X: 0, Y: 0}
+		}
 
 		if len(ui_win.Children) > 0 {
 			for i := 0; i < len(ui_win.Children); i++ {
@@ -208,8 +229,14 @@ func (ui_win *UI_Window) Update_Any() (any, error) {
 /*
 This returns the state of the object
 */
-func (ui_win *UI_Window) GetState() uint8 {
-	return ui_win.State
+func (ui_win *UI_Window) GetState() (out_state uint8) {
+	if ui_win.IsActive && ui_win.IsVisible {
+		out_state = ui_win.State
+		ui_win.State = 0
+	} else {
+		ui_win.State = 90
+	}
+	return out_state
 }
 
 /**/
@@ -242,27 +269,6 @@ func (ui_win *UI_Window) ToString() string {
 	strngOut := fmt.Sprintf("UI_Object ui_wintive:%s\n\tPositon %s\t", ui_win.obj_id, ui_win.Position.ToString())
 	strngOut += fmt.Sprintf("\tDimensions: %s\n", ui_win.Dimensions.ToString())
 	return strngOut
-}
-
-/*
-this confirms the object is initilaized
-*/
-func (ui_win *UI_Window) IsInit() bool {
-	return ui_win.init
-}
-
-/*
-this gets the object ID
-*/
-func (ui_win *UI_Window) GetID() string {
-	return ui_win.obj_id
-}
-
-/*
-This returns a string specifying the objects type
-*/
-func (ui_win *UI_Window) GetType() string {
-	return "UI_Object ui_window"
 }
 
 /*
@@ -361,9 +367,41 @@ func (ui_win *UI_Window) GetPosition_Int() (int, int) {
 	}
 	return xx, yy
 }
+
+/*
+this confirms the object is initilaized
+*/
+func (ui_win *UI_Window) IsInit() bool {
+	return ui_win.init
+}
+
+/*
+this gets the object ID
+*/
+func (ui_win *UI_Window) GetID() string {
+	return ui_win.obj_id
+}
+
+/*
+This returns a string specifying the objects type
+*/
+func (ui_win *UI_Window) GetType() string {
+	return "UI_Object ui_window"
+}
+
+func (ui_win *UI_Window) Update_Ret_State_Redraw_Status() (uint8, bool, error) {
+	return 0, false, nil
+
+}
+
+func (ui_win *UI_Window) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode int) (uint8, bool, error) {
+	return 0, false, nil
+}
+
 func (ui_win *UI_Window) GetNumber_Children() int {
 	return len(ui_win.Children)
 }
+
 func (ui_win *UI_Window) GetChild(index int) UI_Object {
 	if len(ui_win.Children) > index {
 		return ui_win.Children[index]
@@ -371,17 +409,21 @@ func (ui_win *UI_Window) GetChild(index int) UI_Object {
 		return nil
 	}
 }
+
 func (ui_win *UI_Window) AddChild(child UI_Object) error {
 	ui_win.Children = append(ui_win.Children, child)
 	return nil
 }
+
 func (ui_win *UI_Window) RemoveChild(index int) error {
 	// ui_win.Children = append(ui_win.Children, child)
 	return nil
 }
+
 func (ui_win *UI_Window) HasParent() bool {
 	return ui_win.Parent != nil
 }
+
 func (ui_win *UI_Window) GetParent() UI_Object {
 	return ui_win.Parent
 }

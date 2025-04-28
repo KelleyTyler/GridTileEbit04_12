@@ -253,9 +253,9 @@ func (gb *GameBoard) UI_INIT() {
 	gb.NumSelect_Tile_Margin_Y.Init([]string{"n_map_btn", "TileMY"}, gb.UI_Backend, nil, coords.CoordInts{X: 136, Y: 68 + 68}, coords.CoordInts{X: 64, Y: 32})
 	gb.NumSelect_Tile_Margin_Y.SetVals(0, 1, 0, 16, 0)
 
-	gb.Window_Save.Init([]string{"window_save", "SAVE WINDOW"}, gb.UI_Backend, nil, coords.CoordInts{X: 55, Y: 150}, coords.CoordInts{X: 256, Y: 256})
+	gb.Window_Save.Init([]string{"window_save", "SAVE WINDOW"}, gb.UI_Backend, nil, coords.CoordInts{X: 55, Y: 150}, coords.CoordInts{X: 256, Y: 128})
 	gb.Window_Save.Redraw()
-	gb.Window_Load.Init([]string{"window_load", "LOAD WINDOW"}, gb.UI_Backend, nil, coords.CoordInts{X: 55, Y: 150}, coords.CoordInts{X: 256, Y: 256})
+	gb.Window_Load.Init([]string{"window_load", "LOAD WINDOW"}, gb.UI_Backend, nil, coords.CoordInts{X: 55, Y: 150}, coords.CoordInts{X: 256, Y: 128})
 	gb.Window_Load.Redraw()
 }
 
@@ -356,6 +356,22 @@ func (gb *GameBoard) Redraw_Board_New_Params(new_tsize, new_t_spacing coords.Coo
 	gb.BoardChanges = true
 }
 
+func (gb *GameBoard) Redraw_Board() {
+	gb.BoardOptions.BoardPosition = gb.BoardOptions.BoardMargin
+
+	xx, yy := gb.IMat.GetCursorBounds(gb.BoardOptions)
+	xx += int(float32(gb.BoardOptions.BoardMargin.X) * 2.0)
+	yy += int(float32(gb.BoardOptions.BoardMargin.Y) * 2.0)
+	gb.Bounds = coords.CoordInts{X: 590, Y: 590}
+	fmt.Printf("INTI: %d %d\n", xx, yy)
+	gb.Img = ebiten.NewImage(590, 590)
+	gb.Board_Buffer_Img = ebiten.NewImage(xx, yy)
+	gb.Board_Overlay_Buffer_Img = ebiten.NewImage(xx, yy) //644
+	gb.mazeTool.Redef(gb.BoardOptions)
+	gb.BoardOverlayChanges = true
+	gb.BoardChanges = true
+}
+
 func (gb *GameBoard) MouseMove() {
 	if gb.mapMove {
 		//temp := coords.CoordInts{X: xx, Y: yy}
@@ -396,16 +412,21 @@ func (gb *GameBoard) Draw(screen *ebiten.Image) {
 	ops.GeoM.Reset()
 	ops.GeoM.Translate(float64(gb.Position.X-gb.BoardOptions.BoardMargin.X), float64(gb.Position.Y-gb.BoardOptions.BoardMargin.Y))
 	screen.DrawImage(gb.Img, &ops)
-	ops.GeoM.Reset()
-	if gb.GameBoard_UI_STATE == 40 {
-		gb.Window_Save.Draw(screen)
-		// screen.DrawImage(gb.Window_Save.Image, &ops)
-	}
-	if gb.GameBoard_UI_STATE == 30 {
-		gb.Window_Load.Draw(screen)
 
-		// screen.DrawImage(gb.Window_Load.Image, &ops)
-	}
+	///--------------------
+	ops.GeoM.Reset()
+	gb.Window_Save.Draw(screen)
+	gb.Window_Load.Draw(screen)
+
+	// if gb.GameBoard_UI_STATE == 40 {
+	// 	gb.Window_Save.Draw(screen)
+	// 	// screen.DrawImage(gb.Window_Save.Image, &ops)
+	// }
+	// if gb.GameBoard_UI_STATE == 30 {
+	// 	gb.Window_Load.Draw(screen)
+
+	// 	// screen.DrawImage(gb.Window_Load.Image, &ops)
+	// }
 }
 
 func (gb *GameBoard) Redraw() {
