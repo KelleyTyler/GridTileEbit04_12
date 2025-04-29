@@ -59,6 +59,7 @@ type UI_Button struct {
 	isInit                         bool
 }
 
+/**/
 func (btn *UI_Button) Init_00(bckend *UI_Backend, labl string, pos, dimen coords.CoordInts, bType uint8, parent UI_Object) {
 	btn.Backend = bckend
 	// btn.Parentpos = parent
@@ -78,6 +79,8 @@ func (btn *UI_Button) Init_00(bckend *UI_Backend, labl string, pos, dimen coords
 	btn.isInit = true
 	// btn.Colors=
 }
+
+/**/
 func (btn *UI_Button) Init(label []string, bckend *UI_Backend, style *UI_Object_Style, pos, dimen coords.CoordInts) error {
 	btn.Backend = bckend
 	btn.Position = pos
@@ -98,6 +101,8 @@ func (btn *UI_Button) Init(label []string, bckend *UI_Backend, style *UI_Object_
 	// btn.Colors=
 	return nil
 }
+
+/**/
 func (btn *UI_Button) Init_Parents(parent UI_Object) error {
 	btn.Parent = parent
 	parent.AddChild(btn)
@@ -107,6 +112,7 @@ func (btn *UI_Button) Init_Parents(parent UI_Object) error {
 	return nil
 }
 
+/**/
 func (btn UI_Button) Redraw() {
 	// if  {
 	// 	 //color.RGBA{125, 125, 125, 255}
@@ -136,6 +142,7 @@ func (btn UI_Button) Redraw() {
 	// }
 }
 
+/**/
 func (btn UI_Button) Draw(screen *ebiten.Image) error {
 
 	scaler := 1.0
@@ -145,6 +152,8 @@ func (btn UI_Button) Draw(screen *ebiten.Image) error {
 	screen.DrawImage(btn.BtnImg, &ops)
 	return nil
 }
+
+/**/
 func (btn *UI_Button) Update() error {
 	// fmt.Printf("btn tick\n")
 	// xx, yy := ebiten.CursorPosition()
@@ -199,56 +208,57 @@ func (btn *UI_Button) Update() error {
 	return nil
 }
 
-/*This is going to be removed when I revise UI_OBJECT's and similar things*/
-func (btn *UI_Button) Update_Any() (any, error) {
+// /*This is going to be removed when I revise UI_OBJECT's and similar things*/
+// func (btn *UI_Button) Update_Any() (any, error) {
 
-	if btn.IsCursorInBounds() {
-		if btn.Btn_Type == 10 {
-			if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
-				btn.IsToggled = !btn.IsToggled
+// 	if btn.IsCursorInBounds() {
+// 		if btn.Btn_Type == 10 {
+// 			if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
+// 				btn.IsToggled = !btn.IsToggled
 
-				btn.State = 2
-				btn.Backend.PlaySound(3)
-			} else {
-				btn.State = 1
-			}
-			btn.ToRedraw = true
-			//btn.Backend.PlaySound(1)
-		} else {
-			if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
-				btn.State = 2
-				btn.Backend.PlaySound(1)
-				btn.Redraw()
-				return true, nil
-			} else {
-				//btn.Backend.PlaySound(1)
-				if btn.State != 1 {
-					// if btn.State != 2 {
-					// 	btn.Backend.PlaySound(1)
-					// }
-					btn.ToRedraw = true
-					btn.State = 1
-				}
-			}
+// 				btn.State = 2
+// 				btn.Backend.PlaySound(3)
+// 			} else {
+// 				btn.State = 1
+// 			}
+// 			btn.ToRedraw = true
+// 			//btn.Backend.PlaySound(1)
+// 		} else {
+// 			if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
+// 				btn.State = 2
+// 				btn.Backend.PlaySound(1)
+// 				btn.Redraw()
+// 				return true, nil
+// 			} else {
+// 				//btn.Backend.PlaySound(1)
+// 				if btn.State != 1 {
+// 					// if btn.State != 2 {
+// 					// 	btn.Backend.PlaySound(1)
+// 					// }
+// 					btn.ToRedraw = true
+// 					btn.State = 1
+// 				}
+// 			}
 
-		}
-	} else {
-		if btn.State > 0 {
-			btn.State = 0
-			btn.ToRedraw = true
+// 		}
+// 	} else {
+// 		if btn.State > 0 {
+// 			btn.State = 0
+// 			btn.ToRedraw = true
 
-		}
-	}
+// 		}
+// 	}
 
-	if btn.ToRedraw {
-		btn.Redraw()
-		// fmt.Printf("REDRAW\n")
-		btn.ToRedraw = false
-	}
+// 	if btn.ToRedraw {
+// 		btn.Redraw()
+// 		// fmt.Printf("REDRAW\n")
+// 		btn.ToRedraw = false
+// 	}
 
-	return btn.IsToggled, nil
-}
+// 	return btn.IsToggled, nil
+// }
 
+/**/
 func (btn *UI_Button) Update_Unactive() error {
 	if btn.State > 0 {
 		btn.State = 0
@@ -257,6 +267,8 @@ func (btn *UI_Button) Update_Unactive() error {
 	}
 	return nil
 }
+
+/**/
 func (btn *UI_Button) Update_Ret_State_Redraw_Status() (uint8, bool, error) {
 	to_redraw := false
 	if btn.IsCursorInBounds() {
@@ -364,6 +376,7 @@ func (btn *UI_Button) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Po
 	return btn.GetState(), to_redraw, nil
 }
 
+/**/
 func (btn *UI_Button) IsCursorInBounds() bool {
 	if btn.IsVisible && btn.IsActive {
 		Mouse_Pos_X, Mouse_Pos_Y := ebiten.CursorPosition()
@@ -381,6 +394,8 @@ func (btn *UI_Button) IsCursorInBounds() bool {
 	return false
 	// if()
 }
+
+/**/
 func (btn *UI_Button) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode int) bool {
 	if btn.IsVisible && btn.IsActive {
 		// xx, yy := ebiten.CursorPosition()
@@ -411,6 +426,8 @@ func (btn *UI_Button) DeToggle() {
 		}
 	}
 }
+
+/**/
 func (btn *UI_Button) GetState() uint8 {
 	if btn.Btn_Type == 10 {
 		if btn.IsToggled {
@@ -421,22 +438,38 @@ func (btn *UI_Button) GetState() uint8 {
 	} else {
 		return btn.State
 	}
-} //
+}
+
+/**/
 func (btn *UI_Button) ToString() string {
 	strng := fmt.Sprintf("BUTTON: %s \n", btn.id)
 	return strng
 }
-func (btn *UI_Button) IsInit() bool                 { return false }                          //
-func (btn *UI_Button) GetID() string                { return btn.id }                         //
-func (btn *UI_Button) GetType() string              { return "UI_Button" }                    //
-func (btn *UI_Button) GetPosition_Int() (int, int)  { return btn.Position.X, btn.Position.Y } //
-func (btn *UI_Button) GetNumber_Children() int      { return 0 }                              //
-func (btn *UI_Button) GetChild(index int) UI_Object { return nil }                            //
+
+/**/
+func (btn *UI_Button) IsInit() bool { return false } //
+
+/**/
+func (btn *UI_Button) GetID() string { return btn.id } //
+/**/
+func (btn *UI_Button) GetType() string { return "UI_Button" } //
+/**/
+func (btn *UI_Button) GetPosition_Int() (int, int) { return btn.Position.X, btn.Position.Y } //
+/**/
+func (btn *UI_Button) GetNumber_Children() int { return 0 } //
+/**/
+func (btn *UI_Button) GetChild(index int) UI_Object { return nil } //
+/**/
 func (btn *UI_Button) AddChild(child UI_Object) error {
 	return fmt.Errorf("ERROR NOT POSSIBLE")
 }
+
+/**/
 func (btn *UI_Button) RemoveChild(index int) error {
 	return fmt.Errorf("ERROR NOT POSSIBLE")
 }
+
+/**/
 func (btn *UI_Button) GetParent() UI_Object { return nil } //
-func (btn *UI_Button) HasParent() bool      { return btn.Parent != nil }
+/**/
+func (btn *UI_Button) HasParent() bool { return btn.Parent != nil }

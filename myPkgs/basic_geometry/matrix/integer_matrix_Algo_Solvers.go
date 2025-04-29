@@ -6,6 +6,7 @@ import (
 	coords "github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/coords"
 )
 
+/**/
 type MazeMaker struct {
 	CurrentList             coords.CoordList
 	Fails, maxFails         int
@@ -20,7 +21,7 @@ type MazeMaker struct {
 // func (mazeM *MazeMaker) ToggleShowCurrentList() {
 // 	mazeM.ShowCurrentList != mazeM.ShowCurrentList
 // }
-
+/**/
 func (mazeM *MazeMaker) Init(dSettings Integer_Matrix_Ebiten_DrawOptions, intmatrix *IntegerMatrix2D) {
 	mazeM.CurrentList = make(coords.CoordList, 0)
 	mazeM.Fails = 0
@@ -36,6 +37,7 @@ func (mazeM *MazeMaker) Init(dSettings Integer_Matrix_Ebiten_DrawOptions, intmat
 	// mazeM.DisplaySettings.ShowTileLines = []bool{true, true, true}
 }
 
+/**/
 func (mazeM *MazeMaker) RunPrimlike(ticks int, floorvals, wallvals, filterFor []int, margin [4]uint, diage bool) {
 	for range ticks {
 		if len(mazeM.CurrentList) > 0 {
@@ -49,6 +51,7 @@ func (mazeM *MazeMaker) RunPrimlike(ticks int, floorvals, wallvals, filterFor []
 	}
 }
 
+/**/
 func (mazeM *MazeMaker) GetString() string {
 	outstrng := fmt.Sprintf("MAZEGEN:\n HAS IMAT:  %5t\n", mazeM.imat != nil)
 	outstrng += fmt.Sprintf("CurrentList: %3d\n", len(mazeM.CurrentList))
@@ -56,6 +59,7 @@ func (mazeM *MazeMaker) GetString() string {
 	return outstrng
 }
 
+/**/
 type Pathfinding_Solver struct {
 	Start, Target           coords.CoordInts
 	Path                    coords.CoordList
@@ -65,6 +69,7 @@ type Pathfinding_Solver struct {
 	ShowPath                bool
 }
 
+/**/
 func (pfind *Pathfinding_Solver) Init(intmatrix *IntegerMatrix2D, dOps Integer_Matrix_Ebiten_DrawOptions) {
 	pfind.DisplayOptions = dOps
 	pfind.Imat = intmatrix

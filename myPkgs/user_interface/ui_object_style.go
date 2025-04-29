@@ -59,6 +59,7 @@ func Get_UI_Object_Style(styleNumber int) (out_Style UI_Object_Style) {
 	return out_Style
 }
 
+/**/
 func Get_Color_Array(leng int, color_0 color.RGBA) (ColorAr []color.Color) {
 
 	for i := 0; i < leng; i++ {

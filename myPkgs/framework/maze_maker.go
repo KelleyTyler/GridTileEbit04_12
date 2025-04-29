@@ -13,6 +13,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+/**/
 type Maze_Tool struct {
 	Is_Started, Is_Finished bool
 	MazeGen                 mat.MazeMaker
@@ -28,6 +29,7 @@ type Maze_Tool struct {
 	NSelect_MazeGen_00                                                          ui.UI_Num_Select
 }
 
+/**/
 func (mTool *Maze_Tool) Init(intMat *mat.IntegerMatrix2D, backend *ui.UI_Backend, maxPoints int, dsetting *mat.Integer_Matrix_Ebiten_DrawOptions) {
 	mTool.Imat = intMat
 	mTool.UI_Backend = backend
@@ -49,6 +51,7 @@ func (mTool *Maze_Tool) Init(intMat *mat.IntegerMatrix2D, backend *ui.UI_Backend
 	mTool.MazeGen.Init(mTool.DisplaySettings, intMat)
 }
 
+/**/
 func (mTool *Maze_Tool) OnValidMouseClickOnGameBoard(pos_X, pos_Y int) (overlay_change, board_change bool) {
 	overlay_change = false
 	board_change = false
@@ -60,16 +63,19 @@ func (mTool *Maze_Tool) OnValidMouseClickOnGameBoard(pos_X, pos_Y int) (overlay_
 	return overlay_change, board_change
 }
 
+/**/
 func (mTool *Maze_Tool) Reset(opts mat.Integer_Matrix_Ebiten_DrawOptions) {
 	mTool.DisplaySettings.Update_Opts_From_Argument(opts)
 
 	mTool.MazeGen.CurrentList = make(coords.CoordList, 0)
 }
 
+/**/
 func (mTool *Maze_Tool) Redef(opts mat.Integer_Matrix_Ebiten_DrawOptions) {
 	mTool.DisplaySettings.Update_Opts_From_Argument(opts)
 }
 
+/**/
 func (mTool *Maze_Tool) Update_Passive() (overlay_change, board_change bool) {
 	// if gb.ticker > gb.ticker_max {
 	// 	gb.BoardChanges = true
@@ -100,6 +106,7 @@ func (mTool *Maze_Tool) Update_Passive() (overlay_change, board_change bool) {
 	return overlay_change, board_change
 }
 
+/**/
 func (mTool *Maze_Tool) Maze_Gen_Passthrough() (overlay_change, board_change bool) {
 	overlay_change = false
 	board_change = false

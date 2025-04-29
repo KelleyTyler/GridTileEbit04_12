@@ -13,6 +13,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
+/**/
 type Game struct {
 	debugmsg  string
 	Board     GameBoard
@@ -25,6 +26,7 @@ type Game struct {
 	primitive ui.UI_Object_Primitive
 }
 
+/**/
 func GetNewGame() *Game {
 	game := Game{}
 	game.G_Setting = settings.GetSettingsFromJSON()
@@ -49,6 +51,7 @@ func GetNewGame() *Game {
 	return &game
 }
 
+/**/
 func (g *Game) Update() error {
 	g.debugmsg = fmt.Sprintf("FPS: %6.2f TPS:%6.2f\n", ebiten.ActualFPS(), ebiten.ActualTPS())
 	g.Board.Update()
@@ -91,6 +94,7 @@ func (g *Game) Update() error {
 	return nil
 }
 
+/**/
 func (g *Game) Draw(screen *ebiten.Image) {
 
 	//screen.Fill(color.White)
@@ -106,6 +110,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	ebitenutil.DebugPrint(screen, g.debugmsg)
 }
 
+/**/
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
 	return g.G_Setting.ScreenResX, g.G_Setting.ScreenResY
 }

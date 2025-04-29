@@ -23,7 +23,7 @@ type UI_Object interface {
 	Update() error                                                                                                    //--
 	Update_Unactive() error                                                                                           //
 
-	Update_Any() (any, error) //
+	//Update_Any() (any, error) //
 	Update_Ret_State_Redraw_Status() (uint8, bool, error)
 	Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode int) (uint8, bool, error)
 

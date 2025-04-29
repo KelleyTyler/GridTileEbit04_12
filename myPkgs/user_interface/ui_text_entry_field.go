@@ -1,6 +1,7 @@
 package user_interface
 
 import (
+	"fmt"
 	"image/color"
 	"strings"
 
@@ -131,7 +132,7 @@ func (tef *UI_TextEntryField) Predraw() {
 	tops.ColorScale.ScaleWithColor(color.Black)
 	tops.LineSpacing = float64(20)
 	t := tef.DataField
-	if tef.counter%60 < 20 {
+	if tef.counter%60 < 30 {
 		t += "_"
 		tef.counter = 0
 	}
@@ -144,8 +145,18 @@ func (tef *UI_TextEntryField) Get_String_Output() (strng string) {
 	strng = tef.DataField
 
 	tef.DataField = ""
-
+	fmt.Printf("DATAFIELD : %s\n", tef.DataField)
 	return strng
+}
+
+/*
+ */
+func (tef *UI_TextEntryField) Clear() error {
+	// tef.IsActive = false
+	// tef.IsActive = false
+	tef.DataField = ""
+
+	return nil
 }
 
 /*

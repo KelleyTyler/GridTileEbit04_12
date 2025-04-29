@@ -164,6 +164,8 @@ func (ui_win *UI_Window) Redraw() {
 		}
 	}
 }
+
+/**/
 func (ui_win *UI_Window) Update() error {
 	if ui_win.IsActive {
 		xx, yy := ebiten.CursorPosition()
@@ -179,16 +181,29 @@ func (ui_win *UI_Window) Update() error {
 		}
 		// else { ui_win.IsCursorInBounds_Label
 		// 	fmt.Printf("%3d %3d\n", xx, yy)
-		// }
+		// } ui_win.CloseButton.GetState() == 2
 
-		if ui_win.CloseButton.GetState() == 2 {
+		if state, redraw, _ := ui_win.CloseButton.Update_Ret_State_Redraw_Status_Mport(xx, yy, 0); state == 2 {
 			ui_win.State = 90
 			// ui_win.IsActive = false
 			// ui_win.IsVisible = false
 			ui_win.IsMoving = false
 			ui_win.oldMouse = coords.CoordInts{X: 0, Y: 0}
+			if redraw {
+				ui_win.Redraw()
+			}
 		}
 
+		if state, redraw, _ := ui_win.Button_Submit.Update_Ret_State_Redraw_Status_Mport(xx, yy, 0); state == 2 {
+			ui_win.State = 80
+			// ui_win.IsActive = false
+			// ui_win.IsVisible = false
+			ui_win.IsMoving = false
+			ui_win.oldMouse = coords.CoordInts{X: 0, Y: 0}
+			if redraw {
+				ui_win.Redraw()
+			}
+		}
 		if len(ui_win.Children) > 0 {
 			for i := 0; i < len(ui_win.Children); i++ {
 				err := ui_win.Children[i].Update()
@@ -207,6 +222,7 @@ func (ui_win *UI_Window) Update() error {
 	return nil
 }
 
+/**/
 func (ui_win *UI_Window) Update_Unactive() error {
 	if len(ui_win.Children) > 0 {
 		for i := 0; i < len(ui_win.Children); i++ {
@@ -217,13 +233,6 @@ func (ui_win *UI_Window) Update_Unactive() error {
 		}
 	}
 	return nil
-}
-
-/*
-This will return false; Use Only Sparingly!
-*/
-func (ui_win *UI_Window) Update_Any() (any, error) {
-	return false, nil
 }
 
 /*
@@ -269,6 +278,34 @@ func (ui_win *UI_Window) ToString() string {
 	strngOut := fmt.Sprintf("UI_Object ui_wintive:%s\n\tPositon %s\t", ui_win.obj_id, ui_win.Position.ToString())
 	strngOut += fmt.Sprintf("\tDimensions: %s\n", ui_win.Dimensions.ToString())
 	return strngOut
+}
+
+/*
+this returns a basic to string message
+*/
+func (ui_win *UI_Window) Close() {
+	ui_win.IsActive = false
+	ui_win.IsVisible = false
+	// ui_win.IsMoving = false
+	ui_win.CloseButton.DeToggle()
+	ui_win.Button_Submit.DeToggle()
+	ui_win.Textfield.Clear()
+	ui_win.State = 0
+}
+
+/*
+this returns a basic to string message
+*/
+func (ui_win *UI_Window) Open() {
+	ui_win.IsActive = true
+	ui_win.IsVisible = true
+
+	// ui_win.IsMoving = true
+	ui_win.CloseButton.DeToggle()
+	ui_win.Button_Submit.DeToggle()
+	ui_win.Textfield.Clear()
+	ui_win.State = 0
+
 }
 
 /*

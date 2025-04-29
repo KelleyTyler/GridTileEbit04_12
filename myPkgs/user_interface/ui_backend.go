@@ -33,6 +33,7 @@ type UI_Backend struct {
 	Style                       UI_Object_Style
 }
 
+/**/
 func GetUIBackend(settings *settings.GameSettings, gsounds *gensound.Basic_SoundSystem) UI_Backend {
 	// gsounds := gensound.InitSoundSet(settings, 3200, 480)
 	// gsounds.Init01(settings,3200,480)
@@ -74,15 +75,19 @@ func GetUIBackend(settings *settings.GameSettings, gsounds *gensound.Basic_Sound
 	return bckend
 }
 
+/**/
 func (uiBack *UI_Backend) init() {
 
 }
 
+/**/
 func (uiBack *UI_Backend) PlaySound(sound_num int) {
 	if sound_num < int(len(uiBack.Btn_Sounds)) {
 		uiBack.SoundSystem.PlayByte(uiBack.Btn_Sounds[sound_num])
 	}
 }
+
+/**/
 func (uiBack *UI_Backend) InitSounds() {
 	uiBack.Btn_Sounds = append(uiBack.Btn_Sounds, gensound.Soundwave_CreateSound(3200, 200, 0, 110, []float32{1.0}, []float32{0.0750000}))
 	uiBack.Btn_Sounds = append(uiBack.Btn_Sounds, gensound.Soundwave_CreateSound(3200, 200, 10, 110, []float32{1.0}, []float32{0.0750000}))

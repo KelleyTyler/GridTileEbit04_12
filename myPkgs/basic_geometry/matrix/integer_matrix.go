@@ -7,8 +7,10 @@ import (
 	misc "github.com/KelleyTyler/GridTileEbit04_12/myPkgs/misc"
 )
 
+/**/
 type IntegerMatrix2D [][]int
 
+/**/
 func makeIntegerMatrix(numRows, numColumns, intialValue int) IntegerMatrix2D {
 	temp := make(IntegerMatrix2D, numRows)
 	for i := range temp {
@@ -20,6 +22,7 @@ func makeIntegerMatrix(numRows, numColumns, intialValue int) IntegerMatrix2D {
 	return temp
 }
 
+/**/
 func (imat *IntegerMatrix2D) Init(nRows, nColumns, initValue int) {
 	*imat = makeIntegerMatrix(nRows, nColumns, initValue)
 }
@@ -34,6 +37,8 @@ func (imat IntegerMatrix2D) SetValAtCoord(c coords.CoordInts, value int) bool {
 		return false
 	}
 }
+
+/**/
 func (imat IntegerMatrix2D) SetValAtCoord_Filtered(c coords.CoordInts, value int, filter []int) (bool, int) {
 	if imat.IsValidCoords(c) {
 		tempval := imat.GetValueOnCoord(c)
@@ -48,6 +53,8 @@ func (imat IntegerMatrix2D) SetValAtCoord_Filtered(c coords.CoordInts, value int
 		return false, -10
 	}
 }
+
+/**/
 func (imat IntegerMatrix2D) GetStrings() []string {
 	sy, sx := imat.GetSize()
 	outstrng := []string{fmt.Sprintf("INTEGER MATRIX 2D: %d, %d", sy, sx)}
@@ -60,6 +67,8 @@ func (imat IntegerMatrix2D) GetStrings() []string {
 	}
 	return outstrng
 }
+
+/**/
 func (imat IntegerMatrix2D) GetStrings_withCoordList(c coords.CoordList) []string {
 	sy, sx := imat.GetSize()
 	outstrng := []string{fmt.Sprintf("INTEGER MATRIX 2D: %d, %d", sy, sx)}
@@ -77,12 +86,16 @@ func (imat IntegerMatrix2D) GetStrings_withCoordList(c coords.CoordList) []strin
 	}
 	return outstrng
 }
+
+/**/
 func (imat IntegerMatrix2D) PrintStrings() {
 	strngs := imat.GetStrings()
 	for i, s := range strngs {
 		fmt.Printf("%d\t %s\n", i-1, s)
 	}
 }
+
+/**/
 func (imat IntegerMatrix2D) PrintStringsWithCoorList(c coords.CoordList) {
 	strngs := imat.GetStrings_withCoordList(c)
 	strngs0 := imat.GetStrings()
@@ -91,6 +104,8 @@ func (imat IntegerMatrix2D) PrintStringsWithCoorList(c coords.CoordList) {
 		fmt.Printf("%d\t %s\t%s\n", i, strngs0[i], s)
 	}
 }
+
+/**/
 func (imat IntegerMatrix2D) GetSize() (yy int, xx int) {
 	outRows, outCols := 0, 0
 	if len(imat) > 0 {
@@ -102,10 +117,13 @@ func (imat IntegerMatrix2D) GetSize() (yy int, xx int) {
 	return outRows, outCols
 }
 
+/**/
 func (imat IntegerMatrix2D) IsValidCoords(c coords.CoordInts) bool {
 	ylim, xlim := imat.GetSize()
 	return !(c.X < 0 || c.X > xlim-1) && !(c.Y < 0 || c.Y > ylim-1)
 }
+
+/**/
 func (imat IntegerMatrix2D) IsValidCoordsWithinMargins(margins [4]uint, c coords.CoordInts) bool {
 	ylim, xlim := imat.GetSize()
 	con := !(c.X < int(margins[3]) || c.X > xlim-int(margins[1]+1)) && !(c.Y < int(margins[0]) || c.Y > ylim-int(margins[2]+1))
@@ -114,6 +132,8 @@ func (imat IntegerMatrix2D) IsValidCoordsWithinMargins(margins [4]uint, c coords
 	// }
 	return con
 }
+
+/**/
 func (imat IntegerMatrix2D) GetValueOnCoord(c coords.CoordInts) int {
 	if imat.IsValidCoords(c) {
 		return imat[c.Y][c.X]
@@ -122,6 +142,7 @@ func (imat IntegerMatrix2D) GetValueOnCoord(c coords.CoordInts) int {
 	}
 }
 
+/**/
 func (imat *IntegerMatrix2D) ClearMatrix_To(value int) {
 	yy, xx := imat.GetSize()
 	for i := range yy {
@@ -174,6 +195,8 @@ func (imat IntegerMatrix2D) GetNeighborsAndValues_Cardinal(c coords.CoordInts, m
 	}
 	return outlist, valList
 }
+
+/**/
 func (imat IntegerMatrix2D) GetNeighborsAndValues_8(c coords.CoordInts, margins [4]uint) ([8]coords.CoordInts, [8]int) {
 	outlist := [8]coords.CoordInts{}
 	valList := [8]int{}
@@ -240,6 +263,7 @@ func (imat IntegerMatrix2D) GetNeighborsAndValues_8(c coords.CoordInts, margins 
 	return outlist, valList
 }
 
+/**/
 func (imat IntegerMatrix2D) GetValidNeighbors4_no_Order(c coords.CoordInts) []coords.CoordInts {
 	outlist := []coords.CoordInts{}
 	var temp coords.CoordInts
@@ -266,6 +290,8 @@ func (imat IntegerMatrix2D) GetValidNeighbors4_no_Order(c coords.CoordInts) []co
 	}
 	return outlist
 }
+
+/**/
 func (imat IntegerMatrix2D) GetNeighborsAndValues_unordered(c coords.CoordInts) ([]coords.CoordInts, []int) {
 	outlist := []coords.CoordInts{}
 	valList := []int{}

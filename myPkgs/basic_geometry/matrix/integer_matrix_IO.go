@@ -6,6 +6,7 @@ import (
 	"os"
 )
 
+/**/
 func (imat *IntegerMatrix2D) Save_A_File(file_name string) error {
 	file, err := os.Create(fmt.Sprintf("%s.gob", file_name))
 	if err != nil {
@@ -17,6 +18,7 @@ func (imat *IntegerMatrix2D) Save_A_File(file_name string) error {
 	return err
 }
 
+/**/
 func (imat *IntegerMatrix2D) Load_A_File(file_name string) (IntegerMatrix2D, error) {
 	out_matrix := make(IntegerMatrix2D, 0)
 	file, err := os.Open(fmt.Sprintf("%s.gob", file_name))

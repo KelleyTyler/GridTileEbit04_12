@@ -7,6 +7,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/audio"
 )
 
+/**/
 type GeneratedSoundSet struct {
 	BaseFreq     int
 	SampleRate   int
@@ -15,11 +16,14 @@ type GeneratedSoundSet struct {
 	Sounds       [][]byte
 }
 
+/**/
 func (aud *GeneratedSoundSet) AddToAudioThing(note, refFreq int) {
 	// aud.Sounds = append(aud.Sounds, aud.Init_Sub(note, refFreq, []float32{1.0}, []float32{0.0750000}))
 	aud.Sounds = append(aud.Sounds, Soundwave_CreateSound(aud.SampleRate, aud.BaseFreq, note, refFreq, []float32{1.0}, []float32{0.0750000}))
 
 }
+
+/**/
 func (aud *GeneratedSoundSet) Init01(GS *settings.GameSettings, sRate, bFreq int) {
 	aud.BaseFreq = bFreq
 	aud.SampleRate = sRate
@@ -31,7 +35,7 @@ func (aud *GeneratedSoundSet) Init01(GS *settings.GameSettings, sRate, bFreq int
 	//aud.Init_Sub(0, 110, []float32{2.0}, []float32{0.250}) //<- with srate being 4800, and bfreq being 220 q being 60
 }
 
-// InitSoundSet(settings, 3200, 480)
+/**/
 func InitSoundSet(GS *settings.GameSettings, sRate, bFreq int) (aud GeneratedSoundSet) {
 	aud.BaseFreq = bFreq
 	aud.SampleRate = sRate
@@ -44,12 +48,14 @@ func InitSoundSet(GS *settings.GameSettings, sRate, bFreq int) (aud GeneratedSou
 	return aud
 }
 
+/**/
 func (aud *GeneratedSoundSet) PlayByte(bytes []byte) {
 	p := aud.AudioContext.NewPlayerF32FromBytes(bytes)
 	p.SetVolume(float64(aud.GSettings.UIAudioVolume) / 100)
 	p.Play()
 }
 
+/**/
 func (aud *GeneratedSoundSet) PlayThing(num int) {
 	// f := int(freq)
 	p := aud.AudioContext.NewPlayerF32FromBytes(aud.Sounds[num])
@@ -58,6 +64,8 @@ func (aud *GeneratedSoundSet) PlayThing(num int) {
 	// fmt.Printf("PLAY THING %d --- %5.2f -----\n", len(aud.Sounds[num]), p.Volume())
 	// fmt.Printf("%v %v %v %v %v %v %v \n", aud.Sounds[num][0], aud.Sounds[num][500], aud.Sounds[num][1000], aud.Sounds[num][1500], aud.Sounds[num][2000], aud.Sounds[num][2500], aud.Sounds[num][3000])
 }
+
+/**/
 func (aud *GeneratedSoundSet) Init_Sub(q, refFreq int, decayAmp, decayX []float32) []byte {
 	// const refFreq = 110
 	dd := 5    //5
@@ -86,6 +94,7 @@ func (aud *GeneratedSoundSet) Init_Sub(q, refFreq int, decayAmp, decayX []float3
 	return n
 }
 
+/**/
 func Soundwave_CreateSound(SampleRate, BaseFreq, q, refFreq int, decayAmp, decayX []float32) []byte {
 	// const refFreq = 110
 	dd := 5    //5
@@ -114,7 +123,7 @@ func Soundwave_CreateSound(SampleRate, BaseFreq, q, refFreq int, decayAmp, decay
 	return n
 }
 
-// --This is a copy of  the ebiten examples "PianoAt" function;
+/*This is a copy of  the ebiten examples "PianoAt" function;*/
 func Soundwave_NoiseAt(sRate, BaseFreq, i int, freq, divBy float32, amp, decayX []float32) float32 {
 	var v float32
 	for j := 0; j < len(amp); j++ {
@@ -145,6 +154,7 @@ func Soundwave_ToBytes(l, r []float32) []byte {
 	return b
 }
 
+/**/
 type Basic_SoundSystem struct {
 	BaseFreq     int
 	SampleRate   int
@@ -152,7 +162,7 @@ type Basic_SoundSystem struct {
 	GSettings    *settings.GameSettings
 }
 
-// InitSoundSet(settings, 3200, 480)
+/**/
 func Get_Basic_SoundSystem(GS *settings.GameSettings, sRate, bFreq int) (aud Basic_SoundSystem) {
 	aud.BaseFreq = bFreq
 	aud.SampleRate = sRate
@@ -161,6 +171,7 @@ func Get_Basic_SoundSystem(GS *settings.GameSettings, sRate, bFreq int) (aud Bas
 	return aud
 }
 
+/**/
 func (aud *Basic_SoundSystem) PlayByte(bytes []byte) {
 	p := aud.AudioContext.NewPlayerF32FromBytes(bytes)
 	p.SetVolume(float64(aud.GSettings.UIAudioVolume) / 100)

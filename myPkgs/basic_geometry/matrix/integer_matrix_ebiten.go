@@ -10,9 +10,8 @@ import (
 )
 
 /*
-	this is to allow for a connection to the ebitengine frontened;
+this is to allow for a connection to the ebitengine frontened;
 */
-
 type Integer_Matrix_Ebiten_DrawOptions struct {
 	TileSize    coords.CoordInts
 	TileSpacing coords.CoordInts
@@ -39,16 +38,23 @@ type Integer_Matrix_Ebiten_DrawOptions struct {
 	SubDiv_00_Line_Colors                  color.Color
 }
 
+/**/
 func (Opts Integer_Matrix_Ebiten_DrawOptions) GetOptsPtr() (optsPtr *Integer_Matrix_Ebiten_DrawOptions) {
 	return &Opts
 }
+
+/**/
 func (Opts Integer_Matrix_Ebiten_DrawOptions) ToString() (outString string) {
 	outString = fmt.Sprintf("Tile Size: %3d, %3d TileSpacing %3d %3d", Opts.TileSize.X, Opts.TileSize.Y, Opts.TileSpacing.X, Opts.TileSpacing.Y)
 	return outString
 }
+
+/**/
 func (Opts Integer_Matrix_Ebiten_DrawOptions) GetOptsByValue() (optsByValue Integer_Matrix_Ebiten_DrawOptions) {
 	return Opts
 }
+
+/**/
 func (Opts *Integer_Matrix_Ebiten_DrawOptions) Update_Opts_From_Argument(UpOps Integer_Matrix_Ebiten_DrawOptions) {
 	Opts.TileSize = UpOps.TileSize
 	Opts.TileSpacing = UpOps.TileSpacing
@@ -113,6 +119,7 @@ ShowTileLines     []bool
 	AALines           bool
 */
 
+/**/
 func (imat IntegerMatrix2D) DrawAGridTile_With_Lines(screen *ebiten.Image, coord coords.CoordInts, clr0 color.Color, options *Integer_Matrix_Ebiten_DrawOptions) {
 
 	x0, y0, x1, y1 := options.Modify_Coord_For_Options(coord)
@@ -131,6 +138,7 @@ func (imat IntegerMatrix2D) DrawAGridTile_With_Lines(screen *ebiten.Image, coord
 	}
 }
 
+/**/
 func (imat IntegerMatrix2D) DrawCoordListWithLines(screen *ebiten.Image, cList coords.CoordList, colors []color.Color, options Integer_Matrix_Ebiten_DrawOptions) {
 	if len(colors) == 1 {
 		for _, a := range cList {
@@ -139,6 +147,7 @@ func (imat IntegerMatrix2D) DrawCoordListWithLines(screen *ebiten.Image, cList c
 	}
 }
 
+/**/
 func (imat IntegerMatrix2D) DrawFullGridFromColors(screen *ebiten.Image, colors []color.Color, showBoardOL bool, options *Integer_Matrix_Ebiten_DrawOptions) {
 	test1X := ((len(imat[0]) * options.TileSize.X) + (len(imat[0]) * options.TileSpacing.X)) + options.BoardMargin.X
 	test1Y := ((len(imat) * options.TileSize.Y) + (len(imat) * options.TileSpacing.Y)) + options.BoardMargin.Y
@@ -202,6 +211,8 @@ func (imat IntegerMatrix2D) GetCoordOfMouseEvent(Raw_Mouse_X, Raw_Mouse_Y, offse
 	}
 	return mXi, mYi, isOnTile
 }
+
+/**/
 func (imat IntegerMatrix2D) GetCursorBounds(options Integer_Matrix_Ebiten_DrawOptions) (int, int) {
 	test1X := ((len(imat[0]) * options.TileSize.X) + (len(imat[0]) * options.TileSpacing.X)) + options.BoardPosition.X
 	test1Y := ((len(imat) * options.TileSize.Y) + (len(imat) * options.TileSpacing.Y)) + options.BoardPosition.Y

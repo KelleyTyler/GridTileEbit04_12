@@ -8,9 +8,12 @@ import (
 
 type CoordList []CoordInts
 
+/**/
 func (cList *CoordList) ToString() string {
 	return fmt.Sprintf("Length:%d --- ", len(*cList))
 }
+
+/**/
 func (cList *CoordList) ToStringEntirely() []string {
 	strng := []string{}
 	strng = append(strng, fmt.Sprintf("Length:%d", len(*cList)))
@@ -20,6 +23,7 @@ func (cList *CoordList) ToStringEntirely() []string {
 	return strng
 }
 
+/**/
 func (cList *CoordList) ToPrint() {
 	fmt.Printf("%s\n", cList.ToString())
 	for _, a := range *cList {
@@ -27,10 +31,14 @@ func (cList *CoordList) ToPrint() {
 	}
 
 }
+
+/**/
 func (cList CoordList) GetLength() int {
 	return len(cList)
 
 }
+
+/**/
 func (cList *CoordList) SortByX() {
 	temp := make(CoordList, len(*cList))
 	copy(temp, *cList)
@@ -47,6 +55,8 @@ func (cList *CoordList) SortByX() {
 	}
 	copy(*cList, temp)
 }
+
+/**/
 func (cList *CoordList) SortBy(val int, desc bool) {
 	temp := make(CoordList, len(*cList))
 	copy(temp, *cList)
@@ -103,7 +113,7 @@ func (cList *CoordList) SortBy(val int, desc bool) {
 // func (cList *CoordList) Length() int {
 // 	return len(*cList)
 // }
-
+/**/
 func (cList *CoordList) PopFromFront() CoordInts {
 	temp := make(CoordList, len(*cList))
 	copy(temp, *cList)
@@ -121,6 +131,7 @@ func (cList *CoordList) PopFromFront() CoordInts {
 
 }
 
+/**/
 func (cList *CoordList) PushToFront(cord CoordInts) {
 	temp0 := make(CoordList, len(*cList))
 	copy(temp0, *cList)
@@ -130,6 +141,8 @@ func (cList *CoordList) PushToFront(cord CoordInts) {
 	copy(*cList, temp1)
 
 }
+
+/**/
 func (cList *CoordList) PushToBack(cord CoordInts) {
 	temp0 := make(CoordList, len(*cList))
 	copy(temp0, *cList)
@@ -140,6 +153,7 @@ func (cList *CoordList) PushToBack(cord CoordInts) {
 
 }
 
+/**/
 func (cList *CoordList) RemoveFromIndex(index int) {
 	if index < len(*cList) {
 		temp := make(CoordList, 0)
@@ -165,6 +179,7 @@ func (cList *CoordList) RemoveFromIndex(index int) {
 	}
 }
 
+/**/
 func (cList *CoordList) RemoveCoord(coord CoordInts) {
 	if len(*cList) > 0 {
 		temp := make(CoordList, 0)
@@ -179,6 +194,7 @@ func (cList *CoordList) RemoveCoord(coord CoordInts) {
 	}
 }
 
+/**/
 func (cList *CoordList) RemoveDuplicates() {
 	if len(*cList) > 0 {
 		temp := make(CoordList, 0)
@@ -199,6 +215,7 @@ func (cList *CoordList) RemoveDuplicates() {
 	}
 }
 
+/**/
 func (cList *CoordList) IfListContains(cord CoordInts) bool {
 	outer := false
 	for _, a := range *cList {
@@ -209,6 +226,7 @@ func (cList *CoordList) IfListContains(cord CoordInts) bool {
 	return outer
 }
 
+/**/
 func (cList *CoordList) FlipOrder() {
 	if len(*cList) > 0 {
 		temp := make(CoordList, len(*cList))
@@ -242,7 +260,7 @@ func (cList *CoordList) FlipOrder() {
 // 	}
 // 	return outer
 // }
-
+/**/
 func BresenhamLine(c1 CoordInts, c2 CoordInts) CoordList {
 	//outList := make(CoordList, 0)
 	var outList CoordList
@@ -278,6 +296,8 @@ func BresenhamLine(c1 CoordInts, c2 CoordInts) CoordList {
 	}
 	return outList
 }
+
+/**/
 func BresenhamLine_Low(c1 CoordInts, c2 CoordInts) CoordList {
 	outList := make(CoordList, 0)
 	dx := (c2.X - c1.X)
@@ -306,6 +326,8 @@ func BresenhamLine_Low(c1 CoordInts, c2 CoordInts) CoordList {
 	outList = append(outList, c2)
 	return outList
 }
+
+/**/
 func BresenhamLine_High(c1 CoordInts, c2 CoordInts) CoordList {
 	outList := make(CoordList, 0)
 	dx := (c2.X - c1.X)
@@ -400,6 +422,8 @@ func (center *CoordInts) GetACirclePointsFromCenter(radius int) CoordList {
 	tempList.RemoveDuplicates()
 	return tempList
 }
+
+/**/
 func (center *CoordInts) GetACirclePointsSUB(x, y, radius int) CoordList {
 	tempList := make(CoordList, 0)
 	temp_01A := *center

@@ -2,6 +2,7 @@ package matrix
 
 import coords "github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/coords"
 
+/**/
 type ImatNode struct {
 	Position, Start, Target coords.CoordInts
 	Prev                    *ImatNode //this is singular
@@ -53,6 +54,7 @@ func GetNode(start, point, target coords.CoordInts, imat IntegerMatrix2D, parent
 	return temp
 }
 
+/**/
 func GetNodePTR(start, point, target coords.CoordInts, imat IntegerMatrix2D, parent *ImatNode) *ImatNode {
 	temp := GetNode(start, point, target, imat, parent)
 	return &temp
@@ -234,6 +236,8 @@ func (node *ImatNode) fliporderHelper(FromHead bool) {
 func (node *ImatNode) PrintFromHead() {
 
 }
+
+/**/
 func (node ImatNode) GetNode() ImatNode {
 	return node
 }

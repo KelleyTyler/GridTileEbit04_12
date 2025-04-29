@@ -8,12 +8,15 @@ import (
 	"github.com/KelleyTyler/GridTileEbit04_12/myPkgs/misc"
 )
 
+/**/
 func Pathfind(start, target coords.CoordInts, imat IntegerMatrix2D, floors, walls []int, failconditions int, margins [4]uint) (path_is_found bool, path_out coords.CoordList) {
 	//setup
 	path_is_found = false
 	path_out = make(coords.CoordList, 0)
 	return path_is_found, path_out
 }
+
+/**/
 func Pathfind_Phase1A(start, target coords.CoordInts, imat IntegerMatrix2D, floors, walls []int, margins [4]uint) (path_is_found bool, EndNode *ImatNode) {
 
 	path_is_found = false
@@ -21,7 +24,7 @@ func Pathfind_Phase1A(start, target coords.CoordInts, imat IntegerMatrix2D, floo
 	ClosedList := make([]*ImatNode, 0)
 	BlockedList := make([]*ImatNode, 0)
 
-	var max_fails int = 25500
+	var max_fails int = 64 * 64
 	var curr_fails int = 0
 	var isFinished bool = false
 	var closedList_LastLength int = 0
@@ -75,22 +78,35 @@ func Pathfind_Phase1A(start, target coords.CoordInts, imat IntegerMatrix2D, floo
 	}
 
 	if isFinished {
-		fmt.Printf("FINISHED! %d\t%d\t%d\n", curr_fails, len(ClosedList), len(BlockedList))
+		fmt.Printf("FINISHED! FAILS: %d\tCLOSEDLIST: %d\tBLOCKED:%3d\n", curr_fails, len(ClosedList), len(BlockedList))
 		if EndNode != nil {
 			EndNode.Set_Heads_Tails_On_Up()
 		}
 		path_is_found = true
 		// PotentialPaths = append(PotentialPaths, ClosedList...)
 	} else {
-		fmt.Printf("FAILED! %d\t%d\t%d\n", curr_fails, len(ClosedList), len(BlockedList))
-		// EndNode, ClosedList = NodeList_PopFromFront(ClosedList)
+		fmt.Printf("FAILED! FAILS: %d\t CLOSEDLIST: %d\t BLOCKED:%3d\n", curr_fails, len(ClosedList), len(BlockedList))
+		// NodeList_SortByHValue_Ascending_toReturn()
+		BlockedList = NodeList_SortByHValue_Ascending_toReturn(BlockedList)
+		BLNode := BlockedList[0]
+		ClosedList = NodeList_SortByHValue_Ascending_toReturn(ClosedList)
+		CLNode := ClosedList[0]
+
+		if CLNode.GetHValue() < BLNode.GetHValue() {
+			EndNode = CLNode
+		} else {
+			EndNode = BLNode
+		}
+		// EndNode, _ = NodeList_PopFromFront(BlockedList)
 		// EndNode.Set_Heads_Tails_On_Up()
-		// return path_is_found, EndNode
+		return path_is_found, EndNode
 
 	}
 
 	return path_is_found, EndNode
 }
+
+/**/
 func Pathfind_Phase1_Tick(start, target coords.CoordInts, openlist, closedlist, blockedlist []*ImatNode, pathfound bool, curr_fails, max_fails int, imat IntegerMatrix2D, floors, walls []int, margins [4]uint) (oList, cList, bList []*ImatNode, pFound bool, pFoundNode *ImatNode, fails int, err error) { //<--unsure if these are pass by reference or not
 	oList = make([]*ImatNode, len(openlist))
 	cList = make([]*ImatNode, len(closedlist))

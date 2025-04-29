@@ -12,6 +12,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
+/**/
 type GameBoard struct {
 	Board_Buffer_Img         *ebiten.Image
 	Board_Overlay_Buffer_Img *ebiten.Image
@@ -170,7 +171,7 @@ func (gb *GameBoard) Init(backend *ui.UI_Backend, UI_Panel_Parent ui.UI_Object, 
 
 }
 
-// GameBoard_UI_STATE
+/**/
 func (gb *GameBoard) Update() {
 
 	if gb.GameBoard_UI_STATE == 10 {
@@ -229,6 +230,8 @@ func (gb *GameBoard) Update() {
 
 }
 
+/*
+ */
 func (gb *GameBoard) UI_INIT() {
 
 	gb.Load_Map_Button.Init([]string{"r_map_btn", "LOAD\nMAP"}, gb.UI_Backend, nil, coords.CoordInts{X: 136, Y: 34}, coords.CoordInts{X: 64, Y: 32})
@@ -259,6 +262,7 @@ func (gb *GameBoard) UI_INIT() {
 	gb.Window_Load.Redraw()
 }
 
+/**/
 func (gb *GameBoard) UI_UPDATE() {
 	// strng :=
 	// g.MazeTextBox.
@@ -266,16 +270,24 @@ func (gb *GameBoard) UI_UPDATE() {
 		gb.IMat.ClearMatrix_To(gb.NumSelect_ResetNumber.CurrValue)
 		gb.mazeTool.Reset(gb.BoardOptions)
 		gb.drawTool.Clear()
+		gb.Redraw_Board_New_Params(coords.CoordInts{X: gb.NumSelect_TileSize_X.CurrValue, Y: gb.NumSelect_TileSize_Y.CurrValue}, coords.CoordInts{X: gb.NumSelect_Tile_Margin_X.CurrValue, Y: gb.NumSelect_Tile_Margin_Y.CurrValue})
+
+		gb.BoardChanges = true
+
 	}
 	if gb.Redraw_Tiles_Button.GetState() == 2 {
 		fmt.Printf("REDRAW TILES BTN PRESSED\n")
 		gb.Redraw_Board_New_Params(coords.CoordInts{X: gb.NumSelect_TileSize_X.CurrValue, Y: gb.NumSelect_TileSize_Y.CurrValue}, coords.CoordInts{X: gb.NumSelect_Tile_Margin_X.CurrValue, Y: gb.NumSelect_Tile_Margin_Y.CurrValue})
+		gb.BoardChanges = true
+
+		gb.Redraw_Board()
 
 	}
 	if gb.New_Map_Button.GetState() == 2 {
 		//gb.NumSelect_ResetNumber
 		gb.NewBoard(coords.CoordInts{X: gb.NumSelect_MapSize_X.CurrValue, Y: gb.NumSelect_MapSize_Y.CurrValue})
 		gb.Redraw_Board_New_Params(coords.CoordInts{X: gb.NumSelect_TileSize_X.CurrValue, Y: gb.NumSelect_TileSize_Y.CurrValue}, coords.CoordInts{X: gb.NumSelect_Tile_Margin_X.CurrValue, Y: gb.NumSelect_Tile_Margin_Y.CurrValue})
+		gb.BoardChanges = true
 
 	}
 
@@ -302,6 +314,8 @@ func (gb *GameBoard) UI_UPDATE() {
 	}
 
 }
+
+/**/
 func (gb *GameBoard) SetParents(parent ui.UI_Object) {
 	gb.Load_Map_Button.Init_Parents(parent)
 	gb.Save_Map_Button.Init_Parents(parent)
@@ -326,10 +340,12 @@ func (gb *GameBoard) SetParents(parent ui.UI_Object) {
 	// gb.Window_Save.Init_Parents(parent)
 }
 
+/**/
 func (gb *GameBoard) NewBoard(new_Bsize coords.CoordInts) {
 	gb.IMat.Init(new_Bsize.X, new_Bsize.Y, gb.NumSelect_ResetNumber.CurrValue)
 }
 
+/**/
 func (gb *GameBoard) Redraw_Board_New_Params(new_tsize, new_t_spacing coords.CoordInts) {
 	gb.BoardOptions.BoardPosition = gb.BoardOptions.BoardMargin
 	gb.BoardOptions = mat.Integer_Matrix_Ebiten_DrawOptions{
@@ -356,6 +372,7 @@ func (gb *GameBoard) Redraw_Board_New_Params(new_tsize, new_t_spacing coords.Coo
 	gb.BoardChanges = true
 }
 
+/**/
 func (gb *GameBoard) Redraw_Board() {
 	gb.BoardOptions.BoardPosition = gb.BoardOptions.BoardMargin
 
@@ -372,6 +389,7 @@ func (gb *GameBoard) Redraw_Board() {
 	gb.BoardChanges = true
 }
 
+/**/
 func (gb *GameBoard) MouseMove() {
 	if gb.mapMove {
 		//temp := coords.CoordInts{X: xx, Y: yy}
@@ -400,6 +418,8 @@ func (gb *GameBoard) MouseMove() {
 		}
 	}
 }
+
+/**/
 func (gb *GameBoard) Draw(screen *ebiten.Image) {
 	gb.Redraw()
 	ops := ebiten.DrawImageOptions{}
@@ -429,6 +449,7 @@ func (gb *GameBoard) Draw(screen *ebiten.Image) {
 	// }
 }
 
+/**/
 func (gb *GameBoard) Redraw() {
 	if gb.BoardChanges {
 		gb.Board_Buffer_Img.Clear()
@@ -441,6 +462,7 @@ func (gb *GameBoard) Redraw() {
 	}
 }
 
+/**/
 func (gb *GameBoard) DrawOverlay() {
 	gb.Board_Overlay_Buffer_Img.Clear()
 
@@ -450,11 +472,14 @@ func (gb *GameBoard) DrawOverlay() {
 	gb.pfindTest.Draw(gb.Board_Overlay_Buffer_Img, &gb.drawTool.DisplaySettings)
 	gb.mazeTool.Draw(gb.Board_Overlay_Buffer_Img, gb.BoardOptions)
 }
+
+/**/
 func (gb *GameBoard) ToString() string {
 	gb.outMsg = fmt.Sprintf("GAMEBOARD:\n Position: %s\n", gb.BoardOptions.BoardPosition.ToString())
 	return gb.outMsg
 }
 
+/**/
 func (gb *GameBoard) IsCursorInBounds() bool {
 	xx, yy := ebiten.CursorPosition()
 	return (xx > gb.Position.X && xx < gb.Position.X+gb.Bounds.X) && (yy > gb.Position.Y && yy < gb.Position.Y+gb.Bounds.Y)

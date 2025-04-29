@@ -8,6 +8,7 @@ import (
 	"github.com/KelleyTyler/GridTileEbit04_12/myPkgs/misc"
 )
 
+/**/
 func (imat *IntegerMatrix2D) BasicDecay_Step(value_to_set_as, fails int, FrontierList coords.CoordList, filterfor []int, margins [4]uint) (int, coords.CoordList) {
 	tempFrontier := make(coords.CoordList, len(FrontierList))
 	copy(tempFrontier, FrontierList)
@@ -49,6 +50,7 @@ func (imat *IntegerMatrix2D) BasicDecay_Step(value_to_set_as, fails int, Frontie
 	return fails, tempFrontier
 }
 
+/**/
 func (imat *IntegerMatrix2D) PrimLike_Maze_Algorithm_Random(fails, maxfails int, FrontierList coords.CoordList, floorVals, wallVals, filterFor []int, margins [4]uint, culldiagonals bool) (coords.CoordList, int) {
 	randInt := rand.Intn(len(FrontierList))
 
@@ -71,8 +73,10 @@ func (imat *IntegerMatrix2D) PrimLike_Maze_Algorithm_Step(FCL_Num, fails, maxfai
 	if len(temp) > 0 {
 		c := temp[FCL_Num]
 		frustration := true
+		// templist, tempar := imat.GetNeighborsAndValues_8(c, margins)
 		templist, tempar := imat.GetNeighborsAndValues_8(c, margins)
-		if imat.PrimMazeGenCell_CheckingRules(c, filterFor, margins) {
+
+		if imat.PrimMazeGenCell_CheckingRules02(c, filterFor, margins) {
 			nNBool := !misc.IsNumInIntArray(tempar[0], filterFor)
 			nEBool := !misc.IsNumInIntArray(tempar[1], filterFor)
 			eEBool := !misc.IsNumInIntArray(tempar[2], filterFor)
@@ -158,13 +162,65 @@ func (imat *IntegerMatrix2D) PrimMazeGenCell_CheckingRules(cord coords.CoordInts
 	if (nn) && ((se && !sw) || (!se && sw) || (se && sw)) {
 		return false
 	}
-	if (ee) && ((!sw && nw) || (sw && !nw) || (ne && nw)) {
+	if (ee) && ((!sw && nw) || (sw && !nw) || (sw && nw)) {
 		return false
 	}
 	if (ww) && ((!se && ne) || (!ne && se) || (ne && se)) {
 		return false
 	}
-	if (ss) && ((!se && nw) || (ne && !nw) || (ne && nw)) { //(nn && ee && ww && !ss) && ((!ne && se && sw && nw) || (ne && se && sw && !nw))
+	if (ss) && ((!ne && nw) || (ne && !nw) || (ne && nw)) { //(nn && ee && ww && !ss) && ((!ne && se && sw && nw) || (ne && se && sw && !nw))
+		return false
+	}
+	return true
+}
+
+/*
+imported from previous verison;
+default filter should be []int{-1, 1, 4}
+*/
+func (imat *IntegerMatrix2D) PrimMazeGenCell_CheckingRules02(cord coords.CoordInts, filter []int, margin [4]uint) bool {
+	// _, tempAr, _ := imat.GetNeighbors(cord, margin)
+	_, tempvals := imat.GetNeighborsAndValues_8(cord, margin)
+	nn := misc.IsNumInIntArray(tempvals[0], filter)
+	ne := misc.IsNumInIntArray(tempvals[1], filter)
+	ee := misc.IsNumInIntArray(tempvals[2], filter)
+	se := misc.IsNumInIntArray(tempvals[3], filter)
+	ss := misc.IsNumInIntArray(tempvals[4], filter)
+	sw := misc.IsNumInIntArray(tempvals[5], filter)
+	ww := misc.IsNumInIntArray(tempvals[6], filter)
+	nw := misc.IsNumInIntArray(tempvals[7], filter)
+	//---------------------------------------------
+
+	n0 := (se && sw)
+	n1 := (!se && sw)
+	n2 := (se && !sw)
+	// n3 := ss && n0
+	//---------------
+	e0 := (sw && nw)
+	e1 := (!sw && nw)
+	e2 := (sw && !nw)
+	// e3 := ee && e0
+	//-------------------
+	s0 := (ne && nw)
+	s1 := (!ne && nw)
+	s2 := (ne && !nw)
+	// s3 := ss && s0
+	//------------------
+	w0 := (se && ne)
+	w1 := (!se && ne)
+	w2 := (se && !ne)
+	// w3 := ww && w0
+
+	if (nn) && (n1 || n2 || n0) {
+		return false
+	}
+	if (ee) && (e1 || e2 || e0) {
+		return false
+	}
+	if (ww) && (w1 || w2 || w0) {
+		return false
+	}
+	if (ss) && (s1 || s2 || s0) { //(nn && ee && ww && !ss) && ((!ne && se && sw && nw) || (ne && se && sw && !nw))
 		return false
 	}
 	return true

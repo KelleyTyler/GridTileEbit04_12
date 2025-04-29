@@ -5,11 +5,11 @@ import "fmt"
 /*
 
  */
-
 type CoordsI_Line_Seg struct {
 	Point0, Point1 CoordInts
 }
 
+/**/
 func Create_CoordsI_LineSeg_00(x0, y0, x1, y1 int) (outLine CoordsI_Line_Seg) {
 	outLine = CoordsI_Line_Seg{Point0: CoordInts{X: x0, Y: y0}, Point1: CoordInts{X: x1, Y: y1}}
 	return outLine
@@ -102,6 +102,7 @@ func (clis CoordsI_Line_Seg) GetDifferences_Float() (dx, dy float64) {
 	return dx, dy
 }
 
+/**/
 func LineIntersectTest() {
 	line0 := Create_CoordsI_LineSeg_00(1, 1, 15, 15)
 	line1 := Create_CoordsI_LineSeg_00(3, 3, 5, 25)

@@ -5,20 +5,25 @@ import (
 	"math"
 )
 
+/**/
 type CoordFloat2D struct {
 	X, Y float64
 }
 
+/**/
 func MakeCoordFloat2D(x, y float64) (outCoord CoordFloat2D) {
 	outCoord.X = x
 	outCoord.Y = y
 	return outCoord
 }
+
+/**/
 func (cf2D CoordFloat2D) ToString() (outstring string) {
 	outstring = fmt.Sprintf("X:%7.3f, Y:%7.3f", cf2D.X, cf2D.Y)
 	return outstring
 }
 
+/**/
 func (c0 CoordFloat2D) IsEqual(c2 CoordFloat2D) bool {
 	return c0.X == c2.X && c0.Y == c2.Y
 }
@@ -36,6 +41,7 @@ func (c0 CoordFloat2D) IsEqual_Range(c2 CoordFloat2D, margin float64) bool {
 	return isInside0 && isInside1
 }
 
+/**/
 func (c0 CoordFloat2D) Get_Differences_As_CoordFloat2D(c2 CoordFloat2D) (differences CoordFloat2D) {
 	differences.X = c2.X - c0.X
 	differences.Y = c2.Y - c0.Y
@@ -43,6 +49,7 @@ func (c0 CoordFloat2D) Get_Differences_As_CoordFloat2D(c2 CoordFloat2D) (differe
 	return differences
 }
 
+/**/
 func (c0 CoordFloat2D) Get_Distance_Hypotenuse(c2 CoordFloat2D) (distance float64) {
 	dX := c2.X - c0.X
 	dY := c2.Y - c0.Y
@@ -60,6 +67,8 @@ func (c0 CoordFloat2D) Get_Distance_Hypotenuse(c2 CoordFloat2D) (distance float6
 	distance = math.Sqrt(math.Pow(dX, 2) + math.Pow(dY, 2))
 	return distance
 }
+
+/**/
 func (c0 CoordFloat2D) Get_Slope(c2 CoordFloat2D) (slope float64) {
 	dX := c2.X - c0.X
 	dY := c2.Y - c0.Y
@@ -109,6 +118,7 @@ func (c0 CoordFloat2D) Move_According_To_Vector_Degrees(angle float64, magnitude
 	return c2
 }
 
+/**/
 func CoordFloat2DTest() {
 	var cf0 CoordFloat2D = MakeCoordFloat2D(5, 5)
 	var cf1 CoordFloat2D = MakeCoordFloat2D(5, 5.2)
@@ -139,10 +149,12 @@ func CoordFloat2DTest() {
 
 }
 
+/**/
 type CoordFloat3D struct {
 	X, Y, Z float64
 }
 
+/**/
 func MakeCoordFloat3D(x, y, z float64) (outCoord CoordFloat3D) {
 	outCoord.X = x
 	outCoord.Y = y
@@ -150,11 +162,13 @@ func MakeCoordFloat3D(x, y, z float64) (outCoord CoordFloat3D) {
 	return outCoord
 }
 
+/**/
 func (cf3D CoordFloat3D) ToString() (outstring string) {
 	outstring = fmt.Sprintf("X:%5.2f, Y:%5.2f, Z:%5.2f", cf3D.X, cf3D.Y, cf3D.Z)
 	return outstring
 }
 
+/**/
 func (c0 CoordFloat3D) IsEqual(c2 CoordFloat3D) bool {
 	return c0.X == c2.X && c0.Y == c2.Y && c0.Z == c2.Z
 }

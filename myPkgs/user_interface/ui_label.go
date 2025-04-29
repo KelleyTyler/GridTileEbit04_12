@@ -65,6 +65,7 @@ type UI_Label struct {
 	Parent        UI_Object
 }
 
+/**/
 func (lbl *UI_Label) Init_00(backend *UI_Backend, label string, pos, dim coords.CoordInts, parentPosition *coords.CoordInts) {
 	lbl.Style = &backend.Style
 	lbl.Backend = backend
@@ -75,6 +76,8 @@ func (lbl *UI_Label) Init_00(backend *UI_Backend, label string, pos, dim coords.
 	lbl.TextAlignMode = 0
 	lbl.Redraw()
 }
+
+/**/
 func (lbl *UI_Label) Init(idLabels []string, backend *UI_Backend, style *UI_Object_Style, pos, dim coords.CoordInts) error {
 
 	lbl.Backend = backend
@@ -99,6 +102,8 @@ func (lbl *UI_Label) Init(idLabels []string, backend *UI_Backend, style *UI_Obje
 	lbl.Redraw()
 	return nil
 }
+
+/**/
 func (lbl *UI_Label) Init_Parents(Parent UI_Object) error {
 	lbl.Parent = Parent
 	lbl.Parent.AddChild(lbl)
@@ -108,6 +113,8 @@ func (lbl *UI_Label) Init_Parents(Parent UI_Object) error {
 	}
 	return nil
 }
+
+/**/
 func (lbl *UI_Label) Init_Parents_spec(Parent UI_Object) error {
 	lbl.Parent = Parent
 	// lbl.Parent.AddChild(lbl)
@@ -118,6 +125,7 @@ func (lbl *UI_Label) Init_Parents_spec(Parent UI_Object) error {
 	return nil
 }
 
+/**/
 func (lbl *UI_Label) Redraw() {
 	lbl.Img.Fill(lbl.Style.BorderColor)
 	borderThick := lbl.Backend.Style.BorderThickness
@@ -146,6 +154,8 @@ func (lbl *UI_Label) Redraw() {
 	// 	lbl.Parent.Redraw()
 	// }
 }
+
+/**/
 func (lbl *UI_Label) Draw(screen *ebiten.Image) error {
 	ops := ebiten.DrawImageOptions{}
 	ops.GeoM.Reset()
@@ -154,22 +164,35 @@ func (lbl *UI_Label) Draw(screen *ebiten.Image) error {
 	return nil
 }
 
+/**/
 func (lbl *UI_Label) Update() error {
 	return nil
-}                                              //--
-func (lbl *UI_Label) Update_Unactive() error   { return nil }        //
+} //--
+/**/
+func (lbl *UI_Label) Update_Unactive() error { return nil } //
+/**/
 func (lbl *UI_Label) Update_Any() (any, error) { return false, nil } //
+/**/
 func (lbl *UI_Label) Update_Ret_State_Redraw_Status() (uint8, bool, error) {
 	return 0, false, nil
 }
+
+/**/
 func (lbl *UI_Label) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode int) (uint8, bool, error) {
 	return 0, false, nil
 }
-func (lbl *UI_Label) GetState() uint8  { return 0 }                 //
+
+/**/
+func (lbl *UI_Label) GetState() uint8 { return 0 } //
+/**/
 func (lbl *UI_Label) ToString() string { return "This is a Label" } //
-func (lbl *UI_Label) IsInit() bool     { return false }             //
-func (lbl *UI_Label) GetID() string    { return lbl.id }            //
-func (lbl *UI_Label) GetType() string  { return "UI_Label" }        //
+/**/
+func (lbl *UI_Label) IsInit() bool { return false } //
+/**/
+func (lbl *UI_Label) GetID() string { return lbl.id } //
+/**/
+func (lbl *UI_Label) GetType() string { return "UI_Label" } //
+/**/
 func (lbl *UI_Label) IsCursorInBounds() bool {
 
 	cX, cY := ebiten.CursorPosition()
@@ -193,17 +216,32 @@ func (lbl *UI_Label) IsCursorInBounds() bool {
 	return (cX > x0 && cX < x1) && (cY > y0 && cY < y1)
 	// return false
 } //
+/**/
 func (lbl *UI_Label) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode int) bool {
 	return false
-}                                                  //
-func (lbl *UI_Label) GetPosition_Int() (int, int)  { return lbl.Position.X, lbl.Position.Y } //
-func (lbl *UI_Label) GetNumber_Children() int      { return 0 }                              //
-func (lbl *UI_Label) GetChild(index int) UI_Object { return nil }                            //
+}
+
+/**/
+func (lbl *UI_Label) GetPosition_Int() (int, int) { return lbl.Position.X, lbl.Position.Y }
+
+/**/
+func (lbl *UI_Label) GetNumber_Children() int { return 0 }
+
+/**/
+func (lbl *UI_Label) GetChild(index int) UI_Object { return nil }
+
+/**/
 func (lbl *UI_Label) AddChild(child UI_Object) error {
 	return fmt.Errorf("ERROR NOT POSSIBLE")
 }
+
+/**/
 func (lbl *UI_Label) RemoveChild(index int) error {
 	return fmt.Errorf("ERROR NOT POSSIBLE")
 }
-func (lbl *UI_Label) GetParent() UI_Object { return nil } //
-func (lbl *UI_Label) HasParent() bool      { return lbl.Parent != nil }
+
+/**/
+func (lbl *UI_Label) GetParent() UI_Object { return nil }
+
+/**/
+func (lbl *UI_Label) HasParent() bool { return lbl.Parent != nil }

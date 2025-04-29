@@ -46,6 +46,8 @@ func NodeList_SortByFValue_Ascending(list []*ImatNode, start, target coords.Coor
 	// fmt.Printf("ZEROS: %d --------\n", ZEROS)
 
 }
+
+/**/
 func NodeList_SortByFValue_DESC(list []*ImatNode, start, target coords.CoordInts) {
 	// ZEROS := 0
 	slices.SortFunc(list, func(a, e *ImatNode) int {
@@ -73,6 +75,7 @@ func NodeList_SortByFValue_DESC(list []*ImatNode, start, target coords.CoordInts
 
 }
 
+/**/
 func NodeList_SortByHValue_Ascending(list []*ImatNode) {
 	slices.SortFunc(list, func(a, e *ImatNode) int {
 		aVal := a.GetHValue()
@@ -86,6 +89,8 @@ func NodeList_SortByHValue_Ascending(list []*ImatNode) {
 		}
 	})
 }
+
+/**/
 func NodeList_RemoveDuplicates_ToReturn(inList []*ImatNode) (outList []*ImatNode) {
 	outList = make([]*ImatNode, len(inList))
 	copy(outList, inList)
@@ -177,16 +182,18 @@ func NodeList_SortByHValue_Ascending_toReturn(list []*ImatNode) (outlist []*Imat
 	slices.SortFunc(outlist, func(a, e *ImatNode) int {
 		aVal := a.GetHValue()
 		eVal := e.GetHValue()
-		if a == e {
-			return 0
-		} else if aVal < eVal {
+		if aVal < eVal {
 			return -1
-		} else {
+		} else if aVal > eVal {
 			return 1
+		} else {
+			return 0
 		}
 	})
 	return outlist
 }
+
+/**/
 func NodeList_FILTER_LIST(in_list_00, in_list01 []*ImatNode) (outlist_00 []*ImatNode) {
 	// outlist_00 = make([]*ImatNode, len(in_list_00))
 	// copy(outlist_00, in_list_00)
@@ -299,6 +306,7 @@ func NodeList_PopFromFront(inArray []*ImatNode) (reNode *ImatNode, retArray []*I
 	return reNode, retArray
 }
 
+/**/
 func NodeList_Convert_Nodes_To_CoordList(inNode *ImatNode) (ret_coordList coords.CoordList) {
 	ret_coordList = make(coords.CoordList, 0)
 	tempTail := inNode.GetHead()

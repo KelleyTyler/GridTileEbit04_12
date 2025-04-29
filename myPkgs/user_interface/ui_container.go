@@ -21,6 +21,7 @@ type UI_ButtonPanel struct {
 	//update_Image                bool
 }
 
+/**/
 func (btnPanel *UI_ButtonPanel) Init(PanelName string, backend *UI_Backend, position, dimensions coords.CoordInts, ParentPos *coords.CoordInts) {
 	btnPanel.Backend = backend
 	btnPanel.Style = &backend.Style
@@ -36,12 +37,15 @@ func (btnPanel *UI_ButtonPanel) Init(PanelName string, backend *UI_Backend, posi
 
 }
 
+/**/
 func (btnPanel *UI_ButtonPanel) AddButton(btnLabel string, relPos, dimen coords.CoordInts, btntype uint8) {
 	tempbtn := UI_Button{}
 	tempbtn.Init_00(btnPanel.Backend, btnLabel, relPos, dimen, uint8(btntype), nil)
 	btnPanel.Buttons = append(btnPanel.Buttons, tempbtn)
 	btnPanel.ButtonOuts = append(btnPanel.ButtonOuts, false)
 }
+
+/**/
 func (btnPanel *UI_ButtonPanel) Update() {
 
 	// for i, _ := range btnPanel.ButtonOuts {
@@ -58,6 +62,7 @@ func (btnPanel *UI_ButtonPanel) Update() {
 	btnPanel.Update_Drawing()
 }
 
+/**/
 func (btnPanel *UI_ButtonPanel) Update_Drawing() {
 	btnPanel.Label.Draw(btnPanel.BackgroundImg)
 	for _, btn := range btnPanel.Buttons {
@@ -65,6 +70,7 @@ func (btnPanel *UI_ButtonPanel) Update_Drawing() {
 	}
 }
 
+/**/
 func (btnPanel *UI_ButtonPanel) Draw(screen *ebiten.Image) {
 
 	ops := ebiten.DrawImageOptions{}
@@ -74,6 +80,7 @@ func (btnPanel *UI_ButtonPanel) Draw(screen *ebiten.Image) {
 	screen.DrawImage(btnPanel.BackgroundImg, &ops)
 }
 
+/**/
 func (btnPanel *UI_ButtonPanel) AddButtons_Row_TypeA(labels []string, InitialPosition, dimensions coords.CoordInts, Btntypes []uint8) {
 	tempHSpace := dimensions.X + btnPanel.btnspacing.X
 
