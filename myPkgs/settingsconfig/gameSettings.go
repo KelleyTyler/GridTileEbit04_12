@@ -27,6 +27,7 @@ type GameSettings struct {
 	GameBoardTile_Margin_Y int `json:"game_board_tile_margin_y,"`
 }
 
+/**/
 func (sets *GameSettings) ToString() string {
 	outstrng := fmt.Sprintf("SETTINGS:\n%12s: %s\n", "VERSION", sets.VersionID)
 	outstrng += fmt.Sprintf("%12s: %3d %3d\n", "Window Size", sets.WindowSizeX, sets.WindowSizeY)
@@ -58,9 +59,7 @@ func GetBytesFromJSON(filePath string) ([]byte, error) {
 	return rdal, nil
 }
 
-//	func(gSets *GameSettings) GetSettingsFromJSON(){
-//		get
-//	}
+/**/
 func GetSettingsFromJSON() GameSettings {
 	var gSets GameSettings
 	bee, err0 := GetBytesFromJSON("init.JSON")
@@ -75,6 +74,7 @@ func GetSettingsFromJSON() GameSettings {
 	return gSets
 }
 
+/**/
 func GetSettingsFromBakedIn() GameSettings {
 	var gSets GameSettings = GameSettings{
 		VersionID:              "0.0.00",

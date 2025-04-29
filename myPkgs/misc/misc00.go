@@ -3,7 +3,7 @@ package misc
 /*
 	I intend this for semi-useful and likely redundant(wheel re-inventing) functions and structures;
 */
-
+/**/
 func IsNumInIntArray(num int, intArray []int) bool {
 	answer := false
 	for _, a := range intArray {
@@ -14,6 +14,7 @@ func IsNumInIntArray(num int, intArray []int) bool {
 	return answer
 }
 
+/**/
 func IsNumInIntArrayAndWhat_singleint(voidValue, num int, intArray []int) int {
 	answer := voidValue
 	for _, a := range intArray {
@@ -23,6 +24,8 @@ func IsNumInIntArrayAndWhat_singleint(voidValue, num int, intArray []int) int {
 	}
 	return answer
 }
+
+/**/
 func IsNumInIntArrayAndWhat_boolInt(num int, intArray []int) (bool, int) {
 	answer0 := false
 	answer1 := -7
