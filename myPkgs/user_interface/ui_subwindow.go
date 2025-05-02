@@ -76,6 +76,7 @@ type UI_Window struct {
 	Scroller_02 UI_Scrollbar
 
 	errorMsgString string
+	ScrollPane     UI_Scrollpane
 	// tObject   UI_Object
 }
 
@@ -115,8 +116,8 @@ func (ui_win *UI_Window) Init(idLabels []string, backend *UI_Backend, style *UI_
 	ui_win.CloseButton.Redraw()
 	ui_win.Redraw()
 
-	btnWidth_two := (btnWidth) - 2
-	btnWidth = 16
+	// btnWidth_two := (btnWidth) - 2
+	// btnWidth = 16
 	//---------------------------------- This Needs To be 'dealt with' somehow; not sure 'how' but 'somehow'
 	// ui_win.tObject = ui_win.textfield
 	// ui_win.Textfield.Init([]string{"window_textfield", ""}, backend, nil, coords.CoordInts{X: 9, Y: Dimensions.Y - 76}, coords.CoordInts{X: Dimensions.X - 18, Y: ui_win.Window_Label.Dimensions.Y * 1})
@@ -124,18 +125,20 @@ func (ui_win *UI_Window) Init(idLabels []string, backend *UI_Backend, style *UI_
 	// ui_win.Textfield.Redraw()
 	// ui_win.Redraw()
 	// ui_win.Scroller.Init([]string{"window_close_button", "X"}, backend, style, coords.CoordInts{X: 0, Y: 30}, coords.CoordInts{X: Dimensions.Y - 26, Y: 16})
-	ui_win.Scroller.Init([]string{"window_close_button", "X"}, backend, style, coords.CoordInts{X: Dimensions.X - btnWidth, Y: btnWidth_two}, coords.CoordInts{X: btnWidth, Y: Dimensions.Y - btnWidth_two - btnWidth})
+	// ui_win.Scroller.Init([]string{"window_close_button", "X"}, backend, style, coords.CoordInts{X: Dimensions.X - btnWidth, Y: btnWidth_two}, coords.CoordInts{X: btnWidth, Y: Dimensions.Y - btnWidth_two - btnWidth})
 
-	ui_win.Scroller.SetVals(5, 1, -5, 10, 0)
-	ui_win.Scroller.Redraw()
-	ui_win.Scroller.Init_Parents(ui_win)
-	ui_win.Redraw()
+	// ui_win.Scroller.SetVals(5, 1, -5, 10, 0)
+	// ui_win.Scroller.Redraw()
+	// ui_win.Scroller.Init_Parents(ui_win)
+	// ui_win.Redraw()
 
-	ui_win.Scroller_02.Init([]string{"window_close_button", "X"}, backend, style, coords.CoordInts{X: 0, Y: Dimensions.Y - btnWidth}, coords.CoordInts{X: Dimensions.X - btnWidth, Y: btnWidth})
-	ui_win.Scroller_02.SetVals(5, 1, -5, 10, 0)
+	// ui_win.Scroller_02.Init([]string{"window_close_button", "X"}, backend, style, coords.CoordInts{X: 0, Y: Dimensions.Y - btnWidth}, coords.CoordInts{X: Dimensions.X - btnWidth, Y: btnWidth})
+	// ui_win.Scroller_02.SetVals(5, 1, -5, 10, 0)
 
-	ui_win.Scroller_02.Redraw()
-	ui_win.Scroller_02.Init_Parents(ui_win)
+	// ui_win.Scroller_02.Redraw()
+	// ui_win.Scroller_02.Init_Parents(ui_win)
+	ui_win.ScrollPane.Init([]string{"windowScrollPane", "Scroll pane"}, backend, style, coords.CoordInts{X: 0, Y: btnWidth}, coords.CoordInts{X: 150, Y: 150}) //Dimensions.X - btnWidth Dimensions.Y - btnWidth
+	ui_win.ScrollPane.Init_Parents(ui_win)
 	ui_win.Redraw()
 
 	// ui_win.Button_Submit.Init([]string{"window_submit_button", "Submit"}, backend, nil, coords.CoordInts{X: (Dimensions.X / 2) - 32, Y: Dimensions.Y - 40}, coords.CoordInts{X: 64, Y: 32})
