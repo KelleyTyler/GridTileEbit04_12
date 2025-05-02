@@ -1,7 +1,7 @@
 package matrix
 
 import (
-	"fmt"
+	"log"
 	"math/rand"
 
 	coords "github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/coords"
@@ -17,7 +17,7 @@ func (imat *IntegerMatrix2D) BasicDecay_Step(value_to_set_as, fails int, Frontie
 		tempFrontier2 := make(coords.CoordList, 0)
 		t := imat.SetValAtCoord(c, value_to_set_as)
 		if !t {
-			fmt.Printf("\nFAILURE TO SET VALUE\n")
+			log.Printf("\nFAILURE TO SET VALUE\n")
 		}
 		tempcoordList, tempValslist := imat.GetNeighborsAndValues_Cardinal(c, margins)
 		if tempValslist[0] != -1 && tempValslist[0] != value_to_set_as { //&& imat.IsValidCoordsWithinMargins(margins, tempcoordList[0])
@@ -41,7 +41,7 @@ func (imat *IntegerMatrix2D) BasicDecay_Step(value_to_set_as, fails int, Frontie
 			tempFrontier.RemoveCoord(c)
 		} else {
 			fails++
-			fmt.Printf("FAILS Temp.len = %3d %3d\n", len(tempFrontier), len(tempFrontier2))
+			log.Printf("FAILS Temp.len = %3d %3d\n", len(tempFrontier), len(tempFrontier2))
 			tempFrontier.RemoveCoord(c)
 		}
 
@@ -86,28 +86,47 @@ func (imat *IntegerMatrix2D) PrimLike_Maze_Algorithm_Step(FCL_Num, fails, maxfai
 			sWBool := !misc.IsNumInIntArray(tempar[5], filterFor)
 			wWBool := !misc.IsNumInIntArray(tempar[6], filterFor)
 			nWBool := !misc.IsNumInIntArray(tempar[7], filterFor)
-			if nNBool && nEBool && nWBool { //tempar[0] != -1 && tempar[0] != 1 && tempar[0] != 4
-				temp.PushToBack(templist[0])
-				frustration = false
-			}
-			if eEBool && nEBool && sEBool { //tempar[2] != -1 && tempar[2] != 1 && tempar[2] != 4
-				temp.PushToBack(templist[2])
 
-				frustration = false
-			}
-			if sSBool && sEBool && sWBool { //tempar[4] != -1 && tempar[4] != 1 && tempar[4] != 4
-				temp.PushToBack(templist[4])
-				frustration = false
-			}
-			if wWBool && nWBool && sWBool { //tempar[6] != -1 && tempar[6] != 1 && tempar[6] != 4
-				temp.PushToBack(templist[6])
-				frustration = false
-			}
 			if culldiagonals {
+				if nNBool && nEBool && nWBool { //tempar[0] != -1 && tempar[0] != 1 && tempar[0] != 4
+					temp.PushToBack(templist[0])
+					frustration = false
+				}
+				if eEBool && nEBool && sEBool { //tempar[2] != -1 && tempar[2] != 1 && tempar[2] != 4
+					temp.PushToBack(templist[2])
+
+					frustration = false
+				}
+				if sSBool && sEBool && sWBool { //tempar[4] != -1 && tempar[4] != 1 && tempar[4] != 4
+					temp.PushToBack(templist[4])
+					frustration = false
+				}
+				if wWBool && nWBool && sWBool { //tempar[6] != -1 && tempar[6] != 1 && tempar[6] != 4
+					temp.PushToBack(templist[6]) //nEBool && sEBool
+					frustration = false
+				}
 				temp.RemoveCoord(templist[1])
 				temp.RemoveCoord(templist[3])
 				temp.RemoveCoord(templist[5])
 				temp.RemoveCoord(templist[7])
+			} else {
+				if nNBool && nEBool && nWBool { //tempar[0] != -1 && tempar[0] != 1 && tempar[0] != 4
+					temp.PushToBack(templist[0]) //(sEBool || sWBool)&& (eEBool || wWBool)
+					frustration = false
+				}
+				if eEBool && nEBool && sEBool { //tempar[2] != -1 && tempar[2] != 1 && tempar[2] != 4
+					temp.PushToBack(templist[2]) //(sWBool || nWBool) && (nNBool || sSBool)
+
+					frustration = false
+				}
+				if sSBool && sEBool && sWBool { //tempar[4] != -1 && tempar[4] != 1 && tempar[4] != 4
+					temp.PushToBack(templist[4]) //(nEBool || nWBool)&& (eEBool || wWBool)
+					frustration = false
+				}
+				if wWBool && nWBool && sWBool { //tempar[6] != -1 && tempar[6] != 1 && tempar[6] != 4
+					temp.PushToBack(templist[6]) //(nEBool || sEBool)&& (nNBool || sSBool)
+					frustration = false
+				}
 			}
 		} else {
 			imat.SetValAtCoord(c, wallVals[0]) //----

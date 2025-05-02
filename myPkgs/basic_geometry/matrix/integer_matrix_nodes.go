@@ -1,6 +1,10 @@
 package matrix
 
-import coords "github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/coords"
+import (
+	"math"
+
+	coords "github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/coords"
+)
 
 /**/
 type ImatNode struct {
@@ -9,6 +13,7 @@ type ImatNode struct {
 	Next                    *ImatNode //make this an array??? (see argument Against such an action)
 	Iteration               int
 	ValueOnGrid             int
+	Move_Cost               int
 	F_Value                 float64
 	G_Value                 float64
 	H_Value                 float64
@@ -44,6 +49,7 @@ func GetNode(start, point, target coords.CoordInts, imat IntegerMatrix2D, parent
 		temp.ValueOnGrid = imat.GetValueOnCoord(point)
 	}
 	if parent != nil {
+		temp.Move_Cost = temp.Get_Move_Cost_Int()
 		temp.Prev = parent
 		temp.Iteration = temp.GetInteration()
 		temp.G_Value = temp.GetGValue()
@@ -51,6 +57,7 @@ func GetNode(start, point, target coords.CoordInts, imat IntegerMatrix2D, parent
 		temp.F_Value = temp.GetFValue()
 
 	}
+
 	return temp
 }
 
@@ -109,15 +116,42 @@ func (node *ImatNode) SetChildrenOfParents() {
  */
 func (node *ImatNode) GetFValue() (fVal float64) {
 	fVal = node.GetGValue() + node.GetHValue()
+	// fVal = node.G_Value + node.H_Value
 	return fVal
 }
 
 /*
-	this is the cost-so-far so the movement distance to start;
+ */
+func (node *ImatNode) SetFValue() (fVal float64) {
+	// fVal = node.GetGValue() + node.GetHValue()
+	fVal = node.GetGValue() + node.GetHValue()
+	node.F_Value = fVal
+	return fVal
+}
+
+/*
+this is the cost-so-far so the movement distance to start;
 */
 func (node *ImatNode) GetGValue() (gVal float64) {
 	// gVal = node.Position.GetHypotenuseDistance_Float(node.Start) //this is a faster result
-	gVal = node.GetMovementDistanceToStart()
+	gVal = float64(node.Move_Cost)
+
+	// gVal = node.GetMovementDistanceToStart() + float64(node.Move_Cost)
+	// gVal = +float64(node.Move_Cost) - node.GetMovementDistanceToStart()
+	// gVal = node.G_Value
+	return gVal
+}
+
+/*
+this is the cost-so-far so the movement distance to start;
+*/
+func (node *ImatNode) SetGValue() (gVal float64) {
+	// gVal = node.Position.GetHypotenuseDistance_Float(node.Start) //this is a faster result
+
+	// gVal = +float64(node.Move_Cost) - node.GetMovementDistanceToStart()
+	gVal = float64(node.Move_Cost)
+	node.G_Value = gVal
+	// gVal = float64(node.Move_Cost)
 	return gVal
 }
 
@@ -125,7 +159,43 @@ func (node *ImatNode) GetGValue() (gVal float64) {
  */
 func (node *ImatNode) GetHValue() (hVal float64) {
 	hVal = node.Position.GetHypotenuseDistance_Float(node.Target)
+
+	// hVal = node.H_Value
 	return hVal
+
+}
+
+/*
+ */
+func (node *ImatNode) SetHValue() (hVal float64) {
+	hVal = node.Position.GetHypotenuseDistance_Float(node.Target)
+	node.H_Value = hVal
+	return hVal
+	// node.Position.GetHypotenuseDistance_Float(node.Target)
+	// return node.H_Value
+}
+
+/*
+returns the value of
+*/
+func (node *ImatNode) Get_Move_Cost_Float() (hVal float64) {
+	if node.Prev != nil {
+		node.Prev.Get_Move_Cost_Float()
+		return float64(node.Iteration) + float64(node.ValueOnGrid)
+	} else {
+		node.Iteration = 0
+		return float64(node.Iteration) + float64(node.ValueOnGrid)
+	}
+}
+
+func (node *ImatNode) Get_Move_Cost_Int() int {
+	if node.Prev != nil {
+		node.Move_Cost = node.Prev.Get_Move_Cost_Int() + 1 + int(math.Pow(2, float64(node.ValueOnGrid)))
+		return node.Move_Cost
+	} else {
+		node.Move_Cost = 0
+		return node.Move_Cost + int(math.Pow(2, float64(node.ValueOnGrid)))
+	}
 }
 
 /*
@@ -189,18 +259,17 @@ func (node *ImatNode) GetTail() *ImatNode {
 
 /*
 This sets;
-
-
 */
 func (node *ImatNode) Set_Heads_Tails_On_Up() {
-	if node.Prev != nil {
-		node.Prev.Next = node
-		node.Prev.Set_Heads_Tails_On_Up()
+	if node != nil {
+		if node.Prev != nil {
+			node.Prev.Next = node
+			node.Prev.Set_Heads_Tails_On_Up()
+		}
 	}
 }
 
 /*
-
  */
 func (node *ImatNode) FlipOrder() {
 	// node.fliporderHelper(false)
@@ -209,7 +278,6 @@ func (node *ImatNode) FlipOrder() {
 }
 
 /*
-
  */
 func (node *ImatNode) fliporderHelper(FromHead bool) {
 	if FromHead {
@@ -231,7 +299,6 @@ func (node *ImatNode) fliporderHelper(FromHead bool) {
 }
 
 /*
-
  */
 func (node *ImatNode) PrintFromHead() {
 

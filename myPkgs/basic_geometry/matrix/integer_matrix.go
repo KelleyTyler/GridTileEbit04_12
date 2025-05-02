@@ -2,6 +2,7 @@ package matrix
 
 import (
 	"fmt"
+	"log"
 
 	coords "github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/coords"
 	misc "github.com/KelleyTyler/GridTileEbit04_12/myPkgs/misc"
@@ -91,7 +92,7 @@ func (imat IntegerMatrix2D) GetStrings_withCoordList(c coords.CoordList) []strin
 func (imat IntegerMatrix2D) PrintStrings() {
 	strngs := imat.GetStrings()
 	for i, s := range strngs {
-		fmt.Printf("%d\t %s\n", i-1, s)
+		log.Printf("%d\t %s\n", i-1, s)
 	}
 }
 
@@ -101,7 +102,7 @@ func (imat IntegerMatrix2D) PrintStringsWithCoorList(c coords.CoordList) {
 	strngs0 := imat.GetStrings()
 
 	for i, s := range strngs {
-		fmt.Printf("%d\t %s\t%s\n", i, strngs0[i], s)
+		log.Printf("%d\t %s\t%s\n", i, strngs0[i], s)
 	}
 }
 
@@ -128,7 +129,7 @@ func (imat IntegerMatrix2D) IsValidCoordsWithinMargins(margins [4]uint, c coords
 	ylim, xlim := imat.GetSize()
 	con := !(c.X < int(margins[3]) || c.X > xlim-int(margins[1]+1)) && !(c.Y < int(margins[0]) || c.Y > ylim-int(margins[2]+1))
 	// if !con {
-	// 	fmt.Printf("%s is not in margins", c.ToString())
+	// 	log.Printf("%s is not in margins", c.ToString())
 	// }
 	return con
 }
@@ -148,6 +149,29 @@ func (imat *IntegerMatrix2D) ClearMatrix_To(value int) {
 	for i := range yy {
 		for j := range xx {
 			imat.SetValAtCoord(coords.CoordInts{X: j, Y: i}, value)
+		}
+	}
+}
+
+/**/
+func (imat *IntegerMatrix2D) Convert_All_OldValues_To_NewValue(old_value, new_value int) {
+	x_lim, y_lim := imat.GetSize()
+	for i := range (y_lim / 2) + 1 {
+		for j := range (x_lim / 2) + 1 {
+			xR := x_lim - j
+			yR := y_lim - i
+			if (imat.GetValueOnCoord(coords.CoordInts{X: j, Y: i}) == old_value) {
+				imat.SetValAtCoord(coords.CoordInts{X: j, Y: i}, new_value)
+			}
+			if (imat.GetValueOnCoord(coords.CoordInts{X: xR, Y: i}) == old_value) {
+				imat.SetValAtCoord(coords.CoordInts{X: xR, Y: i}, new_value)
+			}
+			if (imat.GetValueOnCoord(coords.CoordInts{X: j, Y: yR}) == old_value) {
+				imat.SetValAtCoord(coords.CoordInts{X: j, Y: yR}, new_value)
+			}
+			if (imat.GetValueOnCoord(coords.CoordInts{X: xR, Y: yR}) == old_value) {
+				imat.SetValAtCoord(coords.CoordInts{X: xR, Y: yR}, new_value)
+			}
 		}
 	}
 }
@@ -188,7 +212,7 @@ func (imat IntegerMatrix2D) GetNeighborsAndValues_Cardinal(c coords.CoordInts, m
 		outlist[3] = temp //west
 		if imat.IsValidCoordsWithinMargins(margins, temp) {
 			valList[3] = imat.GetValueOnCoord(outlist[3])
-			//fmt.Printf("for 3: %s\t the value on coord is: %d\n", temp.ToString(), imat.GetValueOnCoord(outlist[3]))
+			//log.Printf("for 3: %s\t the value on coord is: %d\n", temp.ToString(), imat.GetValueOnCoord(outlist[3]))
 		} else {
 			valList[3] = -1
 		}

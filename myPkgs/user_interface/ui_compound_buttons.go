@@ -139,57 +139,9 @@ func (nSelect *UI_Num_Select) SetMiddlebuttonMode(mode uint8, additionalLabels [
 func (nSelect *UI_Num_Select) Update() error {
 	nSelect.State = 0
 	Mouse_Pos_X, Mouse_Pos_Y := ebiten.CursorPosition()
-	// var err error
-	state0, to_redraw0, err0 := nSelect.L_Button.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, 0)
-	if err0 != nil {
-		log.Fatal(err0)
-	}
+	_, _, err := nSelect.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, 0)
 
-	if state0 == 2 {
-		// fmt.Printf("BTN L is Clicked %d %t\n", nSelect.CurrValue, nSelect.CurrValue != nSelect.DefaultValue)
-		if nSelect.CurrValue > nSelect.MinValue {
-			nSelect.CurrValue -= nSelect.IterValue
-		}
-
-	}
-	state1, to_redraw1, err1 := nSelect.M_Button.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, 0)
-	if err1 != nil {
-		log.Fatal(err1)
-	}
-
-	if state1 == 2 {
-		// fmt.Printf("BTN M is Clicked %d  %d %d %t\n", nSelect.CurrValue, nSelect.IterValue, nSelect.MinValue, nSelect.CurrValue != nSelect.DefaultValue)
-		if nSelect.MiddleButtonMode == 0 {
-			if nSelect.CurrValue != nSelect.DefaultValue {
-				nSelect.CurrValue = nSelect.DefaultValue
-			}
-		} else {
-			nSelect.State = 2
-		}
-	}
-	state2, to_redraw2, err2 := nSelect.R_Button.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, 0)
-	if err2 != nil {
-		log.Fatal(err2)
-	}
-
-	if state2 == 2 {
-
-		if nSelect.CurrValue < nSelect.MaxValue {
-			nSelect.CurrValue = nSelect.CurrValue + nSelect.IterValue
-			//fmt.Printf("BTN R is Clicked %d %t\n", nSelect.CurrValue, nSelect.CurrValue < nSelect.MaxValue)
-		}
-	}
-
-	// if nSelect.IsMovable {
-	// 	if nSelect.IsCursorInBounds() {
-
-	// 	}
-	// }
-	if to_redraw0 || to_redraw1 || to_redraw2 {
-		nSelect.M_Button.Label = fmt.Sprintf("%d", nSelect.CurrValue)
-		nSelect.Redraw()
-	}
-	return nil
+	return err
 }
 
 /*
@@ -211,65 +163,26 @@ func (nSelect *UI_Num_Select) Update_Any() (any, error) {
 func (nSelect *UI_Num_Select) Update_Ret_State_Redraw_Status() (uint8, bool, error) {
 	nSelect.State = 0
 	Mouse_Pos_X, Mouse_Pos_Y := ebiten.CursorPosition()
-	// var err error
-	state0, to_redraw0, err0 := nSelect.L_Button.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, 0)
-	if err0 != nil {
-		log.Fatal(err0)
-	}
-
-	if state0 == 2 {
-		// fmt.Printf("BTN L is Clicked %d %t\n", nSelect.CurrValue, nSelect.CurrValue != nSelect.DefaultValue)
-
-		if nSelect.CurrValue > nSelect.MinValue {
-			nSelect.CurrValue -= nSelect.IterValue
-		}
-	}
-	state1, to_redraw1, err1 := nSelect.M_Button.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, 0)
-	if err1 != nil {
-		log.Fatal(err1)
-	}
-
-	if state1 == 2 {
-		// fmt.Printf("BTN M is Clicked %d  %d %d %t\n", nSelect.CurrValue, nSelect.IterValue, nSelect.MinValue, nSelect.CurrValue != nSelect.DefaultValue)
-		if nSelect.MiddleButtonMode == 0 {
-			if nSelect.CurrValue != nSelect.DefaultValue {
-				nSelect.CurrValue = nSelect.DefaultValue
-			}
-		} else {
-			nSelect.State = 2
-		}
-	}
-	state2, to_redraw2, err2 := nSelect.R_Button.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, 0)
-	if err2 != nil {
-		log.Fatal(err2)
-	}
-
-	if state2 == 2 {
-
-		if nSelect.CurrValue < nSelect.MaxValue {
-			nSelect.CurrValue = nSelect.CurrValue + nSelect.IterValue
-			//fmt.Printf("BTN R is Clicked %d %t\n", nSelect.CurrValue, nSelect.CurrValue < nSelect.MaxValue)
-		}
-	}
-
-	// if nSelect.IsMovable {
-	// 	if nSelect.IsCursorInBounds() {
-
-	// 	}
-	// }
-	export_redraw := false
-	if to_redraw0 || to_redraw1 || to_redraw2 {
-		nSelect.M_Button.Label = fmt.Sprintf("%03d", nSelect.CurrValue)
-		nSelect.Redraw()
-		export_redraw = true
-	}
-
-	return nSelect.State, export_redraw, nil
+	return nSelect.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, 0)
 }
 
 /*
  */
 func (nSelect *UI_Num_Select) SetPosition(Position coords.CoordInts) { nSelect.Position = Position }
+
+/**/
+func (nSelect *UI_Num_Select) SetPosition_Int(X, Y int) {
+
+}
+
+/**/
+func (nSelect *UI_Num_Select) GetDimensions_Int() (int, int) {
+	return 0, 0
+} //
+/**/
+func (nSelect *UI_Num_Select) SetDimensions_Int(int, int) {
+
+}
 
 /*
 Update_Ret_State_Redraw_Status
@@ -282,7 +195,7 @@ func (nSelect *UI_Num_Select) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, 
 	}
 
 	if state0 == 2 {
-		// fmt.Printf("BTN L is Clicked %d %t\n", nSelect.CurrValue, nSelect.CurrValue != nSelect.DefaultValue)
+		// log.Printf("BTN L is Clicked %d %t\n", nSelect.CurrValue, nSelect.CurrValue != nSelect.DefaultValue)
 
 		if nSelect.CurrValue > nSelect.MinValue {
 			nSelect.CurrValue -= nSelect.IterValue
@@ -294,7 +207,7 @@ func (nSelect *UI_Num_Select) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, 
 	}
 
 	if state1 == 2 {
-		// fmt.Printf("BTN M is Clicked %d  %d %d %t\n", nSelect.CurrValue, nSelect.IterValue, nSelect.MinValue, nSelect.CurrValue != nSelect.DefaultValue)
+		// log.Printf("BTN M is Clicked %d  %d %d %t\n", nSelect.CurrValue, nSelect.IterValue, nSelect.MinValue, nSelect.CurrValue != nSelect.DefaultValue)
 		if nSelect.MiddleButtonMode == 0 {
 			if nSelect.CurrValue != nSelect.DefaultValue {
 				nSelect.CurrValue = nSelect.DefaultValue
@@ -312,7 +225,7 @@ func (nSelect *UI_Num_Select) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, 
 
 		if nSelect.CurrValue < nSelect.MaxValue {
 			nSelect.CurrValue = nSelect.CurrValue + nSelect.IterValue
-			//fmt.Printf("BTN R is Clicked %d %t\n", nSelect.CurrValue, nSelect.CurrValue < nSelect.MaxValue)
+			//log.Printf("BTN R is Clicked %d %t\n", nSelect.CurrValue, nSelect.CurrValue < nSelect.MaxValue)
 		}
 	}
 
@@ -323,7 +236,7 @@ func (nSelect *UI_Num_Select) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, 
 	// }
 	export_redraw := false
 	if to_redraw0 || to_redraw1 || to_redraw2 {
-		nSelect.M_Button.Label = fmt.Sprintf("%d", nSelect.CurrValue)
+		nSelect.M_Button.Label = fmt.Sprintf("%03d", nSelect.CurrValue)
 		nSelect.Redraw()
 		export_redraw = true
 	}
@@ -350,25 +263,7 @@ func (nSelect *UI_Num_Select) ToString() string {
 func (nSelect *UI_Num_Select) IsCursorInBounds() bool {
 	if nSelect.IsActive && nSelect.IsVisible {
 		cX, cY := ebiten.CursorPosition()
-		var x0, y0, x1, y1 int
-
-		if nSelect.Parent != nil {
-			px, py := nSelect.Parent.GetPosition_Int()
-			x0 = nSelect.Position.X + px
-			y0 = nSelect.Position.Y + py
-			x1 = nSelect.Position.X + nSelect.Dimensions.X + px
-			y1 = nSelect.Position.Y + nSelect.Dimensions.Y + py
-			// x0 = nSelect.Position.X + nSelect.ParentPos.X
-			// y0 = nSelect.Position.Y + nSelect.ParentPos.X
-			// x1 = nSelect.Position.X + nSelect.ParentPos.X + nSelect.Dimensions.X
-			// y1 = nSelect.Position.Y + nSelect.ParentPos.Y + nSelect.Dimensions.Y
-		} else {
-			x0 = nSelect.Position.X
-			y0 = nSelect.Position.Y
-			x1 = nSelect.Position.X + nSelect.Dimensions.X
-			y1 = nSelect.Position.Y + nSelect.Dimensions.Y
-		}
-		return (cX > x0 && cX < x1) && (cY > y0 && cY < y1)
+		return nSelect.IsCursorInBounds_MousePort(cX, cY, 0)
 	}
 	return false
 }
@@ -451,3 +346,5 @@ func (nSelect *UI_Num_Select) HasParent() bool { return nSelect.Parent != nil }
 
 /**/
 func (nSelect *UI_Num_Select) GetParent() UI_Object { return nSelect.Parent }
+
+/**/

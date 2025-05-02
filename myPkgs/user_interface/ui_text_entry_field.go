@@ -1,8 +1,8 @@
 package user_interface
 
 import (
-	"fmt"
 	"image/color"
+	"log"
 	"strings"
 
 	"github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/coords"
@@ -118,7 +118,7 @@ func (tef *UI_TextEntryField) Redraw() {
 } //--
 
 func (tef *UI_TextEntryField) Predraw() {
-	//fmt.Printf("PREDRAW")
+	//log.Printf("PREDRAW")
 	// tef.Image.Fill(color.RGBA{255, 255, 255, 255})
 	tef.Redraw()
 
@@ -145,7 +145,7 @@ func (tef *UI_TextEntryField) Get_String_Output() (strng string) {
 	strng = tef.DataField
 
 	tef.DataField = ""
-	fmt.Printf("DATAFIELD : %s\n", tef.DataField)
+	log.Printf("DATAFIELD : %s\n", tef.DataField)
 	return strng
 }
 
@@ -175,7 +175,7 @@ func (tef *UI_TextEntryField) Update() error {
 		// if len(ss) > tef.maxLines {
 		// 	tef.DataStrng = strings.Join(ss[len(ss)-tef.maxLines:], "\n")
 		// } else if len(tef.DataStrng) > 10 {
-		// 	fmt.Printf("%d \n", len(ss))
+		// 	log.Printf("%d \n", len(ss))
 		// }
 		if len(ss) > int(tef.maxLines) {
 			tef.DataField = strings.Join(ss[len(ss)-int(tef.maxLines):], "\n")
@@ -251,6 +251,23 @@ func (tef *UI_TextEntryField) GetPosition_Int() (int, int) {
 	}
 }
 
+/**/
+func (tef *UI_TextEntryField) SetPosition_Int(x_point, y_point int) {
+	tef.Position = coords.CoordInts{X: x_point, Y: y_point}
+}
+
+/**/
+func (tef *UI_TextEntryField) GetDimensions_Int() (int, int) {
+	return tef.Dimensions.X, tef.Dimensions.Y
+}
+
+/**/
+func (tef *UI_TextEntryField) SetDimensions_Int(x_point, y_point int) {
+	tef.Dimensions = coords.CoordInts{X: x_point, Y: y_point}
+	//---Redraw The S
+}
+
+/**/
 func (tef *UI_TextEntryField) GetState() uint8          { return 0 }
 func (tef *UI_TextEntryField) ToString() string         { return "" }
 func (tef *UI_TextEntryField) IsInit() bool             { return false }

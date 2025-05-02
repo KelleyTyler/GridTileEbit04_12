@@ -61,8 +61,8 @@ func (aud *GeneratedSoundSet) PlayThing(num int) {
 	p := aud.AudioContext.NewPlayerF32FromBytes(aud.Sounds[num])
 	p.SetVolume(float64(aud.GSettings.UIAudioVolume) / 100)
 	p.Play()
-	// fmt.Printf("PLAY THING %d --- %5.2f -----\n", len(aud.Sounds[num]), p.Volume())
-	// fmt.Printf("%v %v %v %v %v %v %v \n", aud.Sounds[num][0], aud.Sounds[num][500], aud.Sounds[num][1000], aud.Sounds[num][1500], aud.Sounds[num][2000], aud.Sounds[num][2500], aud.Sounds[num][3000])
+	// log.Printf("PLAY THING %d --- %5.2f -----\n", len(aud.Sounds[num]), p.Volume())
+	// log.Printf("%v %v %v %v %v %v %v \n", aud.Sounds[num][0], aud.Sounds[num][500], aud.Sounds[num][1000], aud.Sounds[num][1500], aud.Sounds[num][2000], aud.Sounds[num][2500], aud.Sounds[num][3000])
 }
 
 /**/

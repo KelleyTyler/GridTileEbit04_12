@@ -106,7 +106,7 @@ func (btn *UI_Button) Init(label []string, bckend *UI_Backend, style *UI_Object_
 func (btn *UI_Button) Init_Parents(parent UI_Object) error {
 	btn.Parent = parent
 	parent.AddChild(btn)
-	//fmt.Printf("BUTTON ADDING PARENT %t \n", btn.HasParent())
+	//log.Printf("BUTTON ADDING PARENT %t \n", btn.HasParent())
 	btn.Redraw()
 	btn.Parent.Redraw()
 	return nil
@@ -155,57 +155,10 @@ func (btn UI_Button) Draw(screen *ebiten.Image) error {
 
 /**/
 func (btn *UI_Button) Update() error {
-	// fmt.Printf("btn tick\n")
-	// xx, yy := ebiten.CursorPosition()
-	// q := btn.Position.X
-	// r := btn.Position.X
-	// s := 0
-	// t := 0
-	// if btn.HasParent() {
-	// 	s, t = btn.Parent.GetPosition_Int()
-	// }
-	// if ebiten.IsKeyPressed(ebiten.Key0) {
-	// 	fmt.Printf("HAH %s %d %d %t %d %d \n", btn.Label, xx, yy, btn.HasParent(), q+s, r+t)
-	// }
-	if btn.IsCursorInBounds() {
-		if btn.Btn_Type == 10 {
-			if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
-				btn.IsToggled = !btn.IsToggled
+	xx, yy := ebiten.CursorPosition()
+	_, _, err := btn.Update_Ret_State_Redraw_Status_Mport(xx, yy, 0)
 
-				btn.State = 2
-				btn.Backend.PlaySound(3)
-			} else {
-				btn.State = 1
-			}
-			btn.ToRedraw = true
-
-		} else {
-			if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
-				btn.State = 2
-				btn.Backend.PlaySound(1)
-				btn.Redraw()
-			} else {
-				if btn.State != 1 {
-					// if btn.State != 2 {
-					// 	btn.Backend.PlaySound(1)
-					// }
-					btn.ToRedraw = true
-					btn.State = 1
-				}
-			}
-		}
-	} else {
-		if btn.State > 0 {
-			btn.State -= 1
-		}
-	}
-
-	if btn.ToRedraw {
-		btn.Redraw()
-		// fmt.Printf("REDRAW\n")
-		btn.ToRedraw = false
-	}
-	return nil
+	return err
 }
 
 // /*This is going to be removed when I revise UI_OBJECT's and similar things*/
@@ -251,7 +204,7 @@ func (btn *UI_Button) Update() error {
 
 // 	if btn.ToRedraw {
 // 		btn.Redraw()
-// 		// fmt.Printf("REDRAW\n")
+// 		// log.Printf("REDRAW\n")
 // 		btn.ToRedraw = false
 // 	}
 
@@ -270,54 +223,8 @@ func (btn *UI_Button) Update_Unactive() error {
 
 /**/
 func (btn *UI_Button) Update_Ret_State_Redraw_Status() (uint8, bool, error) {
-	to_redraw := false
-	if btn.IsCursorInBounds() {
-		if btn.Btn_Type == 10 {
-			if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
-				btn.IsToggled = !btn.IsToggled
-
-				btn.State = 2
-				btn.Backend.PlaySound(3)
-			} else {
-				btn.State = 1
-			}
-			btn.ToRedraw = true
-			to_redraw = true
-			//btn.Backend.PlaySound(1)
-		} else {
-			if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
-				btn.State = 2
-				btn.Backend.PlaySound(1)
-				btn.Redraw()
-				return btn.GetState(), true, nil
-			} else {
-				//btn.Backend.PlaySound(1)
-				if btn.State != 1 {
-					// if btn.State != 2 {
-					// 	btn.Backend.PlaySound(1)
-					// }
-					btn.ToRedraw = true
-					to_redraw = true
-					btn.State = 1
-				}
-			}
-
-		}
-	} else {
-		if btn.State > 0 {
-			btn.State = 0
-			btn.ToRedraw = true
-			to_redraw = true
-		}
-	}
-
-	if btn.ToRedraw {
-		btn.Redraw()
-		// fmt.Printf("REDRAW\n")
-		btn.ToRedraw = false
-	}
-	// return btn.IsToggled, nil
-	return btn.GetState(), to_redraw, nil
+	xx, yy := ebiten.CursorPosition()
+	return btn.Update_Ret_State_Redraw_Status_Mport(xx, yy, 0)
 }
 
 /*
@@ -370,7 +277,7 @@ func (btn *UI_Button) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Po
 
 	if btn.ToRedraw {
 		btn.Redraw()
-		// fmt.Printf("REDRAW\n")
+		// log.Printf("REDRAW\n")
 		btn.ToRedraw = false
 	}
 	return btn.GetState(), to_redraw, nil
@@ -380,16 +287,18 @@ func (btn *UI_Button) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Po
 func (btn *UI_Button) IsCursorInBounds() bool {
 	if btn.IsVisible && btn.IsActive {
 		Mouse_Pos_X, Mouse_Pos_Y := ebiten.CursorPosition()
-		x0, y0 := btn.Position.X, btn.Position.Y
-		x1, y1 := btn.Position.X+btn.Dimensions.X, btn.Position.Y+btn.Dimensions.Y
-		if btn.Parent != nil {
-			x2, y2 := btn.Parent.GetPosition_Int()
-			x0 += x2
-			y0 += y2
-			x1 += x2
-			y1 += y2
-		}
-		return (Mouse_Pos_X > x0 && Mouse_Pos_X < x1) && (Mouse_Pos_Y > y0 && Mouse_Pos_Y < y1)
+
+		return btn.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 0)
+		// x0, y0 := btn.Position.X, btn.Position.Y
+		// x1, y1 := btn.Position.X+btn.Dimensions.X, btn.Position.Y+btn.Dimensions.Y
+		// if btn.Parent != nil {
+		// 	x2, y2 := btn.Parent.GetPosition_Int()
+		// 	x0 += x2
+		// 	y0 += y2
+		// 	x1 += x2
+		// 	y1 += y2
+		// }
+		// return (Mouse_Pos_X > x0 && Mouse_Pos_X < x1) && (Mouse_Pos_Y > y0 && Mouse_Pos_Y < y1)
 	}
 	return false
 	// if()
@@ -415,13 +324,13 @@ func (btn *UI_Button) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode 
 }
 
 func (btn *UI_Button) DeToggle() {
-	// fmt.Printf("DETOGGLE %t\n", btn.IsToggled)
+	// log.Printf("DETOGGLE %t\n", btn.IsToggled)
 	if btn.IsToggled {
 		btn.IsToggled = false
 		btn.State = 0
 		btn.Redraw()
 		if btn.Parent != nil {
-			// fmt.Printf("%t------DEACTIVATE\n", btn.Parent != nil)
+			// log.Printf("%t------DEACTIVATE\n", btn.Parent != nil)
 			btn.Parent.Redraw()
 		}
 	}
@@ -438,6 +347,20 @@ func (btn *UI_Button) GetState() uint8 {
 	} else {
 		return btn.State
 	}
+}
+
+/**/
+func (btn *UI_Button) SetPosition_Int(X, Y int) {
+
+}
+
+/**/
+func (btn *UI_Button) GetDimensions_Int() (int, int) {
+	return 0, 0
+} //
+/**/
+func (btn *UI_Button) SetDimensions_Int(int, int) {
+
 }
 
 /**/

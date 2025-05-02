@@ -76,7 +76,7 @@ func (dTool *Drawing_Tool) InitUI(parent ui.UI_Object, yValue int) {
 	dTool.Label_DrawTool.Init_Parents(parent)
 
 	dTool.NSelect_LineColor.Init([]string{"nselect_line_color", "Line Color"}, dTool.UI_Backend, nil, coords.CoordInts{X: 4, Y: yValue + 34}, coords.CoordInts{X: 64, Y: 32})
-	dTool.NSelect_LineColor.SetVals(0, 1, 0, 10, 0)
+	dTool.NSelect_LineColor.SetVals(0, 1, -1, 10, 0)
 	dTool.NSelect_LineColor.Init_Parents(parent)
 
 	dTool.NSelect_CircleRadius.Init([]string{"nselect_Circ_rad", "CircleRadius"}, dTool.UI_Backend, nil, coords.CoordInts{X: 70, Y: yValue + 34}, coords.CoordInts{X: 64, Y: 32})
@@ -84,7 +84,7 @@ func (dTool *Drawing_Tool) InitUI(parent ui.UI_Object, yValue int) {
 	dTool.NSelect_CircleRadius.Init_Parents(parent)
 
 	dTool.NSelect_FillColor.Init([]string{"nselect_fill_color", "Fill Color"}, dTool.UI_Backend, nil, coords.CoordInts{X: 136, Y: yValue + 34}, coords.CoordInts{X: 64, Y: 32})
-	dTool.NSelect_FillColor.SetVals(0, 1, 0, 10, 0)
+	dTool.NSelect_FillColor.SetVals(0, 1, -1, 10, 0)
 	dTool.NSelect_FillColor.Init_Parents(parent)
 
 	dTool.Button_DrawPoint.Init([]string{"n_draw_point_btn", "Draw\nPoint"}, dTool.UI_Backend, nil, coords.CoordInts{X: 4, Y: yValue + 68}, coords.CoordInts{X: 64, Y: 32})

@@ -35,7 +35,10 @@ type UI_Object interface {
 	IsCursorInBounds() bool                                             //
 	IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode int) bool //
 	GetPosition_Int() (int, int)                                        //
-	GetNumber_Children() int                                            //
+	SetPosition_Int(int, int)                                           //
+	GetDimensions_Int() (int, int)                                      //
+	SetDimensions_Int(int, int)
+	GetNumber_Children() int //
 	GetChild(index int) UI_Object
 	AddChild(child UI_Object) error //
 	RemoveChild(index int) error
@@ -286,6 +289,21 @@ func (prim *UI_Object_Primitive) GetPosition_Int() (int, int) {
 	}
 	return xx, yy
 }
+
+/**/
+func (prim *UI_Object_Primitive) SetPosition_Int(X, Y int) {
+
+}
+
+/**/
+func (prim *UI_Object_Primitive) GetDimensions_Int() (int, int) {
+	return 0, 0
+} //
+/**/
+func (prim *UI_Object_Primitive) SetDimensions_Int(int, int) {
+
+}
+
 func (prim *UI_Object_Primitive) GetNumber_Children() int {
 	return len(prim.Children)
 }

@@ -11,6 +11,7 @@ import (
 
 func main() {
 	game := framework.GetNewGame()
+	// ebiten.SetWindowSize(256, 256)
 	ebiten.SetWindowSize(game.G_Setting.WindowSizeX, game.G_Setting.WindowSizeY)
 	ebiten.SetWindowTitle("GTE_04_12")
 	ebiten.SetVsyncEnabled(true)

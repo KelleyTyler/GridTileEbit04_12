@@ -36,6 +36,7 @@ type Integer_Matrix_Ebiten_DrawOptions struct {
 	SubDiv_00_Offset_X, SubDiv_00_Offset_Y uint8
 	SubDiv_00_Line_thickness               float32
 	SubDiv_00_Line_Colors                  color.Color
+	SubDiv_00_Show                         bool
 }
 
 /**/
@@ -62,7 +63,12 @@ func (Opts *Integer_Matrix_Ebiten_DrawOptions) Update_Opts_From_Argument(UpOps I
 	Opts.BoardPosition = UpOps.BoardPosition
 }
 
-/* This Returns the Most Basic Form Of these, likely useful for the many 'draw grid with lines' requests;*/
+/*
+	This Returns the Most Basic Form Of these, likely useful for the many 'draw grid with lines' requests;
+
+x0,y0 is top left, (on the screen anyway; so down->right is the way the grid works)
+x1,y1 is bottom right
+*/
 func (options *Integer_Matrix_Ebiten_DrawOptions) Modify_Coord_For_Options(coord coords.CoordInts) (x0, y0, x1, y1 float64) {
 	// TileCoord := coords.CoordInts{X: options.TileSize.X * coord.X, Y: options.TileSize.Y * coord.Y}
 	x0 = float64(options.TileSize.X*coord.X) + float64(options.TileSpacing.X*coord.X) + float64(options.BoardMargin.X)
@@ -75,6 +81,18 @@ func (options *Integer_Matrix_Ebiten_DrawOptions) Modify_Coord_For_Options(coord
 	y1 = y0 + float64(options.TileSize.Y)
 	// float_Y1_Spacing := float64(options.TileSpacing.Y * coord.Y)
 	return x0, y0, x1, y1
+}
+
+/*
+this gets the center of the coord;
+*/
+func (options *Integer_Matrix_Ebiten_DrawOptions) GetCoordCenter(coord coords.CoordInts) (xC, yC float64) {
+	x0, y0, x1, y1 := options.Modify_Coord_For_Options(coord)
+
+	xC = (x0 + x1) / 2.0
+	yC = (y0 + y1) / 2.0
+
+	return xC, yC
 }
 
 /* This is the Advanced Version */
@@ -123,7 +141,7 @@ ShowTileLines     []bool
 func (imat IntegerMatrix2D) DrawAGridTile_With_Lines(screen *ebiten.Image, coord coords.CoordInts, clr0 color.Color, options *Integer_Matrix_Ebiten_DrawOptions) {
 
 	x0, y0, x1, y1 := options.Modify_Coord_For_Options(coord)
-
+	// xc, yc := options.GetCoordCenter(coord)
 	vector.DrawFilledRect(screen, float32(x0), float32(y0), float32(options.TileSize.X), float32(options.TileSize.Y), clr0, options.AABody)
 	// TileCoord := coords.CoordInts{X: options.TileSize.X * coord.X, Y: options.TileSize.Y * coord.Y}
 	// TileSpace := CoordInts{X: options.TileSpacing.X * coord.X, Y: options.TileSpacing.Y * coord.Y}
@@ -134,6 +152,7 @@ func (imat IntegerMatrix2D) DrawAGridTile_With_Lines(screen *ebiten.Image, coord
 		vector.StrokeLine(screen, float32(x0), float32(y0), float32(x1), float32(y1), options.TileLineThickness[0], options.TileLineColors[1], options.AALines)
 	}
 	if options.ShowTileLines[2] {
+		// vector.DrawFilledCircle(screen, float32(xc), float32(yc), 1.0, color.Black, true)
 		vector.StrokeLine(screen, float32(x0), float32(y1), float32(x1), float32(y0), options.TileLineThickness[0], options.TileLineColors[2], options.AALines)
 	}
 }
@@ -152,7 +171,9 @@ func (imat IntegerMatrix2D) DrawFullGridFromColors(screen *ebiten.Image, colors 
 	test1X := ((len(imat[0]) * options.TileSize.X) + (len(imat[0]) * options.TileSpacing.X)) + options.BoardMargin.X
 	test1Y := ((len(imat) * options.TileSize.Y) + (len(imat) * options.TileSpacing.Y)) + options.BoardMargin.Y
 	for y, _ := range imat {
+
 		for x, b := range imat[y] {
+
 			//----Draw Lines Here??
 			x0, y0, _, _ := options.Modify_Coord_For_Options(coords.CoordInts{X: x, Y: y})
 
@@ -173,12 +194,52 @@ func (imat IntegerMatrix2D) DrawFullGridFromColors(screen *ebiten.Image, colors 
 			}
 		}
 	}
+	if options.SubDiv_00_Show {
+		imat.DrawSubLines(screen, options)
+
+	}
 	//vector.StrokeRect(screen, float32(OffsetX-0), float32(OffsetY-0), float32(test1X-0), float32(test1Y+0), 2.0, color.RGBA{210, 153, 100, 255}, true) //0, 179, 100, 255
 	if showBoardOL {
 		buffernum00 := 4
 		buffernum01 := 2 * buffernum00
 		vector.StrokeRect(screen, float32(options.BoardMargin.X-buffernum00), float32(options.BoardMargin.Y-buffernum00), float32(test1X-options.BoardMargin.X-options.TileSpacing.X+buffernum01), float32(test1Y-options.BoardMargin.Y-options.TileSpacing.Y+buffernum01), 2.0, color.White, true) //color.RGBA{0, 50, 50, 255}
 	}
+}
+
+/*
+vLine_x0, vLine_y0, _, _ := options.Modify_Coord_For_Options(coords.CoordInts{X: 0, Y: y})
+vLine_x1, vLine_y1, _, _ := options.Modify_Coord_For_Options(coords.CoordInts{X: len(imat[y]), Y: y}) //-float32(options.TileSpacing.X)
+vector.StrokeLine(screen, float32(vLine_x0), float32(vLine_y0), float32(vLine_x1), float32(vLine_y1), 1.0, options.SubDiv_00_Line_Colors, true)
+vector.StrokeLine(screen, float32(vLine_x0), float32(vLine_y0)-float32(options.TileSpacing.Y), float32(vLine_x1), float32(vLine_y1)-float32(options.TileSpacing.Y), 1.0, options.SubDiv_00_Line_Colors, true)
+*/
+func (imat IntegerMatrix2D) DrawSubLines(screen *ebiten.Image, options *Integer_Matrix_Ebiten_DrawOptions) {
+	for y := range len(imat) {
+		if y%int(options.SubDiv_00_Size_Y) == 0 {
+			vLine_x0, vLine_y0, _, _ := options.Modify_Coord_For_Options(coords.CoordInts{X: 0, Y: y})
+			vLine_x1, vLine_y1, _, _ := options.Modify_Coord_For_Options(coords.CoordInts{X: len(imat[y]), Y: y}) //-float32(options.TileSpacing.X)
+			vector.StrokeLine(screen, float32(vLine_x0), float32(vLine_y0), float32(vLine_x1), float32(vLine_y1), 1.0, options.SubDiv_00_Line_Colors, true)
+			vector.StrokeLine(screen, float32(vLine_x0), float32(vLine_y0)-float32(options.TileSpacing.Y), float32(vLine_x1), float32(vLine_y1)-float32(options.TileSpacing.Y), 1.0, options.SubDiv_00_Line_Colors, true)
+
+		}
+	}
+
+	for x := range len(imat[0]) {
+		if x%int(options.SubDiv_00_Size_Y) == 0 {
+			vLine_x0, vLine_y0, _, _ := options.Modify_Coord_For_Options(coords.CoordInts{X: x, Y: 0})
+			vLine_x1, vLine_y1, _, _ := options.Modify_Coord_For_Options(coords.CoordInts{X: x, Y: len(imat)})
+			vector.StrokeLine(screen, float32(vLine_x0), float32(vLine_y0), float32(vLine_x1), float32(vLine_y1), 1.0, options.SubDiv_00_Line_Colors, true)
+			vector.StrokeLine(screen, float32(vLine_x0)-float32(options.TileSpacing.X), float32(vLine_y0), float32(vLine_x1)-float32(options.TileSpacing.X), float32(vLine_y1), 1.0, options.SubDiv_00_Line_Colors, true)
+
+		}
+	}
+
+	_, vLine_y0, vLine_x0, _ := options.Modify_Coord_For_Options(coords.CoordInts{X: len(imat[0]) - 1, Y: 0})
+	_, _, vLine_x1, vLine_y1 := options.Modify_Coord_For_Options(coords.CoordInts{X: len(imat[0]) - 1, Y: len(imat) - 1})
+	vector.StrokeLine(screen, float32(vLine_x0), float32(vLine_y0), float32(vLine_x1), float32(vLine_y1), 1.0, options.SubDiv_00_Line_Colors, true) //options.SubDiv_00_Line_Colors
+
+	vLine_x0, _, _, vLine_y0 = options.Modify_Coord_For_Options(coords.CoordInts{X: 0, Y: len(imat) - 1})
+	_, _, vLine_x1, vLine_y1 = options.Modify_Coord_For_Options(coords.CoordInts{X: len(imat[0]) - 1, Y: len(imat) - 1})
+	vector.StrokeLine(screen, float32(vLine_x0), float32(vLine_y0), float32(vLine_x1), float32(vLine_y1), 1.0, options.SubDiv_00_Line_Colors, true) //options.SubDiv_00_Line_Colors
 }
 
 /*
@@ -204,7 +265,7 @@ func (imat IntegerMatrix2D) GetCoordOfMouseEvent(Raw_Mouse_X, Raw_Mouse_Y, offse
 
 		mXi_02 := (options.TileSize.X * mXi) + (mXi * options.TileSpacing.X) + options.TileSize.X
 		mYi_02 := (options.TileSize.Y * mYi) + (mYi * options.TileSpacing.Y) + options.TileSize.Y
-		//fmt.Printf("0-->%6d,%6d\t%6d,%6d\t rec start: %6d %6d\t %6d %6d \n", Raw_Mouse_X, Raw_Mouse_Y, mXo, mYo, mXi_01, mYi_01, mXi_02, mYi_02)
+		//log.Printf("0-->%6d,%6d\t%6d,%6d\t rec start: %6d %6d\t %6d %6d \n", Raw_Mouse_X, Raw_Mouse_Y, mXo, mYo, mXi_01, mYi_01, mXi_02, mYi_02)
 		if (((mXo) > (mXi_01)) && (mXo) < mXi_02) && ((mYo) > (mYi_01) && mYo < mYi_02) {
 			isOnTile = true
 		}
@@ -237,7 +298,7 @@ func (imat IntMatrix) GetCoordOfMouseEvent(Raw_Mouse_X int, Raw_Mouse_Y int, Off
 
 		mXi_02 := (options.TileSize.X * mXi) + (mXi * options.TileSpacing.X) + options.TileSize.X
 		mYi_02 := (options.TileSize.Y * mYi) + (mYi * GapY) + options.TileSize.Y
-		//fmt.Printf("0-->%6d,%6d\t%6d,%6d\t rec start: %6d %6d\t %6d %6d \n", Raw_Mouse_X, Raw_Mouse_Y, mXo, mYo, mXi_01, mYi_01, mXi_02, mYi_02)
+		//log.Printf("0-->%6d,%6d\t%6d,%6d\t rec start: %6d %6d\t %6d %6d \n", Raw_Mouse_X, Raw_Mouse_Y, mXo, mYo, mXi_01, mYi_01, mXi_02, mYi_02)
 		if (((mXo) > (mXi_01)) && (mXo) < mXi_02) && ((mYo) > (mYi_01) && mYo < mYi_02) {
 			isOnTile = true
 		}

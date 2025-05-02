@@ -43,7 +43,7 @@ func NodeList_SortByFValue_Ascending(list []*ImatNode, start, target coords.Coor
 			}
 		}
 	})
-	// fmt.Printf("ZEROS: %d --------\n", ZEROS)
+	// log.Printf("ZEROS: %d --------\n", ZEROS)
 
 }
 
@@ -66,12 +66,12 @@ func NodeList_SortByFValue_DESC(list []*ImatNode, start, target coords.CoordInts
 				return -1
 			} else {
 				// ZEROS++
-				// fmt.Printf("--------\n")
+				// log.Printf("--------\n")
 				return 0
 			}
 		}
 	})
-	// fmt.Printf("ZEROS: %d --------\n", ZEROS)
+	// log.Printf("ZEROS: %d --------\n", ZEROS)
 
 }
 
@@ -192,8 +192,6 @@ func NodeList_SortByHValue_Ascending_toReturn(list []*ImatNode) (outlist []*Imat
 	})
 	return outlist
 }
-
-/**/
 func NodeList_FILTER_LIST(in_list_00, in_list01 []*ImatNode) (outlist_00 []*ImatNode) {
 	// outlist_00 = make([]*ImatNode, len(in_list_00))
 	// copy(outlist_00, in_list_00)
@@ -252,12 +250,12 @@ func NodeList_GetNeighbors_4_Filtered_Hypentenuse(node *ImatNode, start, target 
 					temp.Target = target
 					retlist = append(retlist, &temp)
 
-					//fmt.Printf("%s IS GOOD\n", c.ToString())
+					//log.Printf("%s IS GOOD\n", c.ToString())
 				} else {
-					//fmt.Printf("%s has problem\n", c.ToString())
+					//log.Printf("%s has problem\n", c.ToString())
 				}
 			} else {
-				//fmt.Printf("%s is Equal\n", c.ToString())
+				//log.Printf("%s is Equal\n", c.ToString())
 			}
 
 		} else {
@@ -266,10 +264,10 @@ func NodeList_GetNeighbors_4_Filtered_Hypentenuse(node *ImatNode, start, target 
 				temp.Target = target
 				retlist = append(retlist, &temp)
 
-				//fmt.Printf("%s IS GOOD\n", c.ToString())
+				//log.Printf("%s IS GOOD\n", c.ToString())
 
 			} else {
-				//fmt.Printf("%s has problem\n", c.ToString())
+				//log.Printf("%s has problem\n", c.ToString())
 			}
 		}
 
@@ -306,7 +304,6 @@ func NodeList_PopFromFront(inArray []*ImatNode) (reNode *ImatNode, retArray []*I
 	return reNode, retArray
 }
 
-/**/
 func NodeList_Convert_Nodes_To_CoordList(inNode *ImatNode) (ret_coordList coords.CoordList) {
 	ret_coordList = make(coords.CoordList, 0)
 	tempTail := inNode.GetHead()

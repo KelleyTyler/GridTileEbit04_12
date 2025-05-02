@@ -218,11 +218,43 @@ func (lbl *UI_Label) IsCursorInBounds() bool {
 } //
 /**/
 func (lbl *UI_Label) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode int) bool {
+	var x0, y0, x1, y1 int
+	if lbl.Parent != nil {
+		px, py := lbl.Parent.GetPosition_Int()
+		x0 = lbl.Position.X + px
+		y0 = lbl.Position.Y + py
+		x1 = lbl.Position.X + lbl.Dimensions.X + px
+		y1 = lbl.Position.Y + lbl.Dimensions.Y + py
+		// x0 = ui_win.Position.X + ui_win.ParentPos.X
+		// y0 = ui_win.Position.Y + ui_win.ParentPos.X
+		// x1 = ui_win.Position.X + ui_win.ParentPos.X + ui_win.Dimensions.X
+		// y1 = ui_win.Position.Y + ui_win.ParentPos.Y + ui_win.Dimensions.Y
+	} else {
+		x0 = lbl.Position.X
+		y0 = lbl.Position.Y
+		x1 = lbl.Position.X + lbl.Dimensions.X
+		y1 = lbl.Position.Y + lbl.Dimensions.Y
+	}
+	return (Mouse_Pos_X > x0 && Mouse_Pos_X < x1) && (Mouse_Pos_Y > y0 && Mouse_Pos_Y < y1)
 	return false
 }
 
 /**/
 func (lbl *UI_Label) GetPosition_Int() (int, int) { return lbl.Position.X, lbl.Position.Y }
+
+/**/
+func (lbl *UI_Label) SetPosition_Int(X, Y int) {
+
+}
+
+/**/
+func (lbl *UI_Label) GetDimensions_Int() (int, int) {
+	return 0, 0
+} //
+/**/
+func (lbl *UI_Label) SetDimensions_Int(int, int) {
+
+}
 
 /**/
 func (lbl *UI_Label) GetNumber_Children() int { return 0 }

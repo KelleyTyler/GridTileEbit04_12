@@ -1,8 +1,9 @@
 package framework
 
 import (
-	"fmt"
 	"image/color"
+	"log"
+	"time"
 
 	"github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/coords"
 	mat "github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/matrix"
@@ -31,6 +32,7 @@ type Pathfind_Tester struct {
 	Button_Pathfind_Auto                                                                    ui.UI_Button
 	Button_SHOW_OPENLIST, Button_SHOW_CLOSEDLIST, Button_SHOW_BLOCKEDLIST, Button_SHOW_PATH ui.UI_Button
 	tickCount                                                                               int
+	start_time                                                                              time.Time
 }
 
 /**/
@@ -55,9 +57,8 @@ func (pfind *Pathfind_Tester) Reset() {
 	pfind.EndNode = nil
 	pfind.max_fails = 100
 	pfind.curr_fails = 0
-	fmt.Printf("RESET PFIND TEST \n")
+	log.Printf("RESET PFIND TEST \n")
 	pfind.tickCount = 0
-
 }
 
 /**/
@@ -113,24 +114,24 @@ func (pfind *Pathfind_Tester) Update_Passive() (overlay_change bool) {
 	overlay_change = false
 
 	if pfind.Button_Pathfind_Tick.GetState() == 2 {
-		// fmt.Printf("BUTTON TICK\n")
+		// log.Printf("BUTTON TICK\n")
 		// pfind.Process(1)
 		// go pfind.Process02()
 		pfind.Process02A()
-		// fmt.Printf("BUTTON TICK\n")
+		// log.Printf("BUTTON TICK\n")
 		// go pfind.Process(1)
 
 		return true
 		// defer
 	}
 	if pfind.Button_Reset.GetState() == 2 {
-		fmt.Printf("RESET BUTTON\n")
+		log.Printf("RESET BUTTON\n")
 
 		pfind.Reset()
 		overlay_change = true
 	}
 	if pfind.Button_Pathfind_Auto.GetState() == 2 {
-		// fmt.Printf("AUTO TICK\n")
+		// log.Printf("AUTO TICK\n")
 
 		go pfind.Process(5)
 		overlay_change = true
@@ -147,7 +148,7 @@ func (pfind *Pathfind_Tester) InputCoords(coord coords.CoordInts) {
 	if !pfind.IsStartInput {
 		pfind.Start = coord
 
-		fmt.Printf("START INPUT\n")
+		log.Printf("START INPUT\n")
 		pfind.IsStartInput = true
 		pfind.UI_Backend.PlaySound(4)
 
@@ -158,7 +159,7 @@ func (pfind *Pathfind_Tester) InputCoords(coord coords.CoordInts) {
 			pfind.IsReady = true
 			pfind.IsFinished = false
 			// pfind.EndNode = nil
-			fmt.Printf("END INPUT\n")
+			log.Printf("END INPUT\n")
 			pfind.UI_Backend.PlaySound(4)
 
 		}
@@ -169,19 +170,19 @@ func (pfind *Pathfind_Tester) InputCoords(coord coords.CoordInts) {
 func (pfind *Pathfind_Tester) Process(ticks int) error {
 	var err error
 
-	// fmt.Printf("ENDNODE %t %t %t %t\n\n", pfind.EndNode != nil, pfind.HasStarted, pfind.IsFinished, pfind.IsReady)
+	// log.Printf("ENDNODE %t %t %t %t\n\n", pfind.EndNode != nil, pfind.HasStarted, pfind.IsFinished, pfind.IsReady)
 
 	if pfind.IsReady {
 		for range ticks {
 			if !pfind.HasStarted {
-				fmt.Printf("STARTING!\n")
+				log.Printf("STARTING!\n")
 				startnode := mat.GetNode(pfind.Start, pfind.Start, pfind.Target, *pfind.IMat, nil)
 				pfind.ClosedList = append(pfind.ClosedList, &startnode)
 				temp := mat.NodeList_GetNeighbors_4_Filtered_Hypentenuse(&startnode, pfind.Start, pfind.Target, pfind.IMat, []int{0, 1}, []int{9, 10}, [4]uint{1, 1, 1, 1})
 				mat.NodeList_SortByFValue_DESC(temp, pfind.Start, pfind.Target)
 				pfind.OpenList = append(pfind.OpenList, temp...)
-				fmt.Printf("STARTUP! %d %d \n", len(pfind.ClosedList), len(pfind.OpenList))
-
+				log.Printf("STARTUP! %d %d \n", len(pfind.ClosedList), len(pfind.OpenList))
+				pfind.start_time = time.Now()
 				// pfind.OpenList, pfind.ClosedList, pfind.BlockedList, pfind.IsFinished, pfind.curr_fails, err = mat.Pathfind_Phase1_Tick(pfind.Start, pfind.Target, pfind.OpenList, pfind.ClosedList, pfind.BlockedList, pfind.IsFinished, pfind.curr_fails, pfind.max_fails, *pfind.IMat, []int{0, 1}, []int{9, 10}, [4]uint{1, 1, 1, 1})
 				pfind.HasStarted = true
 			} else {
@@ -199,24 +200,25 @@ func (pfind *Pathfind_Tester) Process(ticks int) error {
 						temp = mat.NodeList_FILTER_LIST(temp, pfind.OpenList)
 						temp = mat.NodeList_FILTER_LIST(temp, pfind.ClosedList)
 						pfind.OpenList = append(pfind.OpenList, temp...)
-						//fmt.Printf("TICK!----\n")
+						//log.Printf("TICK!----\n")
 
 						// mat.NodeList_SortByFValue_Ascending(pfind.OpenList, pfind.Start, pfind.Target)
 						// slices.Reverse(pfind.OpenList)
 					}
 
 					pfind.OpenList, pfind.ClosedList, pfind.BlockedList, pfind.IsFinished, pfind.EndNode, pfind.curr_fails, err = mat.Pathfind_Phase1_Tick(pfind.Start, pfind.Target, pfind.OpenList, pfind.ClosedList, pfind.BlockedList, pfind.IsFinished, pfind.curr_fails, pfind.max_fails, *pfind.IMat, []int{0, 1}, []int{9, 10}, [4]uint{1, 1, 1, 1})
-					//fmt.Printf("RUNNING! %d %d \n", len(pfind.ClosedList), len(pfind.OpenList))
+					//log.Printf("RUNNING! %d %d \n", len(pfind.ClosedList), len(pfind.OpenList))
 					pfind.tickCount++
 				} else {
-					fmt.Printf("FOUND! %t---- TICKS: %d", pfind.EndNode != nil, pfind.tickCount)
-					// fmt.Printf("FOUND! %t---- TICKS: %d\n\n", pfind.EndNode != nil, pfind.tickCount)
+					pfind.IsFinished, pfind.EndNode, _ = mat.Pathfind_Phase1_Wrapup(pfind.OpenList, pfind.ClosedList, pfind.BlockedList, pfind.Start, pfind.Target, pfind.EndNode, pfind.curr_fails, pfind.start_time, pfind.IsFinished)
+					// log.Printf("FOUND! %t---- TICKS: %d", pfind.EndNode != nil, pfind.tickCount)
+					// // log.Printf("FOUND! %t---- TICKS: %d\n\n", pfind.EndNode != nil, pfind.tickCount)
 
-					if pfind.EndNode != nil {
-						fmt.Printf(" length: %d", pfind.EndNode.GetInteration())
-						pfind.EndNode.Set_Heads_Tails_On_Up()
-					}
-					fmt.Printf("\n")
+					// if pfind.EndNode != nil {
+					// 	log.Printf(" length: %d", pfind.EndNode.GetInteration())
+					// 	pfind.EndNode.Set_Heads_Tails_On_Up()
+					// }
+					log.Printf("\n")
 					// pfind.EndNode.Set_Heads_Tails_On_Up() //<---- for some reason the whole thing fucking freezes if this is put into any kind of storage;
 					if pfind.Button_Pathfind_Auto.GetState() == 2 {
 						pfind.Button_Pathfind_Auto.DeToggle()
@@ -233,12 +235,12 @@ func (pfind *Pathfind_Tester) Process(ticks int) error {
 func (pfind *Pathfind_Tester) Process02() error {
 	var err error
 	// isDone := false
-	// fmt.Printf("ENDNODE %t %t %t %t\n\n", pfind.EndNode != nil, pfind.HasStarted, pfind.IsFinished, pfind.IsReady)
+	// log.Printf("ENDNODE %t %t %t %t\n\n", pfind.EndNode != nil, pfind.HasStarted, pfind.IsFinished, pfind.IsReady)
 
 	if pfind.IsReady {
-		pfind.IsFinished, pfind.EndNode = mat.Pathfind_Phase1A(pfind.Start, pfind.Target, *pfind.IMat, []int{0, 1}, []int{9, 10}, [4]uint{1, 1, 1, 1})
+		pfind.IsFinished, pfind.EndNode = mat.Pathfind_Phase1A(pfind.Start, pfind.Target, *pfind.IMat, []int{0, 1}, []int{9, 10}, [4]uint{0, 0, 0, 0})
 		if pfind.IsFinished {
-			fmt.Printf("DONE %d\n\n", pfind.EndNode.GetInteration())
+			log.Printf("DONE %d\n\n", pfind.EndNode.GetInteration())
 		}
 	}
 	return err
@@ -248,9 +250,9 @@ func (pfind *Pathfind_Tester) Process02() error {
 func (pfind *Pathfind_Tester) Process02A() error {
 	var err error
 	// isDone := false
-	// fmt.Printf("ENDNODE %t %t %t %t\n\n", pfind.EndNode != nil, pfind.HasStarted, pfind.IsFinished, pfind.IsReady)
+	// log.Printf("ENDNODE %t %t %t %t\n\n", pfind.EndNode != nil, pfind.HasStarted, pfind.IsFinished, pfind.IsReady)
 	go pfind.Process02()
-	fmt.Printf("ENDNODE %t %t %t %t\n\n", pfind.EndNode != nil, pfind.HasStarted, pfind.IsFinished, pfind.IsReady)
+	log.Printf("ENDNODE %t %t %t %t\n\n", pfind.EndNode != nil, pfind.HasStarted, pfind.IsFinished, pfind.IsReady)
 
 	return err
 }

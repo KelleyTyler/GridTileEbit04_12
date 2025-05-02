@@ -3,6 +3,7 @@ package matrix
 import (
 	"fmt"
 	"log"
+	"time"
 
 	coords "github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/coords"
 	"github.com/KelleyTyler/GridTileEbit04_12/myPkgs/misc"
@@ -18,21 +19,21 @@ func Pathfind(start, target coords.CoordInts, imat IntegerMatrix2D, floors, wall
 
 /**/
 func Pathfind_Phase1A(start, target coords.CoordInts, imat IntegerMatrix2D, floors, walls []int, margins [4]uint) (path_is_found bool, EndNode *ImatNode) {
-
+	start_time := time.Now()
 	path_is_found = false
 	OpenList := make([]*ImatNode, 0)
 	ClosedList := make([]*ImatNode, 0)
 	BlockedList := make([]*ImatNode, 0)
 
-	var max_fails int = 64 * 64
+	var max_fails int = 64 * 64 * 2
 	var curr_fails int = 0
 	var isFinished bool = false
 	var closedList_LastLength int = 0
 	var err error = nil
-	fmt.Printf("PATHFINDER\n")
+	log.Printf("PATHFINDER\n")
 
 	EndNode = nil
-	justStart := true
+	// justStart := true
 	startNode := GetNodePTR(start, start, target, imat, nil)
 	ClosedList = append(ClosedList, startNode)
 	// ClosedList = NodeList_SortByFValue_Desc_toReturn(OpenList, start, target)
@@ -43,14 +44,14 @@ func Pathfind_Phase1A(start, target coords.CoordInts, imat IntegerMatrix2D, floo
 		OpenList = append(OpenList, temp...)
 		OpenList = NodeList_SortByFValue_Desc_toReturn(OpenList, start, target)
 	} else {
-		fmt.Printf("ERROR ERROR ERRROR")
+		log.Printf("ERROR ERROR ERRROR")
 		return false, nil
 	}
 	//beware pseudocode
 	//ClosedList.ClosedList = ClosedList.append(Get_New_Node(start, start, end))//*pseudocode or not I'm not sure I even want this.
 	// OpenList.append
 	for !isFinished && curr_fails < max_fails {
-		if !justStart {
+		if len(OpenList) < 1 && len(ClosedList) > 1 { //!justStart
 			// ClosedList = NodeList_SortByFValue_Desc_toReturn(ClosedList, start, target)
 			temp := NodeList_GetNeighbors_4_Filtered_Hypentenuse(ClosedList[0], start, target, &imat, floors, walls, margins)
 			temp = NodeList_FILTER_LIST(temp, ClosedList)
@@ -61,8 +62,6 @@ func Pathfind_Phase1A(start, target coords.CoordInts, imat IntegerMatrix2D, floo
 			OpenList = NodeList_SortByFValue_Desc_toReturn(OpenList, start, target)
 			ClosedList = NodeList_SortByFValue_Desc_toReturn(OpenList, start, target)
 
-		} else {
-			justStart = false
 		}
 		OpenList, ClosedList, BlockedList, isFinished, EndNode, curr_fails, err = Pathfind_Phase1_Tick(start, target, OpenList, ClosedList, BlockedList, isFinished, curr_fails, max_fails, imat, floors, walls, margins)
 		if err != nil {
@@ -76,38 +75,89 @@ func Pathfind_Phase1A(start, target coords.CoordInts, imat IntegerMatrix2D, floo
 			closedList_LastLength = len(ClosedList)
 		}
 	}
+	// dur := time.Since(start_time)
+	// if isFinished {
+	// 	log.Printf("FINISHED! TIME:%d FAILS: %d\tCLOSEDLIST: %d\tBLOCKED:%3d\n", dur.Milliseconds(), curr_fails, len(ClosedList), len(BlockedList))
+	// 	if EndNode != nil {
+	// 		EndNode.Set_Heads_Tails_On_Up()
+	// 	}
+	// 	path_is_found = true
+	// } else {
+	// 	log.Printf("FAILED! TIME:%d  FAILS: %d\t CLOSEDLIST: %d\t BLOCKED:%3d\n", dur.Milliseconds(), curr_fails, len(ClosedList), len(BlockedList))
+	// 	var BLNode, CLNode *ImatNode
+	// 	if len(BlockedList) > 0 {
+	// 		BlockedList = NodeList_SortByHValue_Ascending_toReturn(BlockedList)
+	// 		BLNode = BlockedList[0]
+	// 	}
+	// 	if len(ClosedList) > 0 {
+	// 		ClosedList = NodeList_SortByHValue_Ascending_toReturn(ClosedList)
+	// 		CLNode = ClosedList[0]
+	// 	}
 
-	if isFinished {
-		fmt.Printf("FINISHED! FAILS: %d\tCLOSEDLIST: %d\tBLOCKED:%3d\n", curr_fails, len(ClosedList), len(BlockedList))
-		if EndNode != nil {
-			EndNode.Set_Heads_Tails_On_Up()
-		}
-		path_is_found = true
-		// PotentialPaths = append(PotentialPaths, ClosedList...)
-	} else {
-		fmt.Printf("FAILED! FAILS: %d\t CLOSEDLIST: %d\t BLOCKED:%3d\n", curr_fails, len(ClosedList), len(BlockedList))
-		// NodeList_SortByHValue_Ascending_toReturn()
-		BlockedList = NodeList_SortByHValue_Ascending_toReturn(BlockedList)
-		BLNode := BlockedList[0]
-		ClosedList = NodeList_SortByHValue_Ascending_toReturn(ClosedList)
-		CLNode := ClosedList[0]
+	// 	if CLNode != nil && BLNode != nil {
+	// 		if CLNode.GetHValue() < BLNode.GetHValue() {
+	// 			EndNode = CLNode
+	// 		} else {
+	// 			EndNode = BLNode
+	// 		}
+	// 	} else if CLNode != nil {
+	// 		EndNode = CLNode
+	// 	} else if BLNode != nil {
+	// 		EndNode = BLNode
+	// 	} else {
+	// 		log.Printf("SOMETHING FUCKED\n")
+	// 	}
 
-		if CLNode.GetHValue() < BLNode.GetHValue() {
-			EndNode = CLNode
-		} else {
-			EndNode = BLNode
-		}
-		// EndNode, _ = NodeList_PopFromFront(BlockedList)
-		// EndNode.Set_Heads_Tails_On_Up()
-		return path_is_found, EndNode
+	// 	return path_is_found, EndNode
 
-	}
-
+	// }
+	path_is_found, EndNode, _ = Pathfind_Phase1_Wrapup(OpenList, ClosedList, BlockedList, start, target, EndNode, curr_fails, start_time, isFinished)
 	return path_is_found, EndNode
 }
 
+/*
+This is to provide a Wrap-up for the code;
+*/
+func Pathfind_Phase1_Wrapup(openlist, closedlist, blockedlist []*ImatNode, start, target coords.CoordInts, EndNode *ImatNode, curr_fails int, start_time time.Time, Is_Finished bool) (isPathFound bool, output_node *ImatNode, err error) {
+	err = nil
+	output_node = EndNode
+	dur := time.Since(start_time)
+	log.Printf("FINISHED:%5t TIME:%010d FAILS: %05d\tOPENLIST: %05d\tCLOSEDLIST: %05d\tBLOCKED:%05d\n", Is_Finished, dur.Milliseconds(), curr_fails, len(openlist), len(closedlist), len(blockedlist))
+	//---------------------- Prep Done
+	if Is_Finished {
+		if output_node != nil {
+			output_node.Set_Heads_Tails_On_Up()
+		}
+	} else {
+		var BLNode, CLNode *ImatNode
+		if len(blockedlist) > 0 {
+			blockedlist = NodeList_SortByHValue_Ascending_toReturn(blockedlist)
+			BLNode = blockedlist[0]
+		}
+		if len(closedlist) > 0 {
+			closedlist = NodeList_SortByHValue_Ascending_toReturn(closedlist)
+			CLNode = closedlist[0]
+		}
+
+		if CLNode != nil && BLNode != nil {
+			if CLNode.GetHValue() < BLNode.GetHValue() {
+				output_node = CLNode
+			} else {
+				output_node = BLNode
+			}
+		} else if CLNode != nil {
+			output_node = CLNode
+		} else if BLNode != nil {
+			output_node = BLNode
+		} else {
+			log.Printf("SOMETHING FUCKED\n")
+		}
+	}
+	return Is_Finished, output_node, err
+}
+
 /**/
-func Pathfind_Phase1_Tick(start, target coords.CoordInts, openlist, closedlist, blockedlist []*ImatNode, pathfound bool, curr_fails, max_fails int, imat IntegerMatrix2D, floors, walls []int, margins [4]uint) (oList, cList, bList []*ImatNode, pFound bool, pFoundNode *ImatNode, fails int, err error) { //<--unsure if these are pass by reference or not
+func Pathfind_Phase1_Tick(start, target coords.CoordInts, openlist, closedlist, blockedlist []*ImatNode, pathfound bool, curr_fails, max_fails int, imat IntegerMatrix2D, floors, walls []int, margins [4]uint) (oList, cList, bList []*ImatNode, pFound bool, p_Found_Node *ImatNode, fails int, err error) { //<--unsure if these are pass by reference or not
 	oList = make([]*ImatNode, len(openlist))
 	cList = make([]*ImatNode, len(closedlist))
 	bList = make([]*ImatNode, len(blockedlist))
@@ -132,15 +182,15 @@ func Pathfind_Phase1_Tick(start, target coords.CoordInts, openlist, closedlist, 
 		// 	return oList, cList, bList, false, fails, err
 		// }
 		if pointQ != nil {
-			//fmt.Printf("Point Q is %s\t", pointQ.Position.ToString())
+			//log.Printf("Point Q is %s\t", pointQ.Position.ToString())
 			if pointQ.Position.IsEqual(target) {
-				// fmt.Printf("\n\nHIT TARGET\n\n\n")
-				pFoundNode = pointQ
+				// log.Printf("\n\nHIT TARGET\n\n\n")
+				p_Found_Node = pointQ
 				pFound = true
-				return oList, cList, bList, pFound, pFoundNode, fails, err
+				return oList, cList, bList, pFound, p_Found_Node, fails, err
 
 			} else if imat.IsValidCoords(pointQ.Position) && !misc.IsNumInIntArray(imat.GetValueOnCoord(pointQ.Position), walls) {
-				//fmt.Printf("Point Q is Valid %7.2f %7.2f\n", pointQ.GetFValue(), pointQ.GetHValue())
+				//log.Printf("Point Q is Valid %7.2f %7.2f\n", pointQ.GetFValue(), pointQ.GetHValue())
 				temp_successors := NodeList_GetNeighbors_4_Filtered_Hypentenuse(pointQ, start, target, &imat, floors, walls, margins)
 				//filter temp_successors into openlist
 				temp_successors = NodeList_FILTER_LIST(temp_successors, oList)
@@ -151,24 +201,24 @@ func Pathfind_Phase1_Tick(start, target coords.CoordInts, openlist, closedlist, 
 					if !NodeList_ContainsPoint(suc.Position, cList) && !suc.Position.IsEqual(pointQ.Position) {
 						if !NodeList_ContainsPoint(suc.Position, bList) {
 							oList = append(oList, suc)
-							// fmt.Printf("ADDED SUCCESSFULLY! %s\n", suc.Position.ToString())
+							// log.Printf("ADDED SUCCESSFULLY! %s\n", suc.Position.ToString())
 							successfulNodes++
 						} else {
-							// fmt.Printf("BLOCKED BLOCKED\n")
-							// fmt.Printf("BLOCKED  %s\n", suc.Position.ToString())
+							// log.Printf("BLOCKED BLOCKED\n")
+							// log.Printf("BLOCKED  %s\n", suc.Position.ToString())
 
 							//remove it
 
 						}
 						// cList = append(cList, suc)
 
-						// fmt.Printf("Success--------\n")
+						// log.Printf("Success--------\n")
 					}
 
 				}
 				if successfulNodes == 0 {
 					// bList = append(bList, pointQ)
-					// fmt.Printf("Point Q (%s) is invalid %7.2f %7.2f \t length of oList: %4d, clist:%4d, blist:%4d\n", pointQ.Position.ToString(), pointQ.GetFValue(), pointQ.GetHValue(), len(oList), len(cList), len(bList))
+					// log.Printf("Point Q (%s) is invalid %7.2f %7.2f \t length of oList: %4d, clist:%4d, blist:%4d\n", pointQ.Position.ToString(), pointQ.GetFValue(), pointQ.GetHValue(), len(oList), len(cList), len(bList))
 					// return oList, cList, bList, pFound, nil, fails, err
 
 				} else {
@@ -192,7 +242,7 @@ func Pathfind_Phase1_Tick(start, target coords.CoordInts, openlist, closedlist, 
 					}
 				}
 			} else {
-				// fmt.Printf("Point Q is NOT Valid \n")
+				// log.Printf("Point Q is NOT Valid \n")
 
 			}
 

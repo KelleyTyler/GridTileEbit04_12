@@ -6,6 +6,7 @@ package framework
 import (
 	"fmt"
 	"image/color"
+	"log"
 
 	"github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/coords"
 	mat "github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/matrix"
@@ -116,7 +117,7 @@ func (mTool *Maze_Tool) Maze_Gen_Passthrough() (overlay_change, board_change boo
 		mTool.MazeGen.RunPrimlike(32, []int{0}, []int{9}, []int{-1}, [4]uint{1, 1, 1, 1}, mTool.Button_TOGGLE_DIAGONALS.GetState() != 2)
 
 		if mTool.MazeGen.HasFinished {
-			fmt.Printf("done\n")
+			log.Printf("done\n")
 
 			mTool.Button_GENERATE_MAZE.DeToggle()
 			mTool.Button_SET_POINTS.DeToggle()

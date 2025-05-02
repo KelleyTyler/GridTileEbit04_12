@@ -14,6 +14,9 @@ type UI_Object_Style struct {
 	Internal_Margins [4]uint8
 	TextSizes        []int
 	TextAlignMode    int
+
+	Panel_Child_Internal_Border_Offset [4]uint8 //the buffer between the border of the parent and the child element
+	Child_Buffer                       [4]uint8 //the buffer between child elements
 }
 
 /*
@@ -56,6 +59,9 @@ func Get_UI_Object_Style(styleNumber int) (out_Style UI_Object_Style) {
 	out_Style.ButtonColor1 = []color.Color{color.RGBA{150, 130, 130, 255}, color.RGBA{165, 130, 145, 255}, color.RGBA{175, 130, 105, 255}}
 	out_Style.ButtonColor2 = []color.Color{color.RGBA{150, 130, 130, 255}, color.RGBA{150, 130, 145, 255}, color.RGBA{150, 130, 105, 255}}
 	out_Style.TextAlignMode = 10
+	out_Style.Panel_Child_Internal_Border_Offset = [4]uint8{4, 4, 4, 4}
+	out_Style.Child_Buffer = [4]uint8{4, 4, 4, 4}
+
 	return out_Style
 }
 

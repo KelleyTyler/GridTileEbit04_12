@@ -44,8 +44,9 @@ func (mazeM *MazeMaker) RunPrimlike(ticks int, floorvals, wallvals, filterFor []
 			mazeM.HasStarted = true
 			mazeM.CurrentList, mazeM.Fails = mazeM.imat.PrimLike_Maze_Algorithm_Random(mazeM.Fails, mazeM.maxFails, mazeM.CurrentList, floorvals, wallvals, filterFor, margin, diage)
 		} else {
-			//fmt.Printf("FINISHED!\n")
+			//log.Printf("FINISHED!\n")
 			mazeM.HasFinished = true
+			mazeM.imat.Convert_All_OldValues_To_NewValue(wallvals[0], 10)
 			break
 		}
 	}
