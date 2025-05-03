@@ -247,6 +247,25 @@ func (btn *UI_Button) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Po
 			btn.ToRedraw = true
 			to_redraw = true
 			//btn.Backend.PlaySound(1)
+		} else if btn.Btn_Type == 20 {
+			if ebiten.IsMouseButtonPressed(ebiten.MouseButton0) {
+				btn.State = 2
+				// btn.Backend.PlaySound(1)
+				btn.Redraw()
+				return btn.GetState(), true, nil
+			} else {
+				//btn.Backend.PlaySound(1)
+				if btn.State != 1 {
+					// if btn.State != 2 {
+					// 	btn.Backend.PlaySound(1)
+					// }
+					btn.ToRedraw = true
+					btn.State = 1
+					to_redraw = true
+
+				}
+			}
+
 		} else {
 			if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
 				btn.State = 2
@@ -312,6 +331,16 @@ func (btn *UI_Button) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode 
 		x1, y1 := btn.Position.X+btn.Dimensions.X, btn.Position.Y+btn.Dimensions.Y
 		if btn.Parent != nil {
 			x2, y2 := btn.Parent.GetPosition_Int()
+			x3, y3 := btn.Parent.Get_Internal_Position_Int()
+			if mode == 10 {
+				x2 += x3
+				y2 += y3
+				if pp := btn.Parent.GetParent(); pp != nil {
+					if !pp.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 0) {
+						return false
+					}
+				}
+			}
 			x0 += x2
 			y0 += y2
 			x1 += x2
@@ -323,7 +352,7 @@ func (btn *UI_Button) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode 
 	// if()
 }
 
-func (btn *UI_Button) DeToggle() {
+func (btn *UI_Button) Detoggle() {
 	// log.Printf("DETOGGLE %t\n", btn.IsToggled)
 	if btn.IsToggled {
 		btn.IsToggled = false
@@ -334,6 +363,16 @@ func (btn *UI_Button) DeToggle() {
 			btn.Parent.Redraw()
 		}
 	}
+}
+
+/**/
+func (btn *UI_Button) Close() {
+
+}
+
+/**/
+func (btn *UI_Button) Open() {
+
 }
 
 /**/
@@ -350,17 +389,23 @@ func (btn *UI_Button) GetState() uint8 {
 }
 
 /**/
-func (btn *UI_Button) SetPosition_Int(X, Y int) {
-
+func (btn *UI_Button) Get_Internal_Position_Int() (x_pos int, y_pos int) {
+	x_pos, y_pos = btn.GetPosition_Int()
+	return x_pos, y_pos
 }
 
 /**/
-func (btn *UI_Button) GetDimensions_Int() (int, int) {
-	return 0, 0
+func (btn *UI_Button) SetPosition_Int(x_pos, y_pos int) {
+	btn.Position = coords.CoordInts{X: x_pos, Y: y_pos}
+}
+
+/**/
+func (btn *UI_Button) GetDimensions_Int() (x_pos, y_pos int) {
+	return btn.Dimensions.X, btn.Dimensions.Y
 } //
 /**/
-func (btn *UI_Button) SetDimensions_Int(int, int) {
-
+func (btn *UI_Button) SetDimensions_Int(x_pos, y_pos int) {
+	btn.Dimensions = coords.CoordInts{X: x_pos, Y: y_pos}
 }
 
 /**/

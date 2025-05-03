@@ -118,6 +118,15 @@ func (ui_tep *UI_Text_Entry_Panel) Update() error {
 func (ui_tep *UI_Text_Entry_Panel) Update_Unactive() error { return nil }
 
 /**/
+func (ui_tep *UI_Text_Entry_Panel) Detoggle() {}
+
+/**/
+func (ui_tep *UI_Text_Entry_Panel) Open() {}
+
+/**/
+func (ui_tep *UI_Text_Entry_Panel) Close() {}
+
+/**/
 func (ui_tep *UI_Text_Entry_Panel) Update_Ret_State_Redraw_Status() (uint8, bool, error) {
 	xx, yy := ebiten.CursorPosition()
 
@@ -127,8 +136,8 @@ func (ui_tep *UI_Text_Entry_Panel) Update_Ret_State_Redraw_Status() (uint8, bool
 /**/
 func (ui_tep *UI_Text_Entry_Panel) Print_Error_Message(error_message string) {
 	ui_tep.error_message = error_message
-	ui_tep.Button_Submit.DeToggle()
-	ui_tep.Textfield.Clear()
+	ui_tep.Button_Submit.Detoggle()
+	ui_tep.Textfield.Detoggle()
 	ui_tep.Redraw()
 	ui_tep.State = 0
 }
@@ -229,6 +238,11 @@ func (ui_tep *UI_Text_Entry_Panel) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse
 		return (Mouse_Pos_X > x0 && Mouse_Pos_X < x1) && (Mouse_Pos_Y > y0 && Mouse_Pos_Y < y1)
 	}
 	return false
+}
+
+/**/
+func (ui_tep *UI_Text_Entry_Panel) Get_Internal_Position_Int() (x_pos int, y_pos int) {
+	return ui_tep.GetPosition_Int()
 }
 
 /**/

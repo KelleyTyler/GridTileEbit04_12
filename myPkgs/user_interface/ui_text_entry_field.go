@@ -150,13 +150,29 @@ func (tef *UI_TextEntryField) Get_String_Output() (strng string) {
 }
 
 /*
- */
-func (tef *UI_TextEntryField) Clear() error {
+This used to be "clear" but in the interests of making this whole shitshow make sense I've changed it to detoggle; then again i might change it back because it could make a bit more sense;
+*/
+func (tef *UI_TextEntryField) Detoggle() {
 	// tef.IsActive = false
 	// tef.IsActive = false
 	tef.DataField = ""
 
-	return nil
+}
+
+/*
+ */
+func (tef *UI_TextEntryField) Close() {
+	tef.IsActive = false
+	tef.IsVisible = false
+	tef.Detoggle()
+}
+
+/*
+ */
+func (tef *UI_TextEntryField) Open() {
+	tef.IsActive = true
+	tef.IsVisible = true
+	tef.Detoggle()
 }
 
 /*
@@ -249,6 +265,11 @@ func (tef *UI_TextEntryField) GetPosition_Int() (int, int) {
 	} else {
 		return tef.Position.X, tef.Position.Y
 	}
+}
+
+/**/
+func (tef *UI_TextEntryField) Get_Internal_Position_Int() (x_pos int, y_pos int) {
+	return tef.GetPosition_Int()
 }
 
 /**/

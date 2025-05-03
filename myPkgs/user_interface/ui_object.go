@@ -6,6 +6,7 @@ import (
 
 	"github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/coords"
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
@@ -34,11 +35,20 @@ type UI_Object interface {
 	GetType() string                                                    //
 	IsCursorInBounds() bool                                             //
 	IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode int) bool //
-	GetPosition_Int() (int, int)                                        //
-	SetPosition_Int(int, int)                                           //
-	GetDimensions_Int() (int, int)                                      //
+	Get_Internal_Position_Int() (x_pos int, y_pos int)
+
+	GetPosition_Int() (int, int)
+	SetPosition_Int(int, int)      //
+	GetDimensions_Int() (int, int) //
+	/**/
+	Close()
+	/**/
+	Open()
+	/**/
+	Detoggle()
 	SetDimensions_Int(int, int)
 	GetNumber_Children() int //
+
 	GetChild(index int) UI_Object
 	AddChild(child UI_Object) error //
 	RemoveChild(index int) error
@@ -113,6 +123,9 @@ func (prim *UI_Object_Primitive) Init(idLabels []string, backend *UI_Backend, st
 
 func (prim *UI_Object_Primitive) Init_Parents(parent UI_Object) error {
 	prim.Parent = parent
+	prim.Parent.AddChild(prim)
+	prim.Redraw()
+	prim.Parent.Redraw()
 	return nil
 }
 
@@ -139,17 +152,19 @@ func (prim *UI_Object_Primitive) Redraw() {
 	}
 }
 func (prim *UI_Object_Primitive) Update() error {
-	if len(prim.Children) > 0 {
-		for i := 0; i < len(prim.Children); i++ {
-			_, to_redraw, err := prim.Children[i].Update_Ret_State_Redraw_Status()
-			if err != nil {
-				log.Fatal(err)
-			}
-			if to_redraw {
-				prim.Children[i].Draw(prim.Image)
-			}
-		}
-	}
+	xx, yy := ebiten.CursorPosition()
+	prim.Update_Ret_State_Redraw_Status_Mport(xx, yy, 0)
+	// if len(prim.Children) > 0 {
+	// 	for i := 0; i < len(prim.Children); i++ {
+	// 		_, to_redraw, err := prim.Children[i].Update_Ret_State_Redraw_Status()
+	// 		if err != nil {
+	// 			log.Fatal(err)
+	// 		}
+	// 		if to_redraw {
+	// 			prim.Children[i].Draw(prim.Image)
+	// 		}
+	// 	}
+	// }
 	// if prim.IsMovable {
 	// 	if prim.IsCursorInBounds() {
 
@@ -181,6 +196,26 @@ func (prim *UI_Object_Primitive) Update_Ret_State_Redraw_Status() (uint8, bool, 
 	return prim.State, false, nil
 }
 func (prim *UI_Object_Primitive) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode int) (uint8, bool, error) {
+
+	if mode == 0 {
+		if len(prim.Children) > 0 {
+			for i := 0; i < len(prim.Children); i++ {
+				_, to_redraw, err := prim.Children[i].Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, 0)
+				if err != nil {
+					log.Fatal(err)
+				}
+				if to_redraw {
+					prim.Children[i].Draw(prim.Image)
+				}
+			}
+		}
+		if prim.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode) {
+			if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
+				log.Printf("%d %d %t\n", Mouse_Pos_X, Mouse_Pos_Y, prim.HasParent())
+
+			}
+		}
+	}
 	return prim.State, false, nil
 }
 
@@ -249,6 +284,15 @@ func (prim *UI_Object_Primitive) IsCursorInBounds() bool {
 	return false
 }
 
+/**/
+func (prim *UI_Object_Primitive) Close() {}
+
+/**/
+func (prim *UI_Object_Primitive) Open() {}
+
+/**/
+func (prim *UI_Object_Primitive) Detoggle() {}
+
 /*
 Idea here is I don't want to waste time with having to get the cursor position when it possibly hasn't changed enough to matter;
 This might be also a terrible idea overall I cannot tell quite yet
@@ -256,22 +300,23 @@ This might be also a terrible idea overall I cannot tell quite yet
 enter 0 for it to default
 */
 func (prim *UI_Object_Primitive) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode int) bool {
-	if prim.IsActive && prim.IsVisible && mode == 0 {
+	if prim.IsActive && prim.IsVisible {
 		cX, cY := Mouse_Pos_X, Mouse_Pos_Y
 		//mode stuff
 		var x0, y0, x1, y1 int
 
 		if prim.Parent != nil {
 			px, py := prim.Parent.GetPosition_Int()
+			qx, qy := prim.Parent.Get_Internal_Position_Int()
 			x0 = prim.Position.X + px
 			y0 = prim.Position.Y + py
-			x1 = prim.Position.X + prim.Dimensions.X + px
-			y1 = prim.Position.Y + prim.Dimensions.Y + py
+			x1 = prim.Position.X + prim.Dimensions.X + px + qx
+			y1 = prim.Position.Y + prim.Dimensions.Y + py + qy
 		} else {
 			x0 = prim.Position.X
 			y0 = prim.Position.Y
-			x1 = prim.Position.X + prim.Dimensions.X
-			y1 = prim.Position.Y + prim.Dimensions.Y
+			x1 = prim.Position.X + prim.Image.Bounds().Dx()
+			y1 = prim.Position.Y + prim.Image.Bounds().Dy()
 		}
 		return (cX > x0 && cX < x1) && (cY > y0 && cY < y1)
 	}
@@ -279,6 +324,15 @@ func (prim *UI_Object_Primitive) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_P
 	return false
 }
 
+/**/
+func (prim *UI_Object_Primitive) Get_Internal_Position_Int() (x_pos int, y_pos int) {
+	if prim.Parent != nil {
+		x_pos, y_pos = prim.Parent.Get_Internal_Position_Int()
+	}
+	return x_pos, y_pos
+}
+
+/**/
 func (prim *UI_Object_Primitive) GetPosition_Int() (int, int) {
 	xx := prim.Position.X
 	yy := prim.Position.Y
@@ -291,16 +345,17 @@ func (prim *UI_Object_Primitive) GetPosition_Int() (int, int) {
 }
 
 /**/
-func (prim *UI_Object_Primitive) SetPosition_Int(X, Y int) {
-
+func (prim *UI_Object_Primitive) SetPosition_Int(pos_X, pos_Y int) {
+	prim.Position = coords.CoordInts{X: pos_X, Y: pos_Y}
 }
 
 /**/
 func (prim *UI_Object_Primitive) GetDimensions_Int() (int, int) {
-	return 0, 0
+	return prim.Dimensions.X, prim.Dimensions.Y
 } //
 /**/
-func (prim *UI_Object_Primitive) SetDimensions_Int(int, int) {
+func (prim *UI_Object_Primitive) SetDimensions_Int(pos_X, pos_Y int) {
+	prim.Dimensions = coords.CoordInts{X: pos_X, Y: pos_Y}
 
 }
 

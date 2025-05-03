@@ -37,7 +37,7 @@ func (gb *GameBoard) UI_INIT() {
 	gb.Window_Load.Redraw()
 	//Init([]string{"window_test", "TEST\n WINDOW"}, gb.UI_Backend, nil, coords.CoordInts{X: 55, Y: 150}, coords.CoordInts{X: 256, Y: 144})
 	gb.Test_Window_Button.Init([]string{"btn_test_window", "Test\nWindow"}, gb.UI_Backend, nil, coords.CoordInts{X: 70, Y: 68 + 68 + 34}, coords.CoordInts{X: 64, Y: 32})
-	gb.Window_Test.Init([]string{"window_test", "TEST WINDOW"}, gb.UI_Backend, nil, coords.CoordInts{X: 55, Y: 150}, coords.CoordInts{X: 256, Y: 256})
+	gb.Window_Test.Init([]string{"window_test", "TEST WINDOW"}, gb.UI_Backend, nil, coords.CoordInts{X: 55, Y: 150}, coords.CoordInts{X: 256, Y: 256 + 32})
 
 }
 

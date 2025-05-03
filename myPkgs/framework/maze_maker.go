@@ -119,9 +119,9 @@ func (mTool *Maze_Tool) Maze_Gen_Passthrough() (overlay_change, board_change boo
 		if mTool.MazeGen.HasFinished {
 			log.Printf("done\n")
 
-			mTool.Button_GENERATE_MAZE.DeToggle()
-			mTool.Button_SET_POINTS.DeToggle()
-			mTool.Button_TOGGLE_DIAGONALS.DeToggle()
+			mTool.Button_GENERATE_MAZE.Detoggle()
+			mTool.Button_SET_POINTS.Detoggle()
+			mTool.Button_TOGGLE_DIAGONALS.Detoggle()
 			mTool.MazeGen.HasStarted = false
 			mTool.OUTPUT_LABEL.Text = fmt.Sprintf("%s ", mTool.MazeGen.GetString())
 			mTool.OUTPUT_LABEL.Redraw()

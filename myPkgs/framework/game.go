@@ -100,7 +100,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		g.Board.Draw(screen)
 		// g.bPanel.Draw(screen)
 		g.primitive.Draw(screen)
-
+		g.Board.Draw_Windows(screen)
 		ebitenutil.DebugPrint(screen, g.debugmsg)
 	} else {
 		screen.Fill(color.RGBA{25, 50, 188, 255})

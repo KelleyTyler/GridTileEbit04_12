@@ -72,11 +72,13 @@ type UI_Window struct {
 	// Button_Submit UI_Button
 
 	// Textfield UI_TextEntryField
-	Scroller    UI_Scrollbar
-	Scroller_02 UI_Scrollbar
+	// Scroller    UI_Scrollbar
+	// Scroller_02 UI_Scrollbar
 
-	errorMsgString string
-	ScrollPane     UI_Scrollpane
+	Button_Thing_Zero UI_Button
+	errorMsgString    string
+	ScrollPane        UI_Scrollpane
+	Prim              UI_Object_Primitive
 	// tObject   UI_Object
 }
 
@@ -137,10 +139,24 @@ func (ui_win *UI_Window) Init(idLabels []string, backend *UI_Backend, style *UI_
 
 	// ui_win.Scroller_02.Redraw()
 	// ui_win.Scroller_02.Init_Parents(ui_win)
-	ui_win.ScrollPane.Init([]string{"windowScrollPane", "Scroll pane"}, backend, style, coords.CoordInts{X: 0, Y: btnWidth}, coords.CoordInts{X: 150, Y: 150}) //Dimensions.X - btnWidth Dimensions.Y - btnWidth
+	boarderThick := int(ui_win.Style.BorderThickness)
+	ui_win.ScrollPane.Init([]string{"windowScrollPane", "Scroll pane"}, backend, style, coords.CoordInts{X: boarderThick, Y: btnWidth}, coords.CoordInts{X: Dimensions.X, Y: Dimensions.Y - btnWidth}) //Dimensions.X - btnWidth Dimensions.Y - btnWidth
 	ui_win.ScrollPane.Init_Parents(ui_win)
 	ui_win.Redraw()
 
+	ui_win.Button_Thing_Zero.Init([]string{"window_submit_button", "Submit"}, backend, nil, coords.CoordInts{X: (Dimensions.X / 2) - 32, Y: Dimensions.Y - 40}, coords.CoordInts{X: 64, Y: 32})
+	ui_win.Prim.Init([]string{"primitive_scroll_primitive", "PRIMITIVE"}, backend, style, coords.CoordInts{X: 0, Y: 0}, coords.CoordInts{X: Dimensions.X - 18, Y: ui_win.Dimensions.Y})
+	ui_win.Prim.Init_Parents(&ui_win.ScrollPane)
+	ui_win.Prim.IsActive = true
+	ui_win.Prim.IsVisible = true
+
+	ui_win.Button_Thing_Zero.Init_Parents(&ui_win.Prim)
+	ui_win.Button_Thing_Zero.Redraw()
+	ui_win.Button_Thing_Zero.IsActive = true
+	ui_win.Button_Thing_Zero.IsVisible = true
+
+	ui_win.Prim.Redraw()
+	ui_win.ScrollPane.Redraw()
 	// ui_win.Button_Submit.Init([]string{"window_submit_button", "Submit"}, backend, nil, coords.CoordInts{X: (Dimensions.X / 2) - 32, Y: Dimensions.Y - 40}, coords.CoordInts{X: 64, Y: 32})
 	// ui_win.Button_Submit.Init_Parents(ui_win)
 	// ui_win.Button_Submit.Redraw()
@@ -189,7 +205,7 @@ func (ui_win *UI_Window) Draw(screen *ebiten.Image) error {
 func (ui_win *UI_Window) Print_Error_Message(error_message string) {
 	ui_win.errorMsgString = error_message
 	ui_win.Redraw()
-	ui_win.CloseButton.DeToggle()
+	ui_win.CloseButton.Detoggle()
 	// ui_win.Button_Submit.DeToggle()
 	// ui_win.Textfield.Clear()
 	ui_win.State = 0
@@ -268,7 +284,20 @@ func (ui_win *UI_Window) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse
 					ui_win.Redraw()
 				}
 			}
+			if state, _, _ := ui_win.Button_Thing_Zero.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, 10); state == 2 {
+				x0, y0 := ui_win.Button_Thing_Zero.GetPosition_Int()
+				x1, y1 := ui_win.Button_Thing_Zero.GetDimensions_Int()
 
+				x2, y2 := ui_win.Button_Thing_Zero.Parent.GetPosition_Int()
+				x3, y3 := ui_win.Button_Thing_Zero.Parent.Get_Internal_Position_Int()
+				x4, y4 := ui_win.Button_Thing_Zero.Parent.GetDimensions_Int()
+				log.Printf("OUT OUT OUT:\n")
+
+				log.Printf("%14s:%3d,%3d\t%14s:%3d,%3d\n", "Position", x0, y0, "Dimensions", x1, y1)
+				log.Printf("%14s:%3d,%3d\t%14s:%3d,%3d\t%14s:%3d,%3d\n", "Par_Pos", x2, y2, "par_Int_Pos", x3, y3, "par_Dim", x4, y4)
+				// log.Printf("%10s:%3d,%3d\n")
+				// log.Printf("%10s:%3d,%3d\n")
+			}
 			// if state, redraw, _ := ui_win.Button_Submit.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode); state == 2 {
 			// 	ui_win.State = 80
 			// 	// ui_win.IsActive = false
@@ -364,7 +393,7 @@ func (ui_win *UI_Window) Close() {
 	ui_win.IsActive = false
 	ui_win.IsVisible = false
 	// ui_win.IsMoving = false
-	ui_win.CloseButton.DeToggle()
+	ui_win.CloseButton.Detoggle()
 	// ui_win.Button_Submit.DeToggle()
 	// ui_win.Textfield.Clear()
 	ui_win.State = 0
@@ -378,11 +407,16 @@ func (ui_win *UI_Window) Open() {
 	ui_win.IsVisible = true
 	ui_win.Position = ui_win.BasePosition
 	// ui_win.IsMoving = true
-	ui_win.CloseButton.DeToggle()
+	ui_win.CloseButton.Detoggle()
 	// ui_win.Button_Submit.DeToggle()
 	// ui_win.Textfield.Clear()
+
 	ui_win.State = 0
 
+}
+func (ui_win *UI_Window) Detoggle() {
+	ui_win.Update_Unactive()
+	ui_win.State = 0
 }
 
 /*
@@ -469,6 +503,12 @@ func (ui_win *UI_Window) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mo
 	}
 	//mode stuff
 	return false
+}
+
+/**/
+func (ui_win *UI_Window) Get_Internal_Position_Int() (x_pos int, y_pos int) {
+	x_pos, y_pos = ui_win.GetPosition_Int()
+	return x_pos, y_pos
 }
 
 /**/

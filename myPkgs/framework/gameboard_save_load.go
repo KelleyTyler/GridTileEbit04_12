@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/coords"
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 /*
@@ -161,6 +162,12 @@ func (gb *GameBoard) Save_Load_Update() {
 		break
 	default:
 	}
+}
+
+func (gb *GameBoard) Draw_Windows(screen *ebiten.Image) {
+	gb.Window_Save.Draw(screen)
+	gb.Window_Load.Draw(screen)
+	gb.Window_Test.Draw(screen)
 }
 
 // func (gb *GameBoard) Init_SaveMenu() {

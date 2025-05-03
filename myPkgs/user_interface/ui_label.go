@@ -236,7 +236,12 @@ func (lbl *UI_Label) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode i
 		y1 = lbl.Position.Y + lbl.Dimensions.Y
 	}
 	return (Mouse_Pos_X > x0 && Mouse_Pos_X < x1) && (Mouse_Pos_Y > y0 && Mouse_Pos_Y < y1)
-	return false
+}
+
+/**/
+func (lbl *UI_Label) Get_Internal_Position_Int() (x_pos int, y_pos int) {
+	x_pos, y_pos = lbl.GetPosition_Int()
+	return x_pos, y_pos
 }
 
 /**/
@@ -255,6 +260,15 @@ func (lbl *UI_Label) GetDimensions_Int() (int, int) {
 func (lbl *UI_Label) SetDimensions_Int(int, int) {
 
 }
+
+/**/
+func (lbl *UI_Label) Close() {}
+
+/**/
+func (lbl *UI_Label) Open() {}
+
+/**/
+func (lbl *UI_Label) Detoggle() {}
 
 /**/
 func (lbl *UI_Label) GetNumber_Children() int { return 0 }

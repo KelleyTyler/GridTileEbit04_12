@@ -298,6 +298,21 @@ func (nSelect *UI_Num_Select) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_
 	return false
 }
 
+/**/
+func (nSelect *UI_Num_Select) Close() {}
+
+/**/
+func (nSelect *UI_Num_Select) Open() {}
+
+/**/
+func (nSelect *UI_Num_Select) Detoggle() {}
+
+/**/
+func (nSelect *UI_Num_Select) Get_Internal_Position_Int() (x_pos int, y_pos int) {
+	x_pos, y_pos = nSelect.GetPosition_Int()
+	return x_pos, y_pos
+}
+
 /*
  */
 func (nSelect *UI_Num_Select) GetPosition_Int() (int, int) {

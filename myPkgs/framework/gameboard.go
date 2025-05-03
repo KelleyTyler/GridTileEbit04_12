@@ -415,9 +415,7 @@ func (gb *GameBoard) Draw(screen *ebiten.Image) {
 
 	///--------------------
 	ops.GeoM.Reset()
-	gb.Window_Save.Draw(screen)
-	gb.Window_Load.Draw(screen)
-	gb.Window_Test.Draw(screen)
+
 	// if gb.GameBoard_UI_STATE == 40 {
 	// 	gb.Window_Save.Draw(screen)
 	// 	// screen.DrawImage(gb.Window_Save.Image, &ops)

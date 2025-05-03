@@ -132,9 +132,9 @@ func (ui_tew_00 *UI_Text_Entry_Window_00) Draw(screen *ebiten.Image) error {
 func (ui_tew_00 *UI_Text_Entry_Window_00) Print_Error_Message(error_message string) {
 	ui_tew_00.errorMsgString = error_message
 	ui_tew_00.Redraw()
-	ui_tew_00.CloseButton.DeToggle()
-	ui_tew_00.Button_Submit.DeToggle()
-	ui_tew_00.Textfield.Clear()
+	ui_tew_00.CloseButton.Detoggle()
+	ui_tew_00.Button_Submit.Detoggle()
+	ui_tew_00.Textfield.Detoggle()
 	ui_tew_00.State = 0
 }
 
@@ -306,9 +306,7 @@ func (ui_tew_00 *UI_Text_Entry_Window_00) Close() {
 	ui_tew_00.IsActive = false
 	ui_tew_00.IsVisible = false
 	// ui_tew_00.IsMoving = false
-	ui_tew_00.CloseButton.DeToggle()
-	ui_tew_00.Button_Submit.DeToggle()
-	ui_tew_00.Textfield.Clear()
+	ui_tew_00.Detoggle()
 	ui_tew_00.State = 0
 }
 
@@ -320,11 +318,14 @@ func (ui_tew_00 *UI_Text_Entry_Window_00) Open() {
 	ui_tew_00.IsVisible = true
 	ui_tew_00.Position = ui_tew_00.BasePosition
 	// ui_tew_00.IsMoving = true
-	ui_tew_00.CloseButton.DeToggle()
-	ui_tew_00.Button_Submit.DeToggle()
-	ui_tew_00.Textfield.Clear()
+	ui_tew_00.Detoggle()
 	ui_tew_00.State = 0
 
+}
+func (ui_tew_00 *UI_Text_Entry_Window_00) Detoggle() {
+	ui_tew_00.CloseButton.Detoggle()
+	ui_tew_00.Button_Submit.Detoggle()
+	ui_tew_00.Textfield.Detoggle()
 }
 
 /*
@@ -422,6 +423,11 @@ func (ui_tew_00 *UI_Text_Entry_Window_00) GetPosition_Int() (int, int) {
 		yy += py
 	}
 	return xx, yy
+}
+
+/**/
+func (ui_tew_00 *UI_Text_Entry_Window_00) Get_Internal_Position_Int() (x_pos int, y_pos int) {
+	return x_pos, y_pos
 }
 
 /**/

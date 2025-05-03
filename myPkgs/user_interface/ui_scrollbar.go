@@ -48,16 +48,18 @@ func (ui_scrollbar *UI_Scrollbar) Init(idLabels []string, backend *UI_Backend, s
 		ui_scrollbar.Image = ebiten.NewImage(ui_scrollbar.Dimensions.X, ui_scrollbar.Dimensions.Y)
 		// dimY := (ui_scrollbar.Dimensions.Y / 2)
 		thick := int(ui_scrollbar.Style.BorderThickness) / 2
-		btnwidth := Dimensions.X
-		ui_scrollbar.L_Button.Init([]string{"lbtn", "+"}, backend, nil, coords.CoordInts{X: (thick / 2), Y: (thick / 2)}, coords.CoordInts{X: btnwidth, Y: btnwidth})
+		btnwidth := Dimensions.X //
+		ui_scrollbar.L_Button.Init([]string{"lbtn", "-"}, backend, nil, coords.CoordInts{X: (thick / 2), Y: ui_scrollbar.Dimensions.Y - (btnwidth + (thick / 2))}, coords.CoordInts{X: btnwidth, Y: btnwidth})
 		// ui_scrollbar.M_Button.Init([]string{"lbtn", "000"}, backend, nil, coords.CoordInts{X: btnwidth + (thick / 2), Y: (thick / 2)}, coords.CoordInts{X: ui_scrollbar.Dimensions.X - ((btnwidth * 2) + (thick)), Y: btnwidth})
 		ui_scrollbar.M_Button.Init([]string{"lbtn", "000"}, backend, nil, coords.CoordInts{X: (thick / 2), Y: btnwidth + (thick / 2)}, coords.CoordInts{X: btnwidth, Y: ui_scrollbar.Dimensions.Y - ((btnwidth * 2) + (thick / 2))})
 
 		// ui_scrollbar.R_Button.Init([]string{"lbtn", "-"}, backend, nil, coords.CoordInts{X: ui_scrollbar.Dimensions.X - (btnwidth + thick - 1), Y: (thick / 2)}, coords.CoordInts{X: btnwidth, Y: btnwidth})
-		ui_scrollbar.R_Button.Init([]string{"lbtn", "-"}, backend, nil, coords.CoordInts{X: (thick / 2), Y: ui_scrollbar.Dimensions.Y - (btnwidth + (thick / 2))}, coords.CoordInts{X: btnwidth, Y: btnwidth})
+		ui_scrollbar.R_Button.Init([]string{"lbtn", "+"}, backend, nil, coords.CoordInts{X: (thick / 2), Y: (thick / 2)}, coords.CoordInts{X: btnwidth, Y: btnwidth})
 
 		// ui_scrollbar.Label.Init([]string{"lbtn", idLabels[1]}, backend, nil, coords.CoordInts{X: thick / 2, Y: thick / 2}, coords.CoordInts{X: ui_scrollbar.Dimensions.X - (thick), Y: dimY})
 		// ui_scrollbar.Label.TextAlignMode = 10
+		ui_scrollbar.L_Button.Btn_Type = 20
+		ui_scrollbar.R_Button.Btn_Type = 20
 		ui_scrollbar.L_Button.Init_Parents(ui_scrollbar)
 		ui_scrollbar.M_Button.Init_Parents(ui_scrollbar)
 		ui_scrollbar.R_Button.Init_Parents(ui_scrollbar)
@@ -70,8 +72,13 @@ func (ui_scrollbar *UI_Scrollbar) Init(idLabels []string, backend *UI_Backend, s
 		thick := int(ui_scrollbar.Style.BorderThickness)
 		btnwidth := Dimensions.Y
 		ui_scrollbar.L_Button.Init([]string{"lbtn", "+"}, backend, nil, coords.CoordInts{X: (thick / 2), Y: (thick / 2)}, coords.CoordInts{X: btnwidth, Y: btnwidth})
+
 		ui_scrollbar.M_Button.Init([]string{"lbtn", "000"}, backend, nil, coords.CoordInts{X: btnwidth + (thick / 2), Y: (thick / 2)}, coords.CoordInts{X: ui_scrollbar.Dimensions.X - ((btnwidth * 2) + (thick / 2)), Y: btnwidth})
+
 		ui_scrollbar.R_Button.Init([]string{"lbtn", "-"}, backend, nil, coords.CoordInts{X: ui_scrollbar.Dimensions.X - (btnwidth + (thick / 2)), Y: (thick / 2)}, coords.CoordInts{X: btnwidth, Y: btnwidth})
+		ui_scrollbar.L_Button.Btn_Type = 20
+		ui_scrollbar.R_Button.Btn_Type = 20
+
 		// ui_scrollbar.Label.Init([]string{"lbtn", idLabels[1]}, backend, nil, coords.CoordInts{X: thick / 2, Y: thick / 2}, coords.CoordInts{X: ui_scrollbar.Dimensions.X - (thick), Y: dimY})
 		// ui_scrollbar.Label.TextAlignMode = 10
 		ui_scrollbar.L_Button.Init_Parents(ui_scrollbar)
@@ -331,6 +338,12 @@ func (ui_scrollbar *UI_Scrollbar) GetPosition_Int() (int, int) {
 	return xx, yy
 }
 
+/**/
+func (ui_scrollbar *UI_Scrollbar) Get_Internal_Position_Int() (x_pos int, y_pos int) {
+	x_pos, y_pos = 0, 0
+	return x_pos, y_pos
+}
+
 /*
 this confirms the object is initilaized
 */
@@ -366,3 +379,12 @@ func (ui_scrollbar *UI_Scrollbar) HasParent() bool { return ui_scrollbar.Parent 
 
 /**/
 func (ui_scrollbar *UI_Scrollbar) GetParent() UI_Object { return ui_scrollbar.Parent }
+
+/**/
+func (ui_scrollbar *UI_Scrollbar) Close() {}
+
+/**/
+func (ui_scrollbar *UI_Scrollbar) Open() {}
+
+/**/
+func (ui_scrollbar *UI_Scrollbar) Detoggle() {}
