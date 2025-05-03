@@ -6,6 +6,9 @@
  
 
  ---
+   ## as of 4/19/2025:
+   
+   - added a new UI structure that I think works quite well; almost up to the functionality I originally had but with a great deal of the tech debt resolved
 
  ## Dependencies:
   
