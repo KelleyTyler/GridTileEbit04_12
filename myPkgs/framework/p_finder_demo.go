@@ -221,7 +221,7 @@ func (pfind *Pathfind_Tester) Process(ticks int) error {
 					log.Printf("\n")
 					// pfind.EndNode.Set_Heads_Tails_On_Up() //<---- for some reason the whole thing fucking freezes if this is put into any kind of storage;
 					if pfind.Button_Pathfind_Auto.GetState() == 2 {
-						pfind.Button_Pathfind_Auto.DeToggle()
+						pfind.Button_Pathfind_Auto.Detoggle()
 					}
 					break
 				}
