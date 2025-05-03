@@ -482,10 +482,10 @@ This might be also a terrible idea overall I cannot tell quite yet
 enter 0 for it to default
 */
 func (ui_win *UI_Window) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode int) bool {
-	if ui_win.IsActive && ui_win.IsVisible && mode == 0 {
+	if ui_win.IsActive && ui_win.IsVisible {
 		cX, cY := Mouse_Pos_X, Mouse_Pos_Y
 		//mode stuff
-		var x0, y0, x1, y1 int
+		var x0, y0, x1, y1, x3, y3 int
 
 		if ui_win.Parent != nil {
 			px, py := ui_win.Parent.GetPosition_Int()
@@ -493,12 +493,28 @@ func (ui_win *UI_Window) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mo
 			y0 = ui_win.Position.Y + py
 			x1 = ui_win.Position.X + ui_win.Dimensions.X + px
 			y1 = ui_win.Position.Y + ui_win.Dimensions.Y + py
+			if mode == 10 {
+				x3, y3 = ui_win.Parent.Get_Internal_Position_Int()
+				x0 += x3
+				x1 += x3
+				y0 += y3
+				y1 += y3
+				if !ui_win.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 0) {
+					// log.Printf("OUT AT Subwindow\n")
+
+					return false
+				}
+			}
 		} else {
 			x0 = ui_win.Position.X
 			y0 = ui_win.Position.Y
 			x1 = ui_win.Position.X + ui_win.Dimensions.X
 			y1 = ui_win.Position.Y + ui_win.Dimensions.Y
 		}
+		// temp :=
+		// if !temp {
+		// 	log.Printf("OUT AT Subwindow 6 %3d %3d 1:%3d %3d\t2:%3d %3d3:%3d %3d\n", Mouse_Pos_X, Mouse_Pos_Y, x0, y0, x1, y1, x3, y3)
+		// }
 		return (cX > x0 && cX < x1) && (cY > y0 && cY < y1)
 	}
 	//mode stuff

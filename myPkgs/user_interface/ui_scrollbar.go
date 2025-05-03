@@ -313,6 +313,16 @@ func (ui_scrollbar *UI_Scrollbar) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_
 			y0 = ui_scrollbar.Position.Y + py
 			x1 = ui_scrollbar.Position.X + ui_scrollbar.Dimensions.X + px
 			y1 = ui_scrollbar.Position.Y + ui_scrollbar.Dimensions.Y + py
+			if mode == 10 {
+				x3, y3 := ui_scrollbar.Parent.Get_Internal_Position_Int()
+				x0 += x3
+				x1 += x3
+				y0 += y3
+				y1 += y3
+				if !ui_scrollbar.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 10) {
+					return false
+				}
+			}
 		} else {
 			x0 = ui_scrollbar.Position.X
 			y0 = ui_scrollbar.Position.Y

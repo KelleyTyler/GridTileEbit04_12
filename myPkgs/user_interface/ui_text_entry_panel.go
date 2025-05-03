@@ -225,10 +225,16 @@ func (ui_tep *UI_Text_Entry_Panel) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse
 			y0 = ui_tep.Position.Y + py
 			x1 = ui_tep.Position.X + ui_tep.Image.Bounds().Dx() + px
 			y1 = ui_tep.Position.Y + ui_tep.Image.Bounds().Dy() + py
-			// x0 = prim.Position.X + prim.ParentPos.X
-			// y0 = prim.Position.Y + prim.ParentPos.X
-			// x1 = prim.Position.X + prim.ParentPos.X + prim.Dimensions.X
-			// y1 = prim.Position.Y + prim.ParentPos.Y + prim.Dimensions.Y
+			if mode == 10 {
+				x3, y3 := ui_tep.Parent.Get_Internal_Position_Int()
+				x0 += x3
+				x1 += x3
+				y0 += y3
+				y1 += y3
+				if !ui_tep.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 10) {
+					return false
+				}
+			}
 		} else {
 			x0 = ui_tep.Position.X
 			y0 = ui_tep.Position.Y

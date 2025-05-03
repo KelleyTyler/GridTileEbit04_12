@@ -307,11 +307,22 @@ func (prim *UI_Object_Primitive) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_P
 
 		if prim.Parent != nil {
 			px, py := prim.Parent.GetPosition_Int()
-			qx, qy := prim.Parent.Get_Internal_Position_Int()
 			x0 = prim.Position.X + px
 			y0 = prim.Position.Y + py
-			x1 = prim.Position.X + prim.Dimensions.X + px + qx
-			y1 = prim.Position.Y + prim.Dimensions.Y + py + qy
+			x1 = prim.Position.X + prim.Dimensions.X + px
+			y1 = prim.Position.Y + prim.Dimensions.Y + py
+			if mode == 10 {
+				x3, y3 := prim.Parent.Get_Internal_Position_Int()
+				x0 += x3
+				x1 += x3
+				y0 += y3
+				y1 += y3
+				if !prim.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 0) {
+					// log.Printf("OUT AT Prim %d %d \n", x3, y3)
+
+					return false
+				}
+			}
 		} else {
 			x0 = prim.Position.X
 			y0 = prim.Position.Y

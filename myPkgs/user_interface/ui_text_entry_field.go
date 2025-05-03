@@ -227,8 +227,13 @@ func (tef *UI_TextEntryField) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, 
 
 /**/
 func (tef *UI_TextEntryField) IsCursorInBounds() bool {
+	Mouse_Pos_X, Mouse_Pos_Y := ebiten.CursorPosition()
+	return tef.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 10)
+}
+
+/**/
+func (tef *UI_TextEntryField) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode int) bool {
 	if tef.IsVisible {
-		cX, cY := ebiten.CursorPosition()
 		var x0, y0, x1, y1 int
 
 		if tef.Parent != nil {
@@ -237,26 +242,30 @@ func (tef *UI_TextEntryField) IsCursorInBounds() bool {
 			y0 = tef.Position.Y + py
 			x1 = tef.Position.X + tef.Dimensions.X + px
 			y1 = tef.Position.Y + tef.Dimensions.Y + py
-			// x0 = ui_win.Position.X + ui_win.ParentPos.X
-			// y0 = ui_win.Position.Y + ui_win.ParentPos.X
-			// x1 = ui_win.Position.X + ui_win.ParentPos.X + ui_win.Dimensions.X
-			// y1 = ui_win.Position.Y + ui_win.ParentPos.Y + ui_win.Dimensions.Y
+			if mode == 10 {
+				x3, y3 := tef.Parent.Get_Internal_Position_Int()
+				x0 += x3
+				x1 += x3
+				y0 += y3
+				y1 += y3
+				if !tef.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 10) {
+					return false
+				}
+			}
 		} else {
 			x0 = tef.Position.X
 			y0 = tef.Position.Y
 			x1 = tef.Position.X + tef.Dimensions.X
 			y1 = tef.Position.Y + tef.Dimensions.Y
 		}
-		return (cX > x0 && cX < x1) && (cY > y0 && cY < y1)
+		return (Mouse_Pos_X > x0 && Mouse_Pos_X < x1) && (Mouse_Pos_Y > y0 && Mouse_Pos_Y < y1)
 	}
 	return false
 }
 
-/**/
-func (tef *UI_TextEntryField) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode int) bool {
-	return false
-}
+/*
 
+ */
 /**/
 func (tef *UI_TextEntryField) GetPosition_Int() (int, int) {
 	if tef.Parent != nil {

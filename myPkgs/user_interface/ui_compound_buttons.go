@@ -286,6 +286,17 @@ func (nSelect *UI_Num_Select) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_
 			y0 = nSelect.Position.Y + py
 			x1 = nSelect.Position.X + nSelect.Dimensions.X + px
 			y1 = nSelect.Position.Y + nSelect.Dimensions.Y + py
+			if mode == 10 {
+				x3, y3 := nSelect.Parent.Get_Internal_Position_Int()
+				x0 += x3
+				x1 += x3
+				y0 += y3
+				y1 += y3
+				if !nSelect.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 10) {
+					return false
+				}
+			}
+
 		} else {
 			x0 = nSelect.Position.X
 			y0 = nSelect.Position.Y

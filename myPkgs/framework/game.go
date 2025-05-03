@@ -25,7 +25,9 @@ type Game struct {
 	lbl00 ui.UI_Label
 	// btn00b                    ui.UI_Button
 	primitive ui.UI_Object_Primitive
-	init      bool
+
+	scroll_pane ui.UI_Scrollpane
+	init        bool
 }
 
 /**/
@@ -61,19 +63,22 @@ func (g *Game) Init() error {
 	// g.Backend = ui.GetUIBackend(&g.G_Setting, nil)
 	gBoardSize := coords.CoordInts{X: g.G_Setting.GameBoardX, Y: g.G_Setting.GameBoardY}
 	gBoardTileSize := coords.CoordInts{X: g.G_Setting.GameBoardTileX, Y: g.G_Setting.GameBoardTileY}
-	gBoardTileSpacing := coords.CoordInts{X: g.G_Setting.GameBoardTile_Margin_X, Y: g.G_Setting.GameBoardTile_Margin_Y} //158
-	num := g.Backend.Settings.ScreenResX - 208                                                                          //70 //-136
-	g.primitive.Init([]string{"Primitive 00"}, &g.Backend, nil, coords.CoordInts{X: num, Y: 4}, coords.CoordInts{X: 204, Y: 632})
-	g.lbl00.Init([]string{"lbl_02", "Primitve00"}, &g.Backend, nil, coords.CoordInts{X: 0, Y: 0}, coords.CoordInts{X: 204, Y: 32})
-
+	gBoardTileSpacing := coords.CoordInts{X: g.G_Setting.GameBoardTile_Margin_X, Y: g.G_Setting.GameBoardTile_Margin_Y}                 //158
+	num := g.Backend.Settings.ScreenResX - (208 + 16)                                                                                   //70 //-136
+	g.primitive.Init([]string{"Primitive 00"}, &g.Backend, nil, coords.CoordInts{X: num, Y: 4}, coords.CoordInts{X: 204 + 16, Y: 632})  //204
+	g.lbl00.Init([]string{"lbl_02", "Primitve00"}, &g.Backend, nil, coords.CoordInts{X: 0, Y: 0}, coords.CoordInts{X: 204 + 16, Y: 32}) //204
+	// g.scroll_pane.Init([]string{"Primitive 00", "SCROLL PANE"}, &g.Backend, nil, coords.CoordInts{X: 0, Y: 32}, coords.CoordInts{X: 204 + 16, Y: 600})
+	// g.scroll_pane.Init_Parents(&g.primitive)
 	g.lbl00.TextAlignMode = 10
 	g.lbl00.Redraw()
-	g.Board.Init(&g.Backend, &g.primitive, coords.CoordInts{X: 158, Y: 42}, coords.CoordInts{X: 4, Y: 4}, gBoardSize, gBoardTileSize, gBoardTileSpacing)
+	g.Board.Init(&g.Backend, &g.primitive, coords.CoordInts{X: 128, Y: 42}, coords.CoordInts{X: 4, Y: 4}, gBoardSize, gBoardTileSize, gBoardTileSpacing)
 
 	g.primitive.Redraw()
 	g.lbl00.Init_Parents(&g.primitive)
 	// game.Board.SetParents(&game.primitive)
+	// g.scroll_pane.Redraw()
 	g.primitive.Redraw()
+
 	g.init = true
 	// return &game
 	// ebiten.SetWindowSize(g.G_Setting.WindowSizeX, g.G_Setting.WindowSizeY)

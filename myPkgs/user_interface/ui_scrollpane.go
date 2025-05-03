@@ -2,6 +2,7 @@ package user_interface
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/coords"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -118,6 +119,7 @@ func (ui_scroll *UI_Scrollpane) Init(idLabels []string, backend *UI_Backend, sty
 	ui_scroll.Scrollbar_Vertical.IsVisible = true
 	ui_scroll.Scrollbar_Horizontal.IsActive = true
 	ui_scroll.Scrollbar_Horizontal.IsVisible = true
+
 	ui_scroll.Redraw()
 	return nil
 }
@@ -246,12 +248,22 @@ func (ui_scroll *UI_Scrollpane) Scrolling(Mouse_Pos_X, Mouse_Pos_Y, mode int) {
 	ui_scroll.Scrollbar_Horizontal.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode)
 	ui_scroll.Internal_Position.Y = ui_scroll.Scrollbar_Vertical.CurrValue
 	ui_scroll.Internal_Position.X = ui_scroll.Scrollbar_Horizontal.CurrValue
-	var scroll_x, scroll_y float64 = 0.0, 0.0
-	scroll_x, scroll_y = ebiten.Wheel()
+	var scroll_y float64 = 0.0
+	_, scroll_y = ebiten.Wheel()
 	if ebiten.IsKeyPressed(ebiten.KeyShift) {
-		ui_scroll.Scrollbar_Vertical.CurrValue += int(scroll_x)
+		ui_scroll.Scrollbar_Horizontal.CurrValue += int(scroll_y)
+		if ui_scroll.Scrollbar_Horizontal.CurrValue > ui_scroll.Scrollbar_Horizontal.MaxValue {
+			ui_scroll.Scrollbar_Horizontal.CurrValue = ui_scroll.Scrollbar_Horizontal.MaxValue
+		} else if ui_scroll.Scrollbar_Horizontal.CurrValue < ui_scroll.Scrollbar_Horizontal.MinValue {
+			ui_scroll.Scrollbar_Horizontal.CurrValue = ui_scroll.Scrollbar_Horizontal.MinValue
+		}
 	} else {
 		ui_scroll.Scrollbar_Vertical.CurrValue += int(scroll_y)
+		if ui_scroll.Scrollbar_Vertical.CurrValue > ui_scroll.Scrollbar_Vertical.MaxValue {
+			ui_scroll.Scrollbar_Vertical.CurrValue = ui_scroll.Scrollbar_Vertical.MaxValue
+		} else if ui_scroll.Scrollbar_Vertical.CurrValue < ui_scroll.Scrollbar_Vertical.MinValue {
+			ui_scroll.Scrollbar_Vertical.CurrValue = ui_scroll.Scrollbar_Vertical.MinValue
+		}
 	}
 }
 
@@ -286,7 +298,7 @@ func (ui_scroll *UI_Scrollpane) IsCursorInBounds() bool {
 /**/
 func (ui_scroll *UI_Scrollpane) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode int) bool {
 	if ui_scroll.IsActive && ui_scroll.IsVisible {
-		var x0, y0, x1, y1 int
+		var x0, y0, x1, y1, x3, y3 int
 
 		if ui_scroll.Parent != nil {
 			px, py := ui_scroll.Parent.GetPosition_Int()
@@ -294,17 +306,30 @@ func (ui_scroll *UI_Scrollpane) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Po
 			y0 = ui_scroll.Position.Y + py
 			x1 = ui_scroll.Position.X + ui_scroll.Image.Bounds().Dx() + px
 			y1 = ui_scroll.Position.Y + ui_scroll.Image.Bounds().Dy() + py
-			// x0 = prim.Position.X + prim.ParentPos.X
-			// y0 = prim.Position.Y + prim.ParentPos.X
-			// x1 = prim.Position.X + prim.ParentPos.X + prim.Dimensions.X
-			// y1 = prim.Position.Y + prim.ParentPos.Y + prim.Dimensions.Y
+			if mode == 10 {
+				x3, y3 = ui_scroll.Parent.Get_Internal_Position_Int()
+				x0 += x3
+				x1 += x3
+				y0 += y3
+				y1 += y3
+				if !ui_scroll.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 10) {
+					log.Printf("OUT AT SCROLLPANE %d %d \n", x3, y3)
+					return false
+				}
+
+			}
 		} else {
+			// log.Printf("OUT AT SCROLLPANE32 %d %d \n", 0, 0)
 			x0 = ui_scroll.Position.X
 			y0 = ui_scroll.Position.Y
 			x1 = ui_scroll.Position.X + ui_scroll.Image.Bounds().Dx()
 			y1 = ui_scroll.Position.Y + ui_scroll.Image.Bounds().Dy()
 		}
-		return (Mouse_Pos_X > x0 && Mouse_Pos_X < x1) && (Mouse_Pos_Y > y0 && Mouse_Pos_Y < y1)
+		temp := (Mouse_Pos_X > x0 && Mouse_Pos_X < x1) && (Mouse_Pos_Y > y0 && Mouse_Pos_Y < y1)
+		// if !temp {
+		// 	log.Printf("OUT AT SCROLLPANE 6 %3d %3d 1:%3d %3d\t2:%3d %3d3:%3d %3d\n", Mouse_Pos_X, Mouse_Pos_Y, x0, y0, x1, y1, x3, y3)
+		// }
+		return temp
 	}
 	return false
 }

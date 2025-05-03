@@ -34,6 +34,8 @@ type GameBoard struct {
 	SavePath           string
 	GameBoard_UI_STATE uint8 // 10 is the normal 30 is 'loading window up' 40 is 'Save Window Up'
 
+	Button_Panel        ui.UI_Object_Primitive
+	Button_Panel_Label  ui.UI_Label
 	Reset_Map_Btn       ui.UI_Button
 	New_Map_Button      ui.UI_Button
 	Redraw_Tiles_Button ui.UI_Button
@@ -45,6 +47,7 @@ type GameBoard struct {
 
 	//  ui.UI_Button
 	// ui.UI_Button
+
 	NumSelect_TileSize_X    ui.UI_Num_Select
 	NumSelect_TileSize_Y    ui.UI_Num_Select
 	NumSelect_Tile_Margin_X ui.UI_Num_Select
@@ -54,8 +57,9 @@ type GameBoard struct {
 
 	Window_Save, Window_Load ui.UI_Text_Entry_Window_00
 
-	Test_Window_Button ui.UI_Button
-	Window_Test        ui.UI_Window
+	Test_Window_Button      ui.UI_Button
+	Window_Test             ui.UI_Window
+	Perspective_Test_Button ui.UI_Button
 
 	//========================
 	// GridmapPallet01 ui.UI_Button
@@ -402,19 +406,25 @@ func (gb *GameBoard) MouseMove() {
 /**/
 func (gb *GameBoard) Draw(screen *ebiten.Image) {
 	gb.Redraw()
-	ops := ebiten.DrawImageOptions{}
-	ops.GeoM.Reset()
-	ops.GeoM.Translate(float64(gb.BoardOptions.BoardPosition.X), float64(gb.BoardOptions.BoardPosition.Y))
-	ops.GeoM.Scale(1.0, 1.0)
-	gb.Img.Fill(color.RGBA{20, 20, 20, 255})
-	gb.Img.DrawImage(gb.Board_Buffer_Img, &ops)
-	gb.Img.DrawImage(gb.Board_Overlay_Buffer_Img, &ops)
-	ops.GeoM.Reset()
-	ops.GeoM.Translate(float64(gb.Position.X-gb.BoardOptions.BoardMargin.X), float64(gb.Position.Y-gb.BoardOptions.BoardMargin.Y))
-	screen.DrawImage(gb.Img, &ops)
 
-	///--------------------
-	ops.GeoM.Reset()
+	if gb.Perspective_Test_Button.GetState() == 2 {
+		gb.PerpsecitveDraw(screen)
+
+	} else {
+		ops := ebiten.DrawImageOptions{}
+		ops.GeoM.Reset()
+		ops.GeoM.Translate(float64(gb.BoardOptions.BoardPosition.X), float64(gb.BoardOptions.BoardPosition.Y))
+		ops.GeoM.Scale(1.0, 1.0)
+		gb.Img.Fill(color.RGBA{20, 20, 20, 255})
+		gb.Img.DrawImage(gb.Board_Buffer_Img, &ops)
+		gb.Img.DrawImage(gb.Board_Overlay_Buffer_Img, &ops)
+		ops.GeoM.Reset()
+		ops.GeoM.Translate(float64(gb.Position.X-gb.BoardOptions.BoardMargin.X), float64(gb.Position.Y-gb.BoardOptions.BoardMargin.Y))
+		screen.DrawImage(gb.Img, &ops)
+
+		///--------------------
+		ops.GeoM.Reset()
+	}
 
 	// if gb.GameBoard_UI_STATE == 40 {
 	// 	gb.Window_Save.Draw(screen)

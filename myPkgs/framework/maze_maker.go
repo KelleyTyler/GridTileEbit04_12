@@ -25,6 +25,7 @@ type Maze_Tool struct {
 
 	// USER INTERFACE
 	// Maze_Selection_Button, Maze_Gen_Button, MazeGenBtn00, MazeGenBtn01 ui.UI_Button
+	Button_Panel_Frame                                                          ui.UI_Object_Primitive
 	BarLabel, OUTPUT_LABEL                                                      ui.UI_Label
 	Button_SET_POINTS, Button_GENERATE_MAZE, Button_TOGGLE_DIAGONALS, Button_00 ui.UI_Button
 	NSelect_MazeGen_00                                                          ui.UI_Num_Select
@@ -147,34 +148,37 @@ func (mTool *Maze_Tool) Draw(screen *ebiten.Image, opts mat.Integer_Matrix_Ebite
 This initiates the User Interface
 */
 func (mTool *Maze_Tool) UI_Init(parent ui.UI_Object, row_value int) {
-	mTool.BarLabel.Init([]string{"maze_gen_label", "MAZE GENERATOR"}, mTool.UI_Backend, nil, coords.CoordInts{X: 0, Y: row_value}, coords.CoordInts{X: 204, Y: 32})
+	mTool.Button_Panel_Frame.Init([]string{"maze_tool_button_panel", "PRIMITIVE"}, mTool.UI_Backend, nil, coords.CoordInts{X: 0, Y: row_value}, coords.CoordInts{X: 204, Y: 138})
+	mTool.BarLabel.Init([]string{"maze_gen_label", "MAZE GENERATOR"}, mTool.UI_Backend, nil, coords.CoordInts{X: 0, Y: 0}, coords.CoordInts{X: 204, Y: 32})
 	mTool.BarLabel.TextAlignMode = 10
 	mTool.BarLabel.Redraw()
-	mTool.BarLabel.Init_Parents(parent)
+	mTool.BarLabel.Init_Parents(&mTool.Button_Panel_Frame)
 
-	row_01_value := row_value + 34
+	row_01_value := 0 + 34
 	mTool.Button_SET_POINTS.Init([]string{"maze_gen_btn", "Select\nPoints"}, mTool.UI_Backend, nil, coords.CoordInts{X: 4, Y: row_01_value}, coords.CoordInts{X: 64, Y: 32})
 	mTool.Button_SET_POINTS.Btn_Type = 10
-	mTool.Button_SET_POINTS.Init_Parents(parent)
+	mTool.Button_SET_POINTS.Init_Parents(&mTool.Button_Panel_Frame)
 
 	mTool.OUTPUT_LABEL.Init([]string{"maze_gen_label", "------"}, mTool.UI_Backend, nil, coords.CoordInts{X: 70, Y: row_01_value}, coords.CoordInts{X: 130, Y: 66})
-	mTool.OUTPUT_LABEL.Init_Parents(parent)
+	mTool.OUTPUT_LABEL.Init_Parents(&mTool.Button_Panel_Frame)
 
 	mTool.Button_GENERATE_MAZE.Init([]string{"maze_gen_btn", "Gen\nPrimlike"}, mTool.UI_Backend, nil, coords.CoordInts{X: 4, Y: row_01_value + 34}, coords.CoordInts{X: 64, Y: 32})
 	mTool.Button_GENERATE_MAZE.Btn_Type = 10
-	mTool.Button_GENERATE_MAZE.Init_Parents(parent)
+	mTool.Button_GENERATE_MAZE.Init_Parents(&mTool.Button_Panel_Frame)
 
-	row_03_Value := row_01_value + 68
+	row_03_Value := 34 + 68
 
 	mTool.Button_TOGGLE_DIAGONALS.Init([]string{"maze_gen_btn", "Toggle\nDiagonals"}, mTool.UI_Backend, nil, coords.CoordInts{X: 4, Y: row_03_Value}, coords.CoordInts{X: 64, Y: 32})
 	mTool.Button_TOGGLE_DIAGONALS.Btn_Type = 10
-	mTool.Button_TOGGLE_DIAGONALS.Init_Parents(parent)
+	mTool.Button_TOGGLE_DIAGONALS.Init_Parents(&mTool.Button_Panel_Frame)
 
 	mTool.NSelect_MazeGen_00.Init([]string{"n_map_btn", "mazeGen00"}, mTool.UI_Backend, nil, coords.CoordInts{X: 70, Y: row_03_Value}, coords.CoordInts{X: 64, Y: 32})
-	mTool.NSelect_MazeGen_00.Init_Parents(parent)
+	mTool.NSelect_MazeGen_00.Init_Parents(&mTool.Button_Panel_Frame)
 	mTool.NSelect_MazeGen_00.SetVals(0, 1, 0, 16, 0)
 
 	mTool.Button_00.Init([]string{"maze_gen_btn", "MazeGen00"}, mTool.UI_Backend, nil, coords.CoordInts{X: 136, Y: row_03_Value}, coords.CoordInts{X: 64, Y: 32})
 	mTool.Button_00.Btn_Type = 10
-	mTool.Button_00.Init_Parents(parent)
+	mTool.Button_00.Init_Parents(&mTool.Button_Panel_Frame)
+	mTool.Button_Panel_Frame.Init_Parents(parent)
+	mTool.Button_Panel_Frame.Redraw()
 }

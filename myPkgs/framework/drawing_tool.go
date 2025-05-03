@@ -20,6 +20,7 @@ type Drawing_Tool struct {
 	// hasP1, hasP2 bool
 
 	//User_Interface_Buttons
+	Button_Panel_Frame                                                         ui.UI_Object_Primitive
 	Label_DrawTool                                                             ui.UI_Label
 	Button_DrawPoint, Button_DrawLine, Button_DrawCircle, Button_DrawRectangle ui.UI_Button
 	Button_StopMode                                                            ui.UI_Button
@@ -70,40 +71,45 @@ func (dTool *Drawing_Tool) DrawLineToGrid(value int) (ret bool) {
 /*
  */
 func (dTool *Drawing_Tool) InitUI(parent ui.UI_Object, yValue int) {
-	dTool.Label_DrawTool.Init([]string{"n_draw_tool_lbl", "Drawing Tool"}, dTool.UI_Backend, nil, coords.CoordInts{X: 0, Y: yValue}, coords.CoordInts{X: 204, Y: 32})
+
+	dTool.Button_Panel_Frame.Init([]string{"primitive_scroll_primitive", "PRIMITIVE"}, dTool.UI_Backend, nil, coords.CoordInts{X: 0, Y: yValue}, coords.CoordInts{X: 204, Y: 140})
+
+	dTool.Label_DrawTool.Init([]string{"n_draw_tool_lbl", "Drawing Tool"}, dTool.UI_Backend, nil, coords.CoordInts{X: 0, Y: 0}, coords.CoordInts{X: 204, Y: 32})
 	dTool.Label_DrawTool.TextAlignMode = 10
 	dTool.Label_DrawTool.Redraw()
-	dTool.Label_DrawTool.Init_Parents(parent)
+	dTool.Label_DrawTool.Init_Parents(&dTool.Button_Panel_Frame)
 
-	dTool.NSelect_LineColor.Init([]string{"nselect_line_color", "Line Color"}, dTool.UI_Backend, nil, coords.CoordInts{X: 4, Y: yValue + 34}, coords.CoordInts{X: 64, Y: 32})
+	dTool.NSelect_LineColor.Init([]string{"nselect_line_color", "Line Color"}, dTool.UI_Backend, nil, coords.CoordInts{X: 4, Y: 0 + 34}, coords.CoordInts{X: 64, Y: 32})
 	dTool.NSelect_LineColor.SetVals(0, 1, -1, 10, 0)
-	dTool.NSelect_LineColor.Init_Parents(parent)
+	dTool.NSelect_LineColor.Init_Parents(&dTool.Button_Panel_Frame)
 
-	dTool.NSelect_CircleRadius.Init([]string{"nselect_Circ_rad", "CircleRadius"}, dTool.UI_Backend, nil, coords.CoordInts{X: 70, Y: yValue + 34}, coords.CoordInts{X: 64, Y: 32})
+	dTool.NSelect_CircleRadius.Init([]string{"nselect_Circ_rad", "CircleRadius"}, dTool.UI_Backend, nil, coords.CoordInts{X: 70, Y: 0 + 34}, coords.CoordInts{X: 64, Y: 32})
 	dTool.NSelect_CircleRadius.SetVals(0, 1, 0, 32, 0)
-	dTool.NSelect_CircleRadius.Init_Parents(parent)
+	dTool.NSelect_CircleRadius.Init_Parents(&dTool.Button_Panel_Frame)
 
-	dTool.NSelect_FillColor.Init([]string{"nselect_fill_color", "Fill Color"}, dTool.UI_Backend, nil, coords.CoordInts{X: 136, Y: yValue + 34}, coords.CoordInts{X: 64, Y: 32})
+	dTool.NSelect_FillColor.Init([]string{"nselect_fill_color", "Fill Color"}, dTool.UI_Backend, nil, coords.CoordInts{X: 136, Y: 0 + 34}, coords.CoordInts{X: 64, Y: 32})
 	dTool.NSelect_FillColor.SetVals(0, 1, -1, 10, 0)
-	dTool.NSelect_FillColor.Init_Parents(parent)
+	dTool.NSelect_FillColor.Init_Parents(&dTool.Button_Panel_Frame)
 
-	dTool.Button_DrawPoint.Init([]string{"n_draw_point_btn", "Draw\nPoint"}, dTool.UI_Backend, nil, coords.CoordInts{X: 4, Y: yValue + 68}, coords.CoordInts{X: 64, Y: 32})
-	dTool.Button_DrawLine.Init([]string{"n_draw_point_btn", "Draw\nLine"}, dTool.UI_Backend, nil, coords.CoordInts{X: 70, Y: yValue + 68}, coords.CoordInts{X: 64, Y: 32})
-	dTool.Button_DrawRectangle.Init([]string{"n_draw_rectangle_btn", "Draw\nRectangle"}, dTool.UI_Backend, nil, coords.CoordInts{X: 136, Y: yValue + 68}, coords.CoordInts{X: 64, Y: 32})
+	dTool.Button_DrawPoint.Init([]string{"n_draw_point_btn", "Draw\nPoint"}, dTool.UI_Backend, nil, coords.CoordInts{X: 4, Y: 0 + 68}, coords.CoordInts{X: 64, Y: 32})
+	dTool.Button_DrawLine.Init([]string{"n_draw_point_btn", "Draw\nLine"}, dTool.UI_Backend, nil, coords.CoordInts{X: 70, Y: 0 + 68}, coords.CoordInts{X: 64, Y: 32})
+	dTool.Button_DrawRectangle.Init([]string{"n_draw_rectangle_btn", "Draw\nRectangle"}, dTool.UI_Backend, nil, coords.CoordInts{X: 136, Y: 0 + 68}, coords.CoordInts{X: 64, Y: 32})
 	//-------------------------------Row3
-	dTool.Button_DrawCircle.Init([]string{"n_draw_circle_btn", "Draw\nCircle"}, dTool.UI_Backend, nil, coords.CoordInts{X: 4, Y: yValue + 102}, coords.CoordInts{X: 64, Y: 32})
-	dTool.Button_StopMode.Init([]string{"n_draw_circle_btn", "Stop\nMode"}, dTool.UI_Backend, nil, coords.CoordInts{X: 70, Y: yValue + 102}, coords.CoordInts{X: 64, Y: 32})
+	dTool.Button_DrawCircle.Init([]string{"n_draw_circle_btn", "Draw\nCircle"}, dTool.UI_Backend, nil, coords.CoordInts{X: 4, Y: 0 + 102}, coords.CoordInts{X: 64, Y: 32})
+	dTool.Button_StopMode.Init([]string{"n_draw_circle_btn", "Stop\nMode"}, dTool.UI_Backend, nil, coords.CoordInts{X: 70, Y: 0 + 102}, coords.CoordInts{X: 64, Y: 32})
 
 	dTool.Button_DrawPoint.Btn_Type = 10
 	dTool.Button_DrawLine.Btn_Type = 10
 	dTool.Button_DrawRectangle.Btn_Type = 10
 	dTool.Button_DrawCircle.Btn_Type = 10
 	dTool.Button_StopMode.Btn_Type = 10
-	dTool.Button_DrawPoint.Init_Parents(parent)
-	dTool.Button_DrawLine.Init_Parents(parent)
-	dTool.Button_DrawRectangle.Init_Parents(parent)
-	dTool.Button_DrawCircle.Init_Parents(parent)
-	dTool.Button_StopMode.Init_Parents(parent)
+	dTool.Button_DrawPoint.Init_Parents(&dTool.Button_Panel_Frame)
+	dTool.Button_DrawLine.Init_Parents(&dTool.Button_Panel_Frame)
+	dTool.Button_DrawRectangle.Init_Parents(&dTool.Button_Panel_Frame)
+	dTool.Button_DrawCircle.Init_Parents(&dTool.Button_Panel_Frame)
+	dTool.Button_StopMode.Init_Parents(&dTool.Button_Panel_Frame)
+	dTool.Button_Panel_Frame.Init_Parents(parent)
+	dTool.Button_Panel_Frame.Redraw()
 
 }
 

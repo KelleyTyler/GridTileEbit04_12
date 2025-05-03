@@ -126,15 +126,15 @@ func GetSettingsFromJSON() GameSettings {
 	bee, err0 := GetBytesFromJSON("init.JSON")
 	if err0 != nil {
 		gSets = GetSettingsFromBakedIn()
-		// init_bytes, err := json.Marshal(gSets)
-		// if err != nil {
-		// 	log.Printf("ERROR ERROR ERROR!!!\n")
-		// }
-		// err = Write_Byes_To_File(init_bytes)
-		// if err != nil {
-		// 	panic(err)
-		// }
-		// MakingDirectory(gSets.SavePath)
+		init_bytes, err := json.Marshal(gSets)
+		if err != nil {
+			log.Printf("ERROR ERROR ERROR!!!\n")
+		}
+		err = Write_Byes_To_File(init_bytes)
+		if err != nil {
+			panic(err)
+		}
+		MakingDirectory(gSets.SavePath)
 		return gSets
 	}
 	err2 := json.Unmarshal(bee, &gSets)
@@ -142,7 +142,7 @@ func GetSettingsFromJSON() GameSettings {
 		log.Fatal(err2)
 	}
 
-	//MakingDirectory(gSets.SavePath)
+	MakingDirectory(gSets.SavePath)
 	return gSets
 }
 

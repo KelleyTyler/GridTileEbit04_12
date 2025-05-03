@@ -335,10 +335,8 @@ func (btn *UI_Button) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode 
 			if mode == 10 {
 				x2 += x3
 				y2 += y3
-				if pp := btn.Parent.GetParent(); pp != nil {
-					if !pp.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 0) {
-						return false
-					}
+				if !btn.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 0) {
+					return false
 				}
 			}
 			x0 += x2
