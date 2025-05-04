@@ -46,8 +46,11 @@ func (gb *GameBoard) UI_INIT() {
 	//Init([]string{"window_test", "TEST\n WINDOW"}, gb.UI_Backend, nil, coords.CoordInts{X: 55, Y: 150}, coords.CoordInts{X: 256, Y: 144})
 	gb.Test_Window_Button.Init([]string{"btn_test_window", "Test\nWindow"}, gb.UI_Backend, nil, coords.CoordInts{X: 70, Y: 68 + 68 + 34}, coords.CoordInts{X: 64, Y: 32})
 	gb.Window_Test.Init([]string{"window_test", "TEST WINDOW"}, gb.UI_Backend, nil, coords.CoordInts{X: 55, Y: 150}, coords.CoordInts{X: 256, Y: 128 + 32})
-	gb.Perspective_Test_Button.Init([]string{"btn_test_perspective", "Test\nPerspective"}, gb.UI_Backend, nil, coords.CoordInts{X: 4, Y: 34}, coords.CoordInts{X: 64, Y: 32})
-	// gb.Perspective_Test_Button.Btn_Type = 10
+	gb.Perspective_Test_Button.Init([]string{"btn_test_perspective", "Test\nPerspective"}, gb.UI_Backend, nil, coords.CoordInts{X: 4, Y: 170}, coords.CoordInts{X: 64, Y: 32})
+	gb.Perspective_Test_Button.Btn_Type = 10
+	gb.Button_Lines.Init([]string{"btn_test_perspective", "Toggle\nMap lines"}, gb.UI_Backend, nil, coords.CoordInts{X: 136, Y: 170}, coords.CoordInts{X: 64, Y: 32})
+	gb.Button_Lines.Btn_Type = 10
+
 	gb.Set_Parent_Panel(&gb.Button_Panel)
 	gb.Button_Panel.Redraw()
 }
@@ -81,9 +84,11 @@ func (gb *GameBoard) Set_Parent_Panel(parent ui.UI_Object) {
 	gb.NumSelect_Tile_Margin_Y.Init_Parents(parent)
 	gb.Redraw_Tiles_Button.Init_Parents(parent)
 	gb.Test_Window_Button.Init_Parents(parent)
-	gb.Perspective_Test_Button.Init_Parents(&gb.Window_Test.Prim)
+	gb.Perspective_Test_Button.Init_Parents(parent)
+	gb.Button_Lines.Init_Parents(parent)
+
 	//--------------------------------
-	// gb.Window_Save.Init_Parents(parent)
+	// gb.Window_Save.Init_Parents(parent)&gb.Window_Test.Prim
 }
 
 /*
@@ -116,5 +121,65 @@ func (gb *GameBoard) PerpsecitveDraw(screen *ebiten.Image) {
 
 		screen.DrawImage(gb.Img.SubImage(image.Rect(0, i, w, i+1)).(*ebiten.Image), op)
 	}
+
+}
+
+/**/
+func (gb *GameBoard) UI_UPDATE() {
+	// strng :=
+	// g.MazeTextBox.
+	if gb.Reset_Map_Btn.GetState() == 2 {
+		gb.IMat.ClearMatrix_To(gb.NumSelect_ResetNumber.CurrValue)
+		gb.mazeTool.Reset(gb.BoardOptions)
+		gb.drawTool.Clear()
+		gb.Redraw_Board_New_Params(coords.CoordInts{X: gb.NumSelect_TileSize_X.CurrValue, Y: gb.NumSelect_TileSize_Y.CurrValue}, coords.CoordInts{X: gb.NumSelect_Tile_Margin_X.CurrValue, Y: gb.NumSelect_Tile_Margin_Y.CurrValue})
+		gb.pfindTest.Reset()
+		gb.BoardChanges = true
+
+	}
+	if gb.Redraw_Tiles_Button.GetState() == 2 {
+		// log.Printf("REDRAW TILES BTN PRESSED\n")
+		gb.Redraw_Board_New_Params(coords.CoordInts{X: gb.NumSelect_TileSize_X.CurrValue, Y: gb.NumSelect_TileSize_Y.CurrValue}, coords.CoordInts{X: gb.NumSelect_Tile_Margin_X.CurrValue, Y: gb.NumSelect_Tile_Margin_Y.CurrValue})
+		gb.BoardChanges = true
+
+		gb.Redraw_Board()
+
+	}
+	if gb.New_Map_Button.GetState() == 2 {
+		//gb.NumSelect_ResetNumber
+		gb.NewBoard(coords.CoordInts{X: gb.NumSelect_MapSize_X.CurrValue, Y: gb.NumSelect_MapSize_Y.CurrValue})
+		gb.pfindTest.Reset()
+		gb.mazeTool.Reset(gb.BoardOptions)
+		gb.drawTool.Clear()
+		gb.Redraw_Board_New_Params(coords.CoordInts{X: gb.NumSelect_TileSize_X.CurrValue, Y: gb.NumSelect_TileSize_Y.CurrValue}, coords.CoordInts{X: gb.NumSelect_Tile_Margin_X.CurrValue, Y: gb.NumSelect_Tile_Margin_Y.CurrValue})
+		gb.BoardChanges = true
+
+	}
+
+	if b, a := gb.mazeTool.Update_Passive(); a || b {
+		if !gb.BoardChanges && a {
+			gb.BoardChanges = true
+		}
+		if !gb.BoardOverlayChanges && b {
+			gb.BoardOverlayChanges = true
+		}
+	}
+
+	if gb.Save_Map_Button.GetState() == 2 {
+		gb.Save_Button_Pressed()
+	}
+	if gb.Load_Map_Button.GetState() == 2 {
+		gb.Load_Button_Pressed()
+	}
+	if gb.Test_Window_Button.GetState() == 2 {
+		gb.Test_Button_Pressed()
+	}
+	if gb.pfindTest.Update_Passive() {
+		gb.BoardOverlayChanges = true
+		gb.BoardChanges = true
+
+	}
+
+	gb.BoardOptions.SubDiv_00_Show = !(gb.Button_Lines.GetState() == 2)
 
 }

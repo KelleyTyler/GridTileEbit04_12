@@ -10,8 +10,8 @@
     "game_board_y": 64,
     "game_board_x_max": 128,
     "game_board_y_max": 128,
-    "game_board_tile_x":8,
-    "game_board_tile_y":8,
+    "game_board_tile_x":4,
+    "game_board_tile_y":4,
     "game_board_tile_margin_x":2,
     "game_board_tile_margin_y":2
 }

@@ -3,7 +3,6 @@ package framework
 import (
 	"fmt"
 	"image/color"
-	"log"
 	"math"
 
 	coords "github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/coords"
@@ -61,6 +60,7 @@ type GameBoard struct {
 	Test_Window_Button      ui.UI_Button
 	Window_Test             ui.UI_Window
 	Perspective_Test_Button ui.UI_Button
+	Button_Lines            ui.UI_Button
 
 	//========================
 	// GridmapPallet01 ui.UI_Button
@@ -257,61 +257,6 @@ func (gb *GameBoard) Update() {
 }
 
 /**/
-func (gb *GameBoard) UI_UPDATE() {
-	// strng :=
-	// g.MazeTextBox.
-	if gb.Reset_Map_Btn.GetState() == 2 {
-		gb.IMat.ClearMatrix_To(gb.NumSelect_ResetNumber.CurrValue)
-		gb.mazeTool.Reset(gb.BoardOptions)
-		gb.drawTool.Clear()
-		gb.Redraw_Board_New_Params(coords.CoordInts{X: gb.NumSelect_TileSize_X.CurrValue, Y: gb.NumSelect_TileSize_Y.CurrValue}, coords.CoordInts{X: gb.NumSelect_Tile_Margin_X.CurrValue, Y: gb.NumSelect_Tile_Margin_Y.CurrValue})
-		gb.pfindTest.Reset()
-		gb.BoardChanges = true
-
-	}
-	if gb.Redraw_Tiles_Button.GetState() == 2 {
-		// log.Printf("REDRAW TILES BTN PRESSED\n")
-		gb.Redraw_Board_New_Params(coords.CoordInts{X: gb.NumSelect_TileSize_X.CurrValue, Y: gb.NumSelect_TileSize_Y.CurrValue}, coords.CoordInts{X: gb.NumSelect_Tile_Margin_X.CurrValue, Y: gb.NumSelect_Tile_Margin_Y.CurrValue})
-		gb.BoardChanges = true
-
-		gb.Redraw_Board()
-
-	}
-	if gb.New_Map_Button.GetState() == 2 {
-		//gb.NumSelect_ResetNumber
-		gb.NewBoard(coords.CoordInts{X: gb.NumSelect_MapSize_X.CurrValue, Y: gb.NumSelect_MapSize_Y.CurrValue})
-		gb.Redraw_Board_New_Params(coords.CoordInts{X: gb.NumSelect_TileSize_X.CurrValue, Y: gb.NumSelect_TileSize_Y.CurrValue}, coords.CoordInts{X: gb.NumSelect_Tile_Margin_X.CurrValue, Y: gb.NumSelect_Tile_Margin_Y.CurrValue})
-		gb.BoardChanges = true
-
-	}
-
-	if b, a := gb.mazeTool.Update_Passive(); a || b {
-		if !gb.BoardChanges && a {
-			gb.BoardChanges = true
-		}
-		if !gb.BoardOverlayChanges && b {
-			gb.BoardOverlayChanges = true
-		}
-	}
-
-	if gb.Save_Map_Button.GetState() == 2 {
-		gb.Save_Button_Pressed()
-	}
-	if gb.Load_Map_Button.GetState() == 2 {
-		gb.Load_Button_Pressed()
-	}
-	if gb.Test_Window_Button.GetState() == 2 {
-		gb.Test_Button_Pressed()
-	}
-	if gb.pfindTest.Update_Passive() {
-		gb.BoardOverlayChanges = true
-		gb.BoardChanges = true
-
-	}
-
-}
-
-/**/
 func (gb *GameBoard) NewBoard(new_Bsize coords.CoordInts) {
 	gb.IMat.Init(new_Bsize.Y, new_Bsize.X, gb.NumSelect_ResetNumber.CurrValue)
 }
@@ -410,18 +355,18 @@ func (gb *GameBoard) Draw(screen *ebiten.Image) {
 
 	if gb.Perspective_Test_Button.GetState() == 2 {
 
-		x0, y0 := gb.Perspective_Test_Button.GetPosition_Int()
-		x1, y1 := gb.Perspective_Test_Button.GetDimensions_Int()
+		// x0, y0 := gb.Perspective_Test_Button.GetPosition_Int()
+		// x1, y1 := gb.Perspective_Test_Button.GetDimensions_Int()
 
-		x2, y2 := gb.Perspective_Test_Button.GetPosition_Int()
-		x3, y3 := gb.Perspective_Test_Button.Parent.Get_Internal_Position_Int()
-		x4, y4 := gb.Perspective_Test_Button.GetDimensions_Int()
-		// x5, y5 := gb.Perspective_Test_Button.Parent.GetParent().Get_Internal_Position_Int()
+		// x2, y2 := gb.Perspective_Test_Button.GetPosition_Int()
+		// x3, y3 := gb.Perspective_Test_Button.Parent.Get_Internal_Position_Int()
+		// x4, y4 := gb.Perspective_Test_Button.GetDimensions_Int()
+		// // x5, y5 := gb.Perspective_Test_Button.Parent.GetParent().Get_Internal_Position_Int()
 
-		log.Printf("OUT OUT OUT:\n")
+		// log.Printf("OUT OUT OUT:\n")
 
-		log.Printf("%14s:%3d,%3d\t%14s:%3d,%3d\n", "Position", x0, y0, "Dimensions", x1, y1)
-		log.Printf("%14s:%3d,%3d\t%14s:%3d,%3d\t%14s:%3d,%3d\n", "Par_Pos", x2, y2, "par_Int_Pos", x3, y3, "par_Dim", x4, y4)
+		// log.Printf("%14s:%3d,%3d\t%14s:%3d,%3d\n", "Position", x0, y0, "Dimensions", x1, y1)
+		// log.Printf("%14s:%3d,%3d\t%14s:%3d,%3d\t%14s:%3d,%3d\n", "Par_Pos", x2, y2, "par_Int_Pos", x3, y3, "par_Dim", x4, y4)
 		gb.PerpsecitveDraw(screen)
 
 	} else {

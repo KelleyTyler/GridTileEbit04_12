@@ -31,16 +31,17 @@ func NodeList_SortByFValue_Ascending(list []*ImatNode, start, target coords.Coor
 		} else if aVal > eVal {
 			return -1
 		} else {
-			a_HVal := a.GetHValue()
-			e_HVal := e.GetHValue()
-			if a_HVal > e_HVal {
-				return 1
-			} else if a_HVal < e_HVal {
-				return -1
-			} else {
-				// ZEROS++
-				return 0
-			}
+			return a.Compare_H(e)
+			// a_HVal := a.GetHValue()
+			// e_HVal := e.GetHValue()
+			// if a_HVal > e_HVal {
+			// 	return 1
+			// } else if a_HVal < e_HVal {
+			// 	return -1
+			// } else {
+			// 	// ZEROS++
+			// 	return 0
+			// }
 		}
 	})
 	// log.Printf("ZEROS: %d --------\n", ZEROS)
@@ -58,17 +59,18 @@ func NodeList_SortByFValue_DESC(list []*ImatNode, start, target coords.CoordInts
 		} else if aVal < eVal {
 			return -1
 		} else {
-			a_HVal := a.GetHValue()
-			e_HVal := e.GetHValue()
-			if a_HVal > e_HVal {
-				return 1
-			} else if a_HVal < e_HVal {
-				return -1
-			} else {
-				// ZEROS++
-				// log.Printf("--------\n")
-				return 0
-			}
+			return a.Compare_H(e)
+			// a_HVal := a.GetHValue()
+			// e_HVal := e.GetHValue()
+			// if a_HVal > e_HVal {
+			// 	return 1
+			// } else if a_HVal < e_HVal {
+			// 	return -1
+			// } else {
+			// 	// ZEROS++
+			// 	// log.Printf("--------\n")
+			// 	return 0
+			// }
 		}
 	})
 	// log.Printf("ZEROS: %d --------\n", ZEROS)

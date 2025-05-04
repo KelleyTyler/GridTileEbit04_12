@@ -275,7 +275,7 @@ This might be also a terrible idea overall I cannot tell quite yet
 enter 0 for it to default
 */
 func (nSelect *UI_Num_Select) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode int) bool {
-	if nSelect.IsActive && nSelect.IsVisible && mode == 0 {
+	if nSelect.IsActive && nSelect.IsVisible && (mode == 0 || mode == 10) {
 		cX, cY := Mouse_Pos_X, Mouse_Pos_Y
 		//mode stuff
 		var x0, y0, x1, y1 int
@@ -286,15 +286,15 @@ func (nSelect *UI_Num_Select) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_
 			y0 = nSelect.Position.Y + py
 			x1 = nSelect.Position.X + nSelect.Dimensions.X + px
 			y1 = nSelect.Position.Y + nSelect.Dimensions.Y + py
-			if mode == 10 {
+			if mode == 10 || mode == 0 {
 				x3, y3 := nSelect.Parent.Get_Internal_Position_Int()
 				x0 += x3
 				x1 += x3
 				y0 += y3
 				y1 += y3
-				if !nSelect.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 10) {
-					return false
-				}
+				// if !nSelect.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 10) {
+				// 	return false
+				// }
 			}
 
 		} else {
@@ -320,7 +320,10 @@ func (nSelect *UI_Num_Select) Detoggle() {}
 
 /**/
 func (nSelect *UI_Num_Select) Get_Internal_Position_Int() (x_pos int, y_pos int) {
-	x_pos, y_pos = nSelect.GetPosition_Int()
+	// x_pos, y_pos = nSelect.GetPosition_Int()
+	if nSelect.Parent != nil {
+		x_pos, y_pos = nSelect.Parent.Get_Internal_Position_Int()
+	}
 	return x_pos, y_pos
 }
 

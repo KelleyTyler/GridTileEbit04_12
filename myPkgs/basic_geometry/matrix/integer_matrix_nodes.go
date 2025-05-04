@@ -14,9 +14,9 @@ type ImatNode struct {
 	Iteration               int
 	ValueOnGrid             int
 	Move_Cost               int
-	F_Value                 float64
-	G_Value                 float64
-	H_Value                 float64
+	// F_Value                 float64
+	// G_Value                 float64
+	// H_Value                 float64
 }
 
 /*ARGUEMENTS AGAINST ARRAY FOR "ImatNode.NEXT:"
@@ -52,9 +52,9 @@ func GetNode(start, point, target coords.CoordInts, imat IntegerMatrix2D, parent
 		temp.Move_Cost = temp.Get_Move_Cost_Int()
 		temp.Prev = parent
 		temp.Iteration = temp.GetInteration()
-		temp.G_Value = temp.GetGValue()
-		temp.H_Value = temp.GetHValue()
-		temp.F_Value = temp.GetFValue()
+		// temp.G_Value = temp.GetGValue()
+		// temp.H_Value = temp.GetHValue()
+		// temp.F_Value = temp.GetFValue()
 
 	}
 
@@ -125,7 +125,7 @@ func (node *ImatNode) GetFValue() (fVal float64) {
 func (node *ImatNode) SetFValue() (fVal float64) {
 	// fVal = node.GetGValue() + node.GetHValue()
 	fVal = node.GetGValue() + node.GetHValue()
-	node.F_Value = fVal
+	// node.F_Value = fVal
 	return fVal
 }
 
@@ -150,7 +150,7 @@ func (node *ImatNode) SetGValue() (gVal float64) {
 
 	// gVal = +float64(node.Move_Cost) - node.GetMovementDistanceToStart()
 	gVal = float64(node.Move_Cost)
-	node.G_Value = gVal
+	// node.G_Value = gVal
 	// gVal = float64(node.Move_Cost)
 	return gVal
 }
@@ -169,7 +169,7 @@ func (node *ImatNode) GetHValue() (hVal float64) {
  */
 func (node *ImatNode) SetHValue() (hVal float64) {
 	hVal = node.Position.GetHypotenuseDistance_Float(node.Target)
-	node.H_Value = hVal
+	// node.H_Value = hVal
 	return hVal
 	// node.Position.GetHypotenuseDistance_Float(node.Target)
 	// return node.H_Value
@@ -235,6 +235,60 @@ func (node *ImatNode) GetTail() *ImatNode {
 		return node.Next.GetTail()
 	} else {
 		return node
+	}
+}
+
+/*
+Compare H Values;
+Returns 1 if the node in question is less than node02;
+Returns -1 if the node in question is more than node02;
+Returns 0 if the node in qustion is more than node02
+*/
+func (node *ImatNode) Compare_H(node02 *ImatNode) int {
+	a_value := node.GetHValue()
+	b_value := node02.GetHValue()
+	if a_value < b_value {
+		return 1
+	} else if a_value > b_value {
+		return -1
+	} else {
+		return 0
+	}
+}
+
+/*
+Compare F Values;
+Returns 1 if the node in question is less than node02;
+Returns -1 if the node in question is more than node02;
+Returns 0 if the node in qustion is more than node02
+*/
+func (node *ImatNode) Compare_F(node02 *ImatNode) int {
+	a_value := node.GetFValue()
+	b_value := node02.GetFValue()
+	if a_value < b_value {
+		return 1
+	} else if a_value > b_value {
+		return -1
+	} else {
+		return 0
+	}
+}
+
+/*
+Compare G Values;
+Returns 1 if the node in question is less than node02;
+Returns -1 if the node in question is more than node02;
+Returns 0 if the node in qustion is more than node02
+*/
+func (node *ImatNode) Compare_G(node02 *ImatNode) int {
+	a_value := node.GetGValue()
+	b_value := node02.GetGValue()
+	if a_value < b_value {
+		return 1
+	} else if a_value > b_value {
+		return -1
+	} else {
+		return 0
 	}
 }
 

@@ -54,9 +54,9 @@ func (pfind *Pathfind_Tester) Reset() {
 	pfind.IsFinished = false
 	pfind.IsReady = false
 	pfind.HasStarted = false
-	pfind.ClosedList = make([]*mat.ImatNode, 0)
-	pfind.OpenList = make([]*mat.ImatNode, 0)
-	pfind.BlockedList = make([]*mat.ImatNode, 0)
+	pfind.ClosedList = nil
+	pfind.OpenList = nil
+	pfind.BlockedList = nil
 	pfind.EndNode = nil
 	pfind.max_fails = 100
 	pfind.curr_fails = 0

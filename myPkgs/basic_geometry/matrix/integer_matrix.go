@@ -372,3 +372,71 @@ func (imat IntegerMatrix2D) GetNeighborsAndValues_unordered(c coords.CoordInts) 
 	}
 	return outlist, valList
 }
+
+/*
+this replaces every cell value with the values in imat02 offset by the offset coordint
+*/
+func (imat *IntegerMatrix2D) OverlayAnotherMatrix(offset coords.CoordInts, imat02 *IntegerMatrix2D) {
+	if qx, qy := imat.GetSize(); offset.Y < qy && offset.X < qx {
+		bx, by := imat02.GetSize()
+		for i := 0; i < by; i++ {
+			yy := i + offset.Y
+			if yy < qy {
+				for j := 0; j < bx; j++ {
+					xx := j + offset.X
+
+					imat.SetValAtCoord(coords.CoordInts{X: xx, Y: yy}, imat02.GetValueOnCoord(coords.CoordInts{X: j, Y: i}))
+				}
+			} else {
+				break
+			}
+
+		}
+	}
+
+}
+
+/*
+this returns a matrix of size
+*/
+func (imat *IntegerMatrix2D) SubMatrix(start_point, matrix_size coords.CoordInts, value_if_empty int) (outMatrix IntegerMatrix2D, err error) {
+	outMatrix = make(IntegerMatrix2D, 0)
+	err = nil
+
+	if qx, qy := imat.GetSize(); start_point.Y < qy && start_point.X < qx {
+
+	} else {
+
+	}
+
+	return outMatrix, err
+}
+
+/*
+------ Some of the actually useful matrix related stuff
+*/
+
+/*
+attempting to model integer multiplication;
+*/
+func (imat IntegerMatrix2D) Multiplication(imat02 IntegerMatrix2D) (outmatrix IntegerMatrix2D) {
+	outmatrix = make(IntegerMatrix2D, 0)
+	// 	m0_size_x, m0_size_y := imat.GetSize()
+	// 	m1_size_x, m1_size_y := imat02.GetSize()
+	// //the following is more for debugging
+	// 	if(m0_size_x==m1_size_y){
+
+	// 	}
+	/* This two */
+	// if ()
+
+	return outmatrix
+}
+
+/*
+Attempting to create integer addition;
+*/
+func (imat IntegerMatrix2D) Addition(imat02 IntegerMatrix2D) (outmatrix IntegerMatrix2D) {
+
+	return outmatrix
+}
