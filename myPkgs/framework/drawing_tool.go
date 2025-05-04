@@ -74,7 +74,7 @@ func (dTool *Drawing_Tool) InitUI(parent ui.UI_Object, yValue int) {
 
 	dTool.Button_Panel_Frame.Init([]string{"primitive_scroll_primitive", "PRIMITIVE"}, dTool.UI_Backend, nil, coords.CoordInts{X: 0, Y: yValue}, coords.CoordInts{X: 204, Y: 140})
 
-	dTool.Label_DrawTool.Init([]string{"n_draw_tool_lbl", "Drawing Tool"}, dTool.UI_Backend, nil, coords.CoordInts{X: 0, Y: 0}, coords.CoordInts{X: 204, Y: 32})
+	dTool.Label_DrawTool.Init([]string{"n_draw_tool_lbl", "Drawing Tool"}, dTool.UI_Backend, nil, coords.CoordInts{X: 0, Y: 0}, coords.CoordInts{X: 204, Y: 16})
 	dTool.Label_DrawTool.TextAlignMode = 10
 	dTool.Label_DrawTool.Redraw()
 	dTool.Label_DrawTool.Init_Parents(&dTool.Button_Panel_Frame)

@@ -274,7 +274,7 @@ func (ui_win *UI_Window) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse
 		// 	log.Printf("%3d %3d\n", xx, yy)
 		// } ui_win.CloseButton.GetState() == 2
 		if ui_win.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode) {
-			if state, redraw, _ := ui_win.CloseButton.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode); state == 2 {
+			if state, redraw, _ := ui_win.CloseButton.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, 5); state == 2 {
 				ui_win.State = 90
 				// ui_win.IsActive = false
 				// ui_win.IsVisible = false
@@ -290,11 +290,11 @@ func (ui_win *UI_Window) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse
 
 				x2, y2 := ui_win.Button_Thing_Zero.Parent.GetPosition_Int()
 				x3, y3 := ui_win.Button_Thing_Zero.Parent.Get_Internal_Position_Int()
-				x4, y4 := ui_win.Button_Thing_Zero.Parent.GetDimensions_Int()
+				// x4, y4 := ui_win.Button_Thing_Zero.Parent.GetDimensions_Int()
 				log.Printf("OUT OUT OUT:\n")
-
+				x5, y5 := ui_win.Button_Thing_Zero.Parent.GetParent().Get_Internal_Position_Int()
 				log.Printf("%14s:%3d,%3d\t%14s:%3d,%3d\n", "Position", x0, y0, "Dimensions", x1, y1)
-				log.Printf("%14s:%3d,%3d\t%14s:%3d,%3d\t%14s:%3d,%3d\n", "Par_Pos", x2, y2, "par_Int_Pos", x3, y3, "par_Dim", x4, y4)
+				log.Printf("%14s:%3d,%3d\t%14s:%3d,%3d\t%14s:%3d,%3d\n", "Par_Pos", x2, y2, "par_Int_Pos", x3, y3, "par_par_int_pos", x5, y5)
 				// log.Printf("%10s:%3d,%3d\n")
 				// log.Printf("%10s:%3d,%3d\n")
 			}

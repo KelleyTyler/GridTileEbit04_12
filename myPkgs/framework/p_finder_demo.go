@@ -68,7 +68,7 @@ func (pfind *Pathfind_Tester) Reset() {
 func (pfind *Pathfind_Tester) UI_Init(parent ui.UI_Object, pfindBtnRow int) {
 	pfind.Button_Panel_Frame.Init([]string{"primitive_scroll_primitive", "PRIMITIVE"}, pfind.UI_Backend, nil, coords.CoordInts{X: 0, Y: pfindBtnRow}, coords.CoordInts{X: 204, Y: 140})
 
-	pfind.Button_Panel_Label.Init([]string{"pfind_b_panel_label", "Pathfind"}, pfind.UI_Backend, nil, coords.CoordInts{X: 0, Y: 0}, coords.CoordInts{X: 204, Y: 32})
+	pfind.Button_Panel_Label.Init([]string{"pfind_b_panel_label", "Pathfind"}, pfind.UI_Backend, nil, coords.CoordInts{X: 0, Y: 0}, coords.CoordInts{X: 204, Y: 16})
 	pfind.Button_Panel_Label.TextAlignMode = 10
 	pfind.Button_Panel_Label.Redraw()
 	pfind.Button_Panel_Label.Init_Parents(&pfind.Button_Panel_Frame)

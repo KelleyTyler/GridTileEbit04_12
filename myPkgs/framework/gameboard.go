@@ -3,6 +3,7 @@ package framework
 import (
 	"fmt"
 	"image/color"
+	"log"
 	"math"
 
 	coords "github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/coords"
@@ -408,6 +409,19 @@ func (gb *GameBoard) Draw(screen *ebiten.Image) {
 	gb.Redraw()
 
 	if gb.Perspective_Test_Button.GetState() == 2 {
+
+		x0, y0 := gb.Perspective_Test_Button.GetPosition_Int()
+		x1, y1 := gb.Perspective_Test_Button.GetDimensions_Int()
+
+		x2, y2 := gb.Perspective_Test_Button.GetPosition_Int()
+		x3, y3 := gb.Perspective_Test_Button.Parent.Get_Internal_Position_Int()
+		x4, y4 := gb.Perspective_Test_Button.GetDimensions_Int()
+		// x5, y5 := gb.Perspective_Test_Button.Parent.GetParent().Get_Internal_Position_Int()
+
+		log.Printf("OUT OUT OUT:\n")
+
+		log.Printf("%14s:%3d,%3d\t%14s:%3d,%3d\n", "Position", x0, y0, "Dimensions", x1, y1)
+		log.Printf("%14s:%3d,%3d\t%14s:%3d,%3d\t%14s:%3d,%3d\n", "Par_Pos", x2, y2, "par_Int_Pos", x3, y3, "par_Dim", x4, y4)
 		gb.PerpsecitveDraw(screen)
 
 	} else {

@@ -149,7 +149,7 @@ This initiates the User Interface
 */
 func (mTool *Maze_Tool) UI_Init(parent ui.UI_Object, row_value int) {
 	mTool.Button_Panel_Frame.Init([]string{"maze_tool_button_panel", "PRIMITIVE"}, mTool.UI_Backend, nil, coords.CoordInts{X: 0, Y: row_value}, coords.CoordInts{X: 204, Y: 138})
-	mTool.BarLabel.Init([]string{"maze_gen_label", "MAZE GENERATOR"}, mTool.UI_Backend, nil, coords.CoordInts{X: 0, Y: 0}, coords.CoordInts{X: 204, Y: 32})
+	mTool.BarLabel.Init([]string{"maze_gen_label", "MAZE GENERATOR"}, mTool.UI_Backend, nil, coords.CoordInts{X: 0, Y: 0}, coords.CoordInts{X: 204, Y: 16})
 	mTool.BarLabel.TextAlignMode = 10
 	mTool.BarLabel.Redraw()
 	mTool.BarLabel.Init_Parents(&mTool.Button_Panel_Frame)

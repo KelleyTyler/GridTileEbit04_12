@@ -14,8 +14,8 @@ import (
 
 func (gb *GameBoard) Load_Button_Pressed() {
 
-	if gb.GameBoard_UI_STATE != 30 {
-		gb.GameBoard_UI_STATE = 30
+	if gb.GameBoard_UI_STATE != 31 {
+		gb.GameBoard_UI_STATE = 31
 		gb.Window_Save.Close()
 		gb.Window_Load.Open()
 		gb.Window_Test.Close()
@@ -32,8 +32,8 @@ func (gb *GameBoard) Load_Button_Pressed() {
 
 func (gb *GameBoard) Save_Button_Pressed() {
 
-	if gb.GameBoard_UI_STATE != 40 {
-		gb.GameBoard_UI_STATE = 40
+	if gb.GameBoard_UI_STATE != 32 {
+		gb.GameBoard_UI_STATE = 32
 		gb.Window_Save.Open()
 		gb.Window_Load.Close()
 		gb.Window_Test.Close()
@@ -49,8 +49,8 @@ func (gb *GameBoard) Save_Button_Pressed() {
 }
 func (gb *GameBoard) Test_Button_Pressed() {
 
-	if gb.GameBoard_UI_STATE != 60 {
-		gb.GameBoard_UI_STATE = 60
+	if gb.GameBoard_UI_STATE != 33 {
+		gb.GameBoard_UI_STATE = 33
 		gb.Window_Test.Open()
 		gb.Window_Save.Close()
 		gb.Window_Load.Close()

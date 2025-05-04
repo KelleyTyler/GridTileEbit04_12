@@ -67,16 +67,16 @@ func (g *Game) Init() error {
 	num := g.Backend.Settings.ScreenResX - (208 + 16)                                                                                   //70 //-136
 	g.primitive.Init([]string{"Primitive 00"}, &g.Backend, nil, coords.CoordInts{X: num, Y: 4}, coords.CoordInts{X: 204 + 16, Y: 632})  //204
 	g.lbl00.Init([]string{"lbl_02", "Primitve00"}, &g.Backend, nil, coords.CoordInts{X: 0, Y: 0}, coords.CoordInts{X: 204 + 16, Y: 32}) //204
-	// g.scroll_pane.Init([]string{"Primitive 00", "SCROLL PANE"}, &g.Backend, nil, coords.CoordInts{X: 0, Y: 32}, coords.CoordInts{X: 204 + 16, Y: 600})
-	// g.scroll_pane.Init_Parents(&g.primitive)
+	g.scroll_pane.Init([]string{"Primitive 00", "SCROLL PANE"}, &g.Backend, nil, coords.CoordInts{X: 0, Y: 32}, coords.CoordInts{X: 204 + 16, Y: 600})
+	g.scroll_pane.Init_Parents(&g.primitive)
 	g.lbl00.TextAlignMode = 10
 	g.lbl00.Redraw()
-	g.Board.Init(&g.Backend, &g.primitive, coords.CoordInts{X: 128, Y: 42}, coords.CoordInts{X: 4, Y: 4}, gBoardSize, gBoardTileSize, gBoardTileSpacing)
+	g.Board.Init(&g.Backend, &g.scroll_pane, coords.CoordInts{X: 128, Y: 42}, coords.CoordInts{X: 4, Y: 4}, gBoardSize, gBoardTileSize, gBoardTileSpacing)
 
 	g.primitive.Redraw()
 	g.lbl00.Init_Parents(&g.primitive)
 	// game.Board.SetParents(&game.primitive)
-	// g.scroll_pane.Redraw()
+	g.scroll_pane.Redraw()
 	g.primitive.Redraw()
 
 	g.init = true
@@ -91,6 +91,10 @@ func (g *Game) Update() error {
 		g.debugmsg = fmt.Sprintf("FPS: %6.2f TPS:%6.2f\n", ebiten.ActualFPS(), ebiten.ActualTPS())
 		g.Board.Update()
 		g.primitive.Update()
+		// g.scroll_pane.Update()
+		// if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
+		// 	log.Printf("SCROLL PANE: %d %d \n", g.scroll_pane.Internal_Position.X, g.scroll_pane.Internal_Position.Y)
+		// }
 	} else {
 		go g.Init()
 	}

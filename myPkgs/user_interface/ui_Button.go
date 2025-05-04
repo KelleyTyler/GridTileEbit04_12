@@ -332,12 +332,19 @@ func (btn *UI_Button) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode 
 		if btn.Parent != nil {
 			x2, y2 := btn.Parent.GetPosition_Int()
 			x3, y3 := btn.Parent.Get_Internal_Position_Int()
-			if mode == 10 {
+			if mode == 10 || mode == 0 { //
+				// log.Printf("P I P: %d,%d %d,%d\n", x2, y2, x3, y3)
 				x2 += x3
 				y2 += y3
-				if !btn.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 0) {
-					return false
-				}
+				// if !btn.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode) {
+				// 	return false
+				// } else {
+				// 	// if pp := btn.Parent.GetParent(); pp != nil {
+				// 	// 	if !pp.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 0) {
+				// 	// 		return false
+				// 	// 	}
+				// 	// }
+				// }
 			}
 			x0 += x2
 			y0 += y2

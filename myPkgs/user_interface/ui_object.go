@@ -317,8 +317,7 @@ func (prim *UI_Object_Primitive) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_P
 				x1 += x3
 				y0 += y3
 				y1 += y3
-				if !prim.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 0) {
-					// log.Printf("OUT AT Prim %d %d \n", x3, y3)
+				if !prim.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 10) {
 
 					return false
 				}

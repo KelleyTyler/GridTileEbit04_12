@@ -13,7 +13,7 @@ import (
  */
 func (gb *GameBoard) UI_INIT() {
 	gb.Button_Panel.Init([]string{"gameboard_load_save_panel", "PRIMITIVE"}, gb.UI_Backend, nil, coords.CoordInts{X: 0, Y: 0}, coords.CoordInts{X: 204, Y: 138 + 68})
-	gb.Button_Panel_Label.Init([]string{"gameboard_panel_label", "GAMEBOARD"}, gb.UI_Backend, nil, coords.CoordInts{X: 0, Y: 0}, coords.CoordInts{X: 204, Y: 32})
+	gb.Button_Panel_Label.Init([]string{"gameboard_panel_label", "GAMEBOARD"}, gb.UI_Backend, nil, coords.CoordInts{X: 0, Y: 0}, coords.CoordInts{X: 204, Y: 16})
 	gb.Button_Panel_Label.TextAlignMode = 10
 	gb.Button_Panel_Label.Redraw()
 
@@ -46,8 +46,8 @@ func (gb *GameBoard) UI_INIT() {
 	//Init([]string{"window_test", "TEST\n WINDOW"}, gb.UI_Backend, nil, coords.CoordInts{X: 55, Y: 150}, coords.CoordInts{X: 256, Y: 144})
 	gb.Test_Window_Button.Init([]string{"btn_test_window", "Test\nWindow"}, gb.UI_Backend, nil, coords.CoordInts{X: 70, Y: 68 + 68 + 34}, coords.CoordInts{X: 64, Y: 32})
 	gb.Window_Test.Init([]string{"window_test", "TEST WINDOW"}, gb.UI_Backend, nil, coords.CoordInts{X: 55, Y: 150}, coords.CoordInts{X: 256, Y: 128 + 32})
-	gb.Perspective_Test_Button.Init([]string{"btn_test_perspective", "Test\nPerspective"}, gb.UI_Backend, nil, coords.CoordInts{X: 4, Y: 68 + 68 + 34}, coords.CoordInts{X: 64, Y: 32})
-	gb.Perspective_Test_Button.Btn_Type = 10
+	gb.Perspective_Test_Button.Init([]string{"btn_test_perspective", "Test\nPerspective"}, gb.UI_Backend, nil, coords.CoordInts{X: 4, Y: 34}, coords.CoordInts{X: 64, Y: 32})
+	// gb.Perspective_Test_Button.Btn_Type = 10
 	gb.Set_Parent_Panel(&gb.Button_Panel)
 	gb.Button_Panel.Redraw()
 }
@@ -81,7 +81,7 @@ func (gb *GameBoard) Set_Parent_Panel(parent ui.UI_Object) {
 	gb.NumSelect_Tile_Margin_Y.Init_Parents(parent)
 	gb.Redraw_Tiles_Button.Init_Parents(parent)
 	gb.Test_Window_Button.Init_Parents(parent)
-	gb.Perspective_Test_Button.Init_Parents(parent)
+	gb.Perspective_Test_Button.Init_Parents(&gb.Window_Test.Prim)
 	//--------------------------------
 	// gb.Window_Save.Init_Parents(parent)
 }

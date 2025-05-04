@@ -237,7 +237,11 @@ func (ui_scroll *UI_Scrollpane) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X
 		// if re_draw {
 
 		// }
-
+		if ui_scroll.IsActive {
+			for i, _ := range ui_scroll.Children {
+				ui_scroll.Children[i].Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode)
+			}
+		}
 	}
 	return 0, false, nil
 }
@@ -246,8 +250,7 @@ func (ui_scroll *UI_Scrollpane) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X
 func (ui_scroll *UI_Scrollpane) Scrolling(Mouse_Pos_X, Mouse_Pos_Y, mode int) {
 	ui_scroll.Scrollbar_Vertical.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode)
 	ui_scroll.Scrollbar_Horizontal.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode)
-	ui_scroll.Internal_Position.Y = ui_scroll.Scrollbar_Vertical.CurrValue
-	ui_scroll.Internal_Position.X = ui_scroll.Scrollbar_Horizontal.CurrValue
+
 	var scroll_y float64 = 0.0
 	_, scroll_y = ebiten.Wheel()
 	if ebiten.IsKeyPressed(ebiten.KeyShift) {
@@ -265,6 +268,8 @@ func (ui_scroll *UI_Scrollpane) Scrolling(Mouse_Pos_X, Mouse_Pos_Y, mode int) {
 			ui_scroll.Scrollbar_Vertical.CurrValue = ui_scroll.Scrollbar_Vertical.MinValue
 		}
 	}
+	ui_scroll.Internal_Position.Y = ui_scroll.Scrollbar_Vertical.CurrValue
+	ui_scroll.Internal_Position.X = ui_scroll.Scrollbar_Horizontal.CurrValue
 }
 
 /**/
@@ -312,7 +317,7 @@ func (ui_scroll *UI_Scrollpane) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Po
 				x1 += x3
 				y0 += y3
 				y1 += y3
-				if !ui_scroll.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 10) {
+				if !ui_scroll.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode) {
 					log.Printf("OUT AT SCROLLPANE %d %d \n", x3, y3)
 					return false
 				}
