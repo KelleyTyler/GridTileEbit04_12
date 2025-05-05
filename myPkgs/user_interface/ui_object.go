@@ -36,6 +36,7 @@ type UI_Object interface {
 	IsCursorInBounds() bool                                             //
 	IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode int) bool //
 	Get_Internal_Position_Int() (x_pos int, y_pos int)
+	Get_Internal_Dimensions_Int() (x_pos int, y_pos int)
 
 	GetPosition_Int() (int, int)
 	SetPosition_Int(int, int)      //
@@ -98,86 +99,86 @@ type UI_Object_Primitive struct {
 /*
 UI_Object_Primitive.Init
 */
-func (prim *UI_Object_Primitive) Init(idLabels []string, backend *UI_Backend, style *UI_Object_Style, Position, Dimensions coords.CoordInts) error {
-	prim.obj_id = "primitive_UI_OBJ"
-	prim.Dimensions = Dimensions
-	prim.Position = Position
-	prim.Backend = backend
+func (ui_panel *UI_Object_Primitive) Init(idLabels []string, backend *UI_Backend, style *UI_Object_Style, Position, Dimensions coords.CoordInts) error {
+	ui_panel.obj_id = "ui_panelitive_UI_OBJ"
+	ui_panel.Dimensions = Dimensions
+	ui_panel.Position = Position
+	ui_panel.Backend = backend
 	if style != nil {
-		prim.Style = style
+		ui_panel.Style = style
 	} else {
-		prim.Style = &prim.Backend.Style
+		ui_panel.Style = &ui_panel.Backend.Style
 	}
-	prim.State = 0
+	ui_panel.State = 0
 
 	//-------Setting up Image
-	prim.Image = ebiten.NewImage(Dimensions.X, Dimensions.Y)
-	prim.Redraw()
-	prim.ImageUpdate = true
+	ui_panel.Image = ebiten.NewImage(Dimensions.X, Dimensions.Y)
+	ui_panel.Redraw()
+	ui_panel.ImageUpdate = true
 	//------Finishing Up
-	if !prim.init {
-		prim.init = true
+	if !ui_panel.init {
+		ui_panel.init = true
 	}
 	return nil
 }
 
-func (prim *UI_Object_Primitive) Init_Parents(parent UI_Object) error {
-	prim.Parent = parent
-	prim.Parent.AddChild(prim)
-	prim.Redraw()
-	prim.Parent.Redraw()
+func (ui_panel *UI_Object_Primitive) Init_Parents(parent UI_Object) error {
+	ui_panel.Parent = parent
+	ui_panel.Parent.AddChild(ui_panel)
+	ui_panel.Redraw()
+	ui_panel.Parent.Redraw()
 	return nil
 }
 
-func (prim *UI_Object_Primitive) Draw(screen *ebiten.Image) error {
-	prim.Redraw()
+func (ui_panel *UI_Object_Primitive) Draw(screen *ebiten.Image) error {
+	ui_panel.Redraw()
 	ops := ebiten.DrawImageOptions{}
 	scale := 1.0
 	ops.GeoM.Reset()
-	ops.GeoM.Translate(float64(prim.Position.X)*scale, float64(prim.Position.Y)*scale)
-	screen.DrawImage(prim.Image, &ops)
+	ops.GeoM.Translate(float64(ui_panel.Position.X)*scale, float64(ui_panel.Position.Y)*scale)
+	screen.DrawImage(ui_panel.Image, &ops)
 	return nil
 }
-func (prim *UI_Object_Primitive) Redraw() {
-	prim.Image.Fill(prim.Style.BorderColor)
-	lineThick := prim.Style.BorderThickness
-	vector.DrawFilledRect(prim.Image, lineThick, lineThick, float32(prim.Dimensions.X)-(2*lineThick), float32(prim.Dimensions.Y)-(2*lineThick), prim.Style.PanelColor, true)
-	if len(prim.Children) > 0 {
-		for i := 0; i < len(prim.Children); i++ {
-			err := prim.Children[i].Draw(prim.Image)
+func (ui_panel *UI_Object_Primitive) Redraw() {
+	ui_panel.Image.Fill(ui_panel.Style.BorderColor)
+	lineThick := ui_panel.Style.BorderThickness
+	vector.DrawFilledRect(ui_panel.Image, lineThick, lineThick, float32(ui_panel.Dimensions.X)-(2*lineThick), float32(ui_panel.Dimensions.Y)-(2*lineThick), ui_panel.Style.PanelColor, true)
+	if len(ui_panel.Children) > 0 {
+		for i := 0; i < len(ui_panel.Children); i++ {
+			err := ui_panel.Children[i].Draw(ui_panel.Image)
 			if err != nil {
 				log.Fatal(err)
 			}
 		}
 	}
 }
-func (prim *UI_Object_Primitive) Update() error {
+func (ui_panel *UI_Object_Primitive) Update() error {
 	xx, yy := ebiten.CursorPosition()
-	prim.Update_Ret_State_Redraw_Status_Mport(xx, yy, 0)
-	// if len(prim.Children) > 0 {
-	// 	for i := 0; i < len(prim.Children); i++ {
-	// 		_, to_redraw, err := prim.Children[i].Update_Ret_State_Redraw_Status()
+	ui_panel.Update_Ret_State_Redraw_Status_Mport(xx, yy, 0)
+	// if len(ui_panel.Children) > 0 {
+	// 	for i := 0; i < len(ui_panel.Children); i++ {
+	// 		_, to_redraw, err := ui_panel.Children[i].Update_Ret_State_Redraw_Status()
 	// 		if err != nil {
 	// 			log.Fatal(err)
 	// 		}
 	// 		if to_redraw {
-	// 			prim.Children[i].Draw(prim.Image)
+	// 			ui_panel.Children[i].Draw(ui_panel.Image)
 	// 		}
 	// 	}
 	// }
-	// if prim.IsMovable {
-	// 	if prim.IsCursorInBounds() {
+	// if ui_panel.IsMovable {
+	// 	if ui_panel.IsCursorInBounds() {
 
 	// 	}
 	// }
-	// prim.Redraw()
+	// ui_panel.Redraw()
 	return nil
 }
 
-func (prim *UI_Object_Primitive) Update_Unactive() error {
-	if len(prim.Children) > 0 {
-		for i := 0; i < len(prim.Children); i++ {
-			err := prim.Children[i].Update_Unactive()
+func (ui_panel *UI_Object_Primitive) Update_Unactive() error {
+	if len(ui_panel.Children) > 0 {
+		for i := 0; i < len(ui_panel.Children); i++ {
+			err := ui_panel.Children[i].Update_Unactive()
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -189,95 +190,95 @@ func (prim *UI_Object_Primitive) Update_Unactive() error {
 /*
 This will return false; Use Only Sparingly!
 */
-func (prim *UI_Object_Primitive) Update_Any() (any, error) {
+func (ui_panel *UI_Object_Primitive) Update_Any() (any, error) {
 	return false, nil
 }
-func (prim *UI_Object_Primitive) Update_Ret_State_Redraw_Status() (uint8, bool, error) {
-	return prim.State, false, nil
+func (ui_panel *UI_Object_Primitive) Update_Ret_State_Redraw_Status() (uint8, bool, error) {
+	return ui_panel.State, false, nil
 }
-func (prim *UI_Object_Primitive) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode int) (uint8, bool, error) {
+func (ui_panel *UI_Object_Primitive) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode int) (uint8, bool, error) {
 
 	if mode == 0 {
-		if len(prim.Children) > 0 {
-			for i := 0; i < len(prim.Children); i++ {
-				_, to_redraw, err := prim.Children[i].Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, 0)
+		if len(ui_panel.Children) > 0 {
+			for i := 0; i < len(ui_panel.Children); i++ {
+				_, to_redraw, err := ui_panel.Children[i].Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, 0)
 				if err != nil {
 					log.Fatal(err)
 				}
 				if to_redraw {
-					prim.Children[i].Draw(prim.Image)
+					ui_panel.Children[i].Draw(ui_panel.Image)
 				}
 			}
 		}
-		if prim.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode) {
+		if ui_panel.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode) {
 			if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
-				log.Printf("%d %d %t\n", Mouse_Pos_X, Mouse_Pos_Y, prim.HasParent())
+				log.Printf("%d %d %t\n", Mouse_Pos_X, Mouse_Pos_Y, ui_panel.HasParent())
 
 			}
 		}
 	}
-	return prim.State, false, nil
+	return ui_panel.State, false, nil
 }
 
 /*
 This returns the state of the object
 */
-func (prim *UI_Object_Primitive) GetState() uint8 {
-	return prim.State
+func (ui_panel *UI_Object_Primitive) GetState() uint8 {
+	return ui_panel.State
 }
 
 /*
 this returns a basic to string message
 */
-func (prim *UI_Object_Primitive) ToString() string {
-	strngOut := fmt.Sprintf("UI_Object Primtive:%s\n\tPositon %s\t", prim.obj_id, prim.Position.ToString())
-	strngOut += fmt.Sprintf("\tDimensions: %s\n", prim.Dimensions.ToString())
+func (ui_panel *UI_Object_Primitive) ToString() string {
+	strngOut := fmt.Sprintf("UI_Object Primtive:%s\n\tPositon %s\t", ui_panel.obj_id, ui_panel.Position.ToString())
+	strngOut += fmt.Sprintf("\tDimensions: %s\n", ui_panel.Dimensions.ToString())
 	return strngOut
 }
 
 /*
 this confirms the object is initilaized
 */
-func (prim *UI_Object_Primitive) IsInit() bool {
-	return prim.init
+func (ui_panel *UI_Object_Primitive) IsInit() bool {
+	return ui_panel.init
 }
 
 /*
 this gets the object ID
 */
-func (prim *UI_Object_Primitive) GetID() string {
-	return prim.obj_id
+func (ui_panel *UI_Object_Primitive) GetID() string {
+	return ui_panel.obj_id
 }
 
 /*
 This returns a string specifying the objects type
 */
-func (prim *UI_Object_Primitive) GetType() string {
+func (ui_panel *UI_Object_Primitive) GetType() string {
 	return "UI_Object Primitive"
 }
 
 /*
  */
-func (prim *UI_Object_Primitive) IsCursorInBounds() bool {
-	if prim.IsActive && prim.IsVisible {
+func (ui_panel *UI_Object_Primitive) IsCursorInBounds() bool {
+	if ui_panel.IsActive && ui_panel.IsVisible {
 		cX, cY := ebiten.CursorPosition()
 		var x0, y0, x1, y1 int
 
-		if prim.Parent != nil {
-			px, py := prim.Parent.GetPosition_Int()
-			x0 = prim.Position.X + px
-			y0 = prim.Position.Y + py
-			x1 = prim.Position.X + prim.Dimensions.X + px
-			y1 = prim.Position.Y + prim.Dimensions.Y + py
-			// x0 = prim.Position.X + prim.ParentPos.X
-			// y0 = prim.Position.Y + prim.ParentPos.X
-			// x1 = prim.Position.X + prim.ParentPos.X + prim.Dimensions.X
-			// y1 = prim.Position.Y + prim.ParentPos.Y + prim.Dimensions.Y
+		if ui_panel.Parent != nil {
+			px, py := ui_panel.Parent.GetPosition_Int()
+			x0 = ui_panel.Position.X + px
+			y0 = ui_panel.Position.Y + py
+			x1 = ui_panel.Position.X + ui_panel.Dimensions.X + px
+			y1 = ui_panel.Position.Y + ui_panel.Dimensions.Y + py
+			// x0 = ui_panel.Position.X + ui_panel.ParentPos.X
+			// y0 = ui_panel.Position.Y + ui_panel.ParentPos.X
+			// x1 = ui_panel.Position.X + ui_panel.ParentPos.X + ui_panel.Dimensions.X
+			// y1 = ui_panel.Position.Y + ui_panel.ParentPos.Y + ui_panel.Dimensions.Y
 		} else {
-			x0 = prim.Position.X
-			y0 = prim.Position.Y
-			x1 = prim.Position.X + prim.Dimensions.X
-			y1 = prim.Position.Y + prim.Dimensions.Y
+			x0 = ui_panel.Position.X
+			y0 = ui_panel.Position.Y
+			x1 = ui_panel.Position.X + ui_panel.Dimensions.X
+			y1 = ui_panel.Position.Y + ui_panel.Dimensions.Y
 		}
 		return (cX > x0 && cX < x1) && (cY > y0 && cY < y1)
 	}
@@ -285,13 +286,13 @@ func (prim *UI_Object_Primitive) IsCursorInBounds() bool {
 }
 
 /**/
-func (prim *UI_Object_Primitive) Close() {}
+func (ui_panel *UI_Object_Primitive) Close() {}
 
 /**/
-func (prim *UI_Object_Primitive) Open() {}
+func (ui_panel *UI_Object_Primitive) Open() {}
 
 /**/
-func (prim *UI_Object_Primitive) Detoggle() {}
+func (ui_panel *UI_Object_Primitive) Detoggle() {}
 
 /*
 Idea here is I don't want to waste time with having to get the cursor position when it possibly hasn't changed enough to matter;
@@ -299,34 +300,34 @@ This might be also a terrible idea overall I cannot tell quite yet
 
 enter 0 for it to default
 */
-func (prim *UI_Object_Primitive) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode int) bool {
-	if prim.IsActive && prim.IsVisible {
+func (ui_panel *UI_Object_Primitive) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode int) bool {
+	if ui_panel.IsActive && ui_panel.IsVisible {
 		cX, cY := Mouse_Pos_X, Mouse_Pos_Y
 		//mode stuff
 		var x0, y0, x1, y1 int
 
-		if prim.Parent != nil {
-			px, py := prim.Parent.GetPosition_Int()
-			x0 = prim.Position.X + px
-			y0 = prim.Position.Y + py
-			x1 = prim.Position.X + prim.Dimensions.X + px
-			y1 = prim.Position.Y + prim.Dimensions.Y + py
+		if ui_panel.Parent != nil {
+			px, py := ui_panel.Parent.GetPosition_Int()
+			x0 = ui_panel.Position.X + px
+			y0 = ui_panel.Position.Y + py
+			x1 = ui_panel.Position.X + ui_panel.Dimensions.X + px
+			y1 = ui_panel.Position.Y + ui_panel.Dimensions.Y + py
 			if mode == 10 {
-				x3, y3 := prim.Parent.Get_Internal_Position_Int()
+				x3, y3 := ui_panel.Parent.Get_Internal_Position_Int()
 				x0 += x3
 				x1 += x3
 				y0 += y3
 				y1 += y3
-				if !prim.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 10) {
+				if !ui_panel.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 10) {
 
 					return false
 				}
 			}
 		} else {
-			x0 = prim.Position.X
-			y0 = prim.Position.Y
-			x1 = prim.Position.X + prim.Image.Bounds().Dx()
-			y1 = prim.Position.Y + prim.Image.Bounds().Dy()
+			x0 = ui_panel.Position.X
+			y0 = ui_panel.Position.Y
+			x1 = ui_panel.Position.X + ui_panel.Image.Bounds().Dx()
+			y1 = ui_panel.Position.Y + ui_panel.Image.Bounds().Dy()
 		}
 		return (cX > x0 && cX < x1) && (cY > y0 && cY < y1)
 	}
@@ -335,19 +336,25 @@ func (prim *UI_Object_Primitive) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_P
 }
 
 /**/
-func (prim *UI_Object_Primitive) Get_Internal_Position_Int() (x_pos int, y_pos int) {
-	if prim.Parent != nil {
-		x_pos, y_pos = prim.Parent.Get_Internal_Position_Int()
+func (ui_panel *UI_Object_Primitive) Get_Internal_Position_Int() (x_pos int, y_pos int) {
+	if ui_panel.Parent != nil {
+		x_pos, y_pos = ui_panel.Parent.Get_Internal_Position_Int()
 	}
 	return x_pos, y_pos
 }
 
 /**/
-func (prim *UI_Object_Primitive) GetPosition_Int() (int, int) {
-	xx := prim.Position.X
-	yy := prim.Position.Y
-	if prim.Parent != nil {
-		px, py := prim.Parent.GetPosition_Int()
+func (ui_panel *UI_Object_Primitive) Get_Internal_Dimensions_Int() (x_pos int, y_pos int) {
+	x_pos, y_pos = ui_panel.GetPosition_Int()
+	return x_pos, y_pos
+}
+
+/**/
+func (ui_panel *UI_Object_Primitive) GetPosition_Int() (int, int) {
+	xx := ui_panel.Position.X
+	yy := ui_panel.Position.Y
+	if ui_panel.Parent != nil {
+		px, py := ui_panel.Parent.GetPosition_Int()
 		xx += px
 		yy += py
 	}
@@ -355,41 +362,41 @@ func (prim *UI_Object_Primitive) GetPosition_Int() (int, int) {
 }
 
 /**/
-func (prim *UI_Object_Primitive) SetPosition_Int(pos_X, pos_Y int) {
-	prim.Position = coords.CoordInts{X: pos_X, Y: pos_Y}
+func (ui_panel *UI_Object_Primitive) SetPosition_Int(pos_X, pos_Y int) {
+	ui_panel.Position = coords.CoordInts{X: pos_X, Y: pos_Y}
 }
 
 /**/
-func (prim *UI_Object_Primitive) GetDimensions_Int() (int, int) {
-	return prim.Dimensions.X, prim.Dimensions.Y
+func (ui_panel *UI_Object_Primitive) GetDimensions_Int() (int, int) {
+	return ui_panel.Dimensions.X, ui_panel.Dimensions.Y
 } //
 /**/
-func (prim *UI_Object_Primitive) SetDimensions_Int(pos_X, pos_Y int) {
-	prim.Dimensions = coords.CoordInts{X: pos_X, Y: pos_Y}
+func (ui_panel *UI_Object_Primitive) SetDimensions_Int(pos_X, pos_Y int) {
+	ui_panel.Dimensions = coords.CoordInts{X: pos_X, Y: pos_Y}
 
 }
 
-func (prim *UI_Object_Primitive) GetNumber_Children() int {
-	return len(prim.Children)
+func (ui_panel *UI_Object_Primitive) GetNumber_Children() int {
+	return len(ui_panel.Children)
 }
-func (prim *UI_Object_Primitive) GetChild(index int) UI_Object {
-	if len(prim.Children) > index {
-		return prim.Children[index]
+func (ui_panel *UI_Object_Primitive) GetChild(index int) UI_Object {
+	if len(ui_panel.Children) > index {
+		return ui_panel.Children[index]
 	} else {
 		return nil
 	}
 }
-func (prim *UI_Object_Primitive) AddChild(child UI_Object) error {
-	prim.Children = append(prim.Children, child)
+func (ui_panel *UI_Object_Primitive) AddChild(child UI_Object) error {
+	ui_panel.Children = append(ui_panel.Children, child)
 	return nil
 }
-func (prim *UI_Object_Primitive) RemoveChild(index int) error {
-	// prim.Children = append(prim.Children, child)
+func (ui_panel *UI_Object_Primitive) RemoveChild(index int) error {
+	// ui_panel.Children = append(ui_panel.Children, child)
 	return nil
 }
-func (prim *UI_Object_Primitive) HasParent() bool {
-	return prim.Parent != nil
+func (ui_panel *UI_Object_Primitive) HasParent() bool {
+	return ui_panel.Parent != nil
 }
-func (prim *UI_Object_Primitive) GetParent() UI_Object {
-	return prim.Parent
+func (ui_panel *UI_Object_Primitive) GetParent() UI_Object {
+	return ui_panel.Parent
 }

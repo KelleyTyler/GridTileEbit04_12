@@ -60,207 +60,207 @@ type UI_Button struct {
 }
 
 /**/
-func (btn *UI_Button) Init_00(bckend *UI_Backend, labl string, pos, dimen coords.CoordInts, bType uint8, parent UI_Object) {
-	btn.Backend = bckend
-	// btn.Parentpos = parent
-	btn.Position = pos
-	btn.Dimensions = dimen
-	btn.Btn_Type = bType
-	// btn.ActionPtr = action
-	btn.State = 0
-	btn.BtnImg = ebiten.NewImage(dimen.X, dimen.Y)
-	btn.IsActive = true
-	btn.IsVisible = true
-	btn.IsToggled = false
-	btn.Label = labl
-	btn.ToRedraw = true
-	btn.Redraw()
+func (ui_button *UI_Button) Init_00(bckend *UI_Backend, labl string, pos, dimen coords.CoordInts, bType uint8, parent UI_Object) {
+	ui_button.Backend = bckend
+	// ui_button.Parentpos = parent
+	ui_button.Position = pos
+	ui_button.Dimensions = dimen
+	ui_button.Btn_Type = bType
+	// ui_button.ActionPtr = action
+	ui_button.State = 0
+	ui_button.BtnImg = ebiten.NewImage(dimen.X, dimen.Y)
+	ui_button.IsActive = true
+	ui_button.IsVisible = true
+	ui_button.IsToggled = false
+	ui_button.Label = labl
+	ui_button.ToRedraw = true
+	ui_button.Redraw()
 
-	btn.isInit = true
-	// btn.Colors=
+	ui_button.isInit = true
+	// ui_button.Colors=
 }
 
 /**/
-func (btn *UI_Button) Init(label []string, bckend *UI_Backend, style *UI_Object_Style, pos, dimen coords.CoordInts) error {
-	btn.Backend = bckend
-	btn.Position = pos
-	btn.Dimensions = dimen
-	btn.Btn_Type = 0
-	// btn.ActionPtr = action
-	btn.State = 0
-	btn.BtnImg = ebiten.NewImage(dimen.X, dimen.Y)
-	btn.IsActive = true
-	btn.IsVisible = true
-	btn.IsToggled = false
-	btn.id = label[0]
-	btn.Label = label[1]
-	btn.ToRedraw = true
-	btn.Redraw()
-	btn.isInit = true
+func (ui_button *UI_Button) Init(label []string, bckend *UI_Backend, style *UI_Object_Style, pos, dimen coords.CoordInts) error {
+	ui_button.Backend = bckend
+	ui_button.Position = pos
+	ui_button.Dimensions = dimen
+	ui_button.Btn_Type = 0
+	// ui_button.ActionPtr = action
+	ui_button.State = 0
+	ui_button.BtnImg = ebiten.NewImage(dimen.X, dimen.Y)
+	ui_button.IsActive = true
+	ui_button.IsVisible = true
+	ui_button.IsToggled = false
+	ui_button.id = label[0]
+	ui_button.Label = label[1]
+	ui_button.ToRedraw = true
+	ui_button.Redraw()
+	ui_button.isInit = true
 
-	// btn.Colors=
+	// ui_button.Colors=
 	return nil
 }
 
 /**/
-func (btn *UI_Button) Init_Parents(parent UI_Object) error {
-	btn.Parent = parent
-	parent.AddChild(btn)
-	//log.Printf("BUTTON ADDING PARENT %t \n", btn.HasParent())
-	btn.Redraw()
-	btn.Parent.Redraw()
+func (ui_button *UI_Button) Init_Parents(parent UI_Object) error {
+	ui_button.Parent = parent
+	parent.AddChild(ui_button)
+	//log.Printf("BUTTON ADDING PARENT %t \n", ui_button.HasParent())
+	ui_button.Redraw()
+	ui_button.Parent.Redraw()
 	return nil
 }
 
 /**/
-func (btn UI_Button) Redraw() {
+func (ui_button UI_Button) Redraw() {
 	// if  {
 	// 	 //color.RGBA{125, 125, 125, 255}
 	// }
-	btn.BtnImg.Fill(btn.Backend.Style.BorderColor)
-	borderThick := btn.Backend.Style.BorderThickness
-	if btn.Btn_Type == 10 && btn.IsToggled {
-		vector.DrawFilledRect(btn.BtnImg, borderThick, borderThick, float32(btn.Dimensions.X)-(borderThick*2), float32(btn.Dimensions.Y)-(borderThick*2), btn.Backend.Style.ButtonColor1[btn.State], true)
+	ui_button.BtnImg.Fill(ui_button.Backend.Style.BorderColor)
+	borderThick := ui_button.Backend.Style.BorderThickness
+	if ui_button.Btn_Type == 10 && ui_button.IsToggled {
+		vector.DrawFilledRect(ui_button.BtnImg, borderThick, borderThick, float32(ui_button.Dimensions.X)-(borderThick*2), float32(ui_button.Dimensions.Y)-(borderThick*2), ui_button.Backend.Style.ButtonColor1[ui_button.State], true)
 	} else {
-		vector.DrawFilledRect(btn.BtnImg, borderThick, borderThick, float32(btn.Dimensions.X)-(borderThick*2), float32(btn.Dimensions.Y)-(borderThick*2), btn.Backend.Style.ButtonColor0[btn.State], true)
+		vector.DrawFilledRect(ui_button.BtnImg, borderThick, borderThick, float32(ui_button.Dimensions.X)-(borderThick*2), float32(ui_button.Dimensions.Y)-(borderThick*2), ui_button.Backend.Style.ButtonColor0[ui_button.State], true)
 	}
 	//------text
 	scaler := 1.0
 	tops := &text.DrawOptions{}
 
-	tops.GeoM.Translate(float64(btn.Dimensions.X/2)*scaler, float64(btn.Dimensions.Y/2)*scaler)
+	tops.GeoM.Translate(float64(ui_button.Dimensions.X/2)*scaler, float64(ui_button.Dimensions.Y/2)*scaler)
 	tops.GeoM.Scale(1/scaler, 1/scaler)
 	tops.ColorScale.ScaleWithColor(color.White)
 	tops.LineSpacing = float64(10) * scaler
 	tops.PrimaryAlign = text.AlignCenter
 	tops.SecondaryAlign = text.AlignCenter
-	temp := btn.Label
-	//temp += fmt.Sprintf("\n%d", btn.State)
-	text.Draw(btn.BtnImg, temp, btn.Backend.Btn_Text_Reg, tops)
-	// if btn.Parent != nil {
-	// 	btn.Parent.Redraw()
+	temp := ui_button.Label
+	//temp += fmt.Sprintf("\n%d", ui_button.State)
+	text.Draw(ui_button.BtnImg, temp, ui_button.Backend.Btn_Text_Reg, tops)
+	// if ui_button.Parent != nil {
+	// 	ui_button.Parent.Redraw()
 	// }
 }
 
 /**/
-func (btn UI_Button) Draw(screen *ebiten.Image) error {
+func (ui_button UI_Button) Draw(screen *ebiten.Image) error {
 
 	scaler := 1.0
 	ops := ebiten.DrawImageOptions{}
 	ops.GeoM.Reset()
-	ops.GeoM.Translate(float64(btn.Position.X)*scaler, float64(btn.Position.Y)*scaler)
-	screen.DrawImage(btn.BtnImg, &ops)
+	ops.GeoM.Translate(float64(ui_button.Position.X)*scaler, float64(ui_button.Position.Y)*scaler)
+	screen.DrawImage(ui_button.BtnImg, &ops)
 	return nil
 }
 
 /**/
-func (btn *UI_Button) Update() error {
+func (ui_button *UI_Button) Update() error {
 	xx, yy := ebiten.CursorPosition()
-	_, _, err := btn.Update_Ret_State_Redraw_Status_Mport(xx, yy, 0)
+	_, _, err := ui_button.Update_Ret_State_Redraw_Status_Mport(xx, yy, 0)
 
 	return err
 }
 
 // /*This is going to be removed when I revise UI_OBJECT's and similar things*/
-// func (btn *UI_Button) Update_Any() (any, error) {
+// func (ui_button *UI_Button) Update_Any() (any, error) {
 
-// 	if btn.IsCursorInBounds() {
-// 		if btn.Btn_Type == 10 {
+// 	if ui_button.IsCursorInBounds() {
+// 		if ui_button.Btn_Type == 10 {
 // 			if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
-// 				btn.IsToggled = !btn.IsToggled
+// 				ui_button.IsToggled = !ui_button.IsToggled
 
-// 				btn.State = 2
-// 				btn.Backend.PlaySound(3)
+// 				ui_button.State = 2
+// 				ui_button.Backend.PlaySound(3)
 // 			} else {
-// 				btn.State = 1
+// 				ui_button.State = 1
 // 			}
-// 			btn.ToRedraw = true
-// 			//btn.Backend.PlaySound(1)
+// 			ui_button.ToRedraw = true
+// 			//ui_button.Backend.PlaySound(1)
 // 		} else {
 // 			if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
-// 				btn.State = 2
-// 				btn.Backend.PlaySound(1)
-// 				btn.Redraw()
+// 				ui_button.State = 2
+// 				ui_button.Backend.PlaySound(1)
+// 				ui_button.Redraw()
 // 				return true, nil
 // 			} else {
-// 				//btn.Backend.PlaySound(1)
-// 				if btn.State != 1 {
-// 					// if btn.State != 2 {
-// 					// 	btn.Backend.PlaySound(1)
+// 				//ui_button.Backend.PlaySound(1)
+// 				if ui_button.State != 1 {
+// 					// if ui_button.State != 2 {
+// 					// 	ui_button.Backend.PlaySound(1)
 // 					// }
-// 					btn.ToRedraw = true
-// 					btn.State = 1
+// 					ui_button.ToRedraw = true
+// 					ui_button.State = 1
 // 				}
 // 			}
 
 // 		}
 // 	} else {
-// 		if btn.State > 0 {
-// 			btn.State = 0
-// 			btn.ToRedraw = true
+// 		if ui_button.State > 0 {
+// 			ui_button.State = 0
+// 			ui_button.ToRedraw = true
 
 // 		}
 // 	}
 
-// 	if btn.ToRedraw {
-// 		btn.Redraw()
+// 	if ui_button.ToRedraw {
+// 		ui_button.Redraw()
 // 		// log.Printf("REDRAW\n")
-// 		btn.ToRedraw = false
+// 		ui_button.ToRedraw = false
 // 	}
 
-// 	return btn.IsToggled, nil
+// 	return ui_button.IsToggled, nil
 // }
 
 /**/
-func (btn *UI_Button) Update_Unactive() error {
-	if btn.State > 0 {
-		btn.State = 0
-		btn.ToRedraw = true
+func (ui_button *UI_Button) Update_Unactive() error {
+	if ui_button.State > 0 {
+		ui_button.State = 0
+		ui_button.ToRedraw = true
 
 	}
 	return nil
 }
 
 /**/
-func (btn *UI_Button) Update_Ret_State_Redraw_Status() (uint8, bool, error) {
+func (ui_button *UI_Button) Update_Ret_State_Redraw_Status() (uint8, bool, error) {
 	xx, yy := ebiten.CursorPosition()
-	return btn.Update_Ret_State_Redraw_Status_Mport(xx, yy, 0)
+	return ui_button.Update_Ret_State_Redraw_Status_Mport(xx, yy, 0)
 }
 
 /*
 This is a nice compromise in many respects;
 what I'm attempting to do here is ensure that the buttons will be redrawn properly and are not going to need to have additional measures placed on them;
 */
-func (btn *UI_Button) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode int) (uint8, bool, error) {
+func (ui_button *UI_Button) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode int) (uint8, bool, error) {
 	to_redraw := false
 
-	if btn.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode) {
-		if btn.Btn_Type == 10 {
+	if ui_button.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode) {
+		if ui_button.Btn_Type == 10 {
 			if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
-				btn.IsToggled = !btn.IsToggled
+				ui_button.IsToggled = !ui_button.IsToggled
 
-				btn.State = 2
-				btn.Backend.PlaySound(3)
+				ui_button.State = 2
+				ui_button.Backend.PlaySound(3)
 			} else {
-				btn.State = 1
+				ui_button.State = 1
 			}
-			btn.ToRedraw = true
+			ui_button.ToRedraw = true
 			to_redraw = true
-			//btn.Backend.PlaySound(1)
-		} else if btn.Btn_Type == 20 {
+			//ui_button.Backend.PlaySound(1)
+		} else if ui_button.Btn_Type == 20 {
 			if ebiten.IsMouseButtonPressed(ebiten.MouseButton0) {
-				btn.State = 2
-				// btn.Backend.PlaySound(1)
-				btn.Redraw()
-				return btn.GetState(), true, nil
+				ui_button.State = 2
+				// ui_button.Backend.PlaySound(1)
+				ui_button.Redraw()
+				return ui_button.GetState(), true, nil
 			} else {
-				//btn.Backend.PlaySound(1)
-				if btn.State != 1 {
-					// if btn.State != 2 {
-					// 	btn.Backend.PlaySound(1)
+				//ui_button.Backend.PlaySound(1)
+				if ui_button.State != 1 {
+					// if ui_button.State != 2 {
+					// 	ui_button.Backend.PlaySound(1)
 					// }
-					btn.ToRedraw = true
-					btn.State = 1
+					ui_button.ToRedraw = true
+					ui_button.State = 1
 					to_redraw = true
 
 				}
@@ -268,18 +268,18 @@ func (btn *UI_Button) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Po
 
 		} else {
 			if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
-				btn.State = 2
-				btn.Backend.PlaySound(1)
-				btn.Redraw()
-				return btn.GetState(), true, nil
+				ui_button.State = 2
+				ui_button.Backend.PlaySound(1)
+				ui_button.Redraw()
+				return ui_button.GetState(), true, nil
 			} else {
-				//btn.Backend.PlaySound(1)
-				if btn.State != 1 {
-					// if btn.State != 2 {
-					// 	btn.Backend.PlaySound(1)
+				//ui_button.Backend.PlaySound(1)
+				if ui_button.State != 1 {
+					// if ui_button.State != 2 {
+					// 	ui_button.Backend.PlaySound(1)
 					// }
-					btn.ToRedraw = true
-					btn.State = 1
+					ui_button.ToRedraw = true
+					ui_button.State = 1
 					to_redraw = true
 
 				}
@@ -287,31 +287,31 @@ func (btn *UI_Button) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Po
 
 		}
 	} else {
-		if btn.State > 0 {
-			btn.State = 0
-			btn.ToRedraw = true
+		if ui_button.State > 0 {
+			ui_button.State = 0
+			ui_button.ToRedraw = true
 			to_redraw = true
 		}
 	}
 
-	if btn.ToRedraw {
-		btn.Redraw()
+	if ui_button.ToRedraw {
+		ui_button.Redraw()
 		// log.Printf("REDRAW\n")
-		btn.ToRedraw = false
+		ui_button.ToRedraw = false
 	}
-	return btn.GetState(), to_redraw, nil
+	return ui_button.GetState(), to_redraw, nil
 }
 
 /**/
-func (btn *UI_Button) IsCursorInBounds() bool {
-	if btn.IsVisible && btn.IsActive {
+func (ui_button *UI_Button) IsCursorInBounds() bool {
+	if ui_button.IsVisible && ui_button.IsActive {
 		Mouse_Pos_X, Mouse_Pos_Y := ebiten.CursorPosition()
 
-		return btn.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 0)
-		// x0, y0 := btn.Position.X, btn.Position.Y
-		// x1, y1 := btn.Position.X+btn.Dimensions.X, btn.Position.Y+btn.Dimensions.Y
-		// if btn.Parent != nil {
-		// 	x2, y2 := btn.Parent.GetPosition_Int()
+		return ui_button.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 0)
+		// x0, y0 := ui_button.Position.X, ui_button.Position.Y
+		// x1, y1 := ui_button.Position.X+ui_button.Dimensions.X, ui_button.Position.Y+ui_button.Dimensions.Y
+		// if ui_button.Parent != nil {
+		// 	x2, y2 := ui_button.Parent.GetPosition_Int()
 		// 	x0 += x2
 		// 	y0 += y2
 		// 	x1 += x2
@@ -324,22 +324,22 @@ func (btn *UI_Button) IsCursorInBounds() bool {
 }
 
 /**/
-func (btn *UI_Button) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode int) bool {
-	if btn.IsVisible && btn.IsActive {
+func (ui_button *UI_Button) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode int) bool {
+	if ui_button.IsVisible && ui_button.IsActive {
 		// xx, yy := ebiten.CursorPosition()
-		x0, y0 := btn.Position.X, btn.Position.Y
-		x1, y1 := btn.Position.X+btn.Dimensions.X, btn.Position.Y+btn.Dimensions.Y
-		if btn.Parent != nil {
-			x2, y2 := btn.Parent.GetPosition_Int()
-			x3, y3 := btn.Parent.Get_Internal_Position_Int()
+		x0, y0 := ui_button.Position.X, ui_button.Position.Y
+		x1, y1 := ui_button.Position.X+ui_button.Dimensions.X, ui_button.Position.Y+ui_button.Dimensions.Y
+		if ui_button.Parent != nil {
+			x2, y2 := ui_button.Parent.GetPosition_Int()
+			x3, y3 := ui_button.Parent.Get_Internal_Position_Int()
 			if mode == 10 || mode == 0 { //
 				// log.Printf("P I P: %d,%d %d,%d\n", x2, y2, x3, y3)
 				x2 += x3
 				y2 += y3
-				// if !btn.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode) {
+				// if !ui_button.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode) {
 				// 	return false
 				// } else {
-				// 	// if pp := btn.Parent.GetParent(); pp != nil {
+				// 	// if pp := ui_button.Parent.GetParent(); pp != nil {
 				// 	// 	if !pp.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 0) {
 				// 	// 		return false
 				// 	// 	}
@@ -357,92 +357,100 @@ func (btn *UI_Button) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode 
 	// if()
 }
 
-func (btn *UI_Button) Detoggle() {
-	// log.Printf("DETOGGLE %t\n", btn.IsToggled)
-	if btn.IsToggled {
-		btn.IsToggled = false
-		btn.State = 0
-		btn.Redraw()
-		if btn.Parent != nil {
-			// log.Printf("%t------DEACTIVATE\n", btn.Parent != nil)
-			btn.Parent.Redraw()
+func (ui_button *UI_Button) Detoggle() {
+	// log.Printf("DETOGGLE %t\n", ui_button.IsToggled)
+	if ui_button.IsToggled {
+		ui_button.IsToggled = false
+		ui_button.State = 0
+		ui_button.Redraw()
+		if ui_button.Parent != nil {
+			// log.Printf("%t------DEACTIVATE\n", ui_button.Parent != nil)
+			ui_button.Parent.Redraw()
 		}
 	}
 }
 
 /**/
-func (btn *UI_Button) Close() {
+func (ui_button *UI_Button) Close() {
 
 }
 
 /**/
-func (btn *UI_Button) Open() {
+func (ui_button *UI_Button) Open() {
 
 }
 
 /**/
-func (btn *UI_Button) GetState() uint8 {
-	if btn.Btn_Type == 10 {
-		if btn.IsToggled {
+func (ui_button *UI_Button) GetState() uint8 {
+	if ui_button.Btn_Type == 10 {
+		if ui_button.IsToggled {
 			return 2
 		} else {
-			return btn.State
+			return ui_button.State
 		}
 	} else {
-		return btn.State
+		return ui_button.State
 	}
 }
 
 /**/
-func (btn *UI_Button) Get_Internal_Position_Int() (x_pos int, y_pos int) {
-	x_pos, y_pos = btn.GetPosition_Int()
+func (ui_button *UI_Button) Get_Internal_Position_Int() (x_pos int, y_pos int) {
+	x_pos, y_pos = ui_button.GetPosition_Int()
 	return x_pos, y_pos
 }
 
 /**/
-func (btn *UI_Button) SetPosition_Int(x_pos, y_pos int) {
-	btn.Position = coords.CoordInts{X: x_pos, Y: y_pos}
+func (ui_button *UI_Button) Get_Internal_Dimensions_Int() (x_pos int, y_pos int) {
+	x_pos, y_pos = ui_button.GetPosition_Int()
+	return x_pos, y_pos
 }
 
 /**/
-func (btn *UI_Button) GetDimensions_Int() (x_pos, y_pos int) {
-	return btn.Dimensions.X, btn.Dimensions.Y
+func (ui_button *UI_Button) SetPosition_Int(x_pos, y_pos int) {
+	ui_button.Position = coords.CoordInts{X: x_pos, Y: y_pos}
+}
+
+/**/
+func (ui_button *UI_Button) GetDimensions_Int() (x_pos, y_pos int) {
+	return ui_button.Dimensions.X, ui_button.Dimensions.Y
 } //
 /**/
-func (btn *UI_Button) SetDimensions_Int(x_pos, y_pos int) {
-	btn.Dimensions = coords.CoordInts{X: x_pos, Y: y_pos}
+func (ui_button *UI_Button) SetDimensions_Int(x_pos, y_pos int) {
+	ui_button.Dimensions = coords.CoordInts{X: x_pos, Y: y_pos}
 }
 
 /**/
-func (btn *UI_Button) ToString() string {
-	strng := fmt.Sprintf("BUTTON: %s \n", btn.id)
+func (ui_button *UI_Button) ToString() string {
+	strng := fmt.Sprintf("BUTTON: %s \n", ui_button.id)
 	return strng
 }
 
 /**/
-func (btn *UI_Button) IsInit() bool { return false } //
+func (ui_button *UI_Button) IsInit() bool { return false } //
 
 /**/
-func (btn *UI_Button) GetID() string { return btn.id } //
+func (ui_button *UI_Button) GetID() string { return ui_button.id } //
 /**/
-func (btn *UI_Button) GetType() string { return "UI_Button" } //
+func (ui_button *UI_Button) GetType() string { return "UI_Button" } //
 /**/
-func (btn *UI_Button) GetPosition_Int() (int, int) { return btn.Position.X, btn.Position.Y } //
+func (ui_button *UI_Button) GetPosition_Int() (int, int) {
+	return ui_button.Position.X, ui_button.Position.Y
+} //
 /**/
-func (btn *UI_Button) GetNumber_Children() int { return 0 } //
+func (ui_button *UI_Button) GetNumber_Children() int { return 0 } //
 /**/
-func (btn *UI_Button) GetChild(index int) UI_Object { return nil } //
+func (ui_button *UI_Button) GetChild(index int) UI_Object { return nil } //
 /**/
-func (btn *UI_Button) AddChild(child UI_Object) error {
+func (ui_button *UI_Button) AddChild(child UI_Object) error {
 	return fmt.Errorf("ERROR NOT POSSIBLE")
 }
 
 /**/
-func (btn *UI_Button) RemoveChild(index int) error {
+func (ui_button *UI_Button) RemoveChild(index int) error {
 	return fmt.Errorf("ERROR NOT POSSIBLE")
 }
 
 /**/
-func (btn *UI_Button) GetParent() UI_Object { return nil } //
+func (ui_button *UI_Button) GetParent() UI_Object { return nil } //
 /**/
-func (btn *UI_Button) HasParent() bool { return btn.Parent != nil }
+func (ui_button *UI_Button) HasParent() bool { return ui_button.Parent != nil }

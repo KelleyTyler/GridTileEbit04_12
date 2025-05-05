@@ -252,6 +252,12 @@ func (ui_tep *UI_Text_Entry_Panel) Get_Internal_Position_Int() (x_pos int, y_pos
 }
 
 /**/
+func (ui_tep *UI_Text_Entry_Panel) Get_Internal_Dimensions_Int() (x_pos int, y_pos int) {
+	x_pos, y_pos = ui_tep.GetPosition_Int()
+	return x_pos, y_pos
+}
+
+/**/
 func (ui_tep *UI_Text_Entry_Panel) GetPosition_Int() (int, int) {
 	return ui_tep.Position.X, ui_tep.Position.Y
 }

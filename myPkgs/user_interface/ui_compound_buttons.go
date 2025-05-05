@@ -37,116 +37,116 @@ type UI_Num_Select struct {
 
 /*
  */
-func (nSelect *UI_Num_Select) Init(idLabels []string, backend *UI_Backend, style *UI_Object_Style, Position, Dimensions coords.CoordInts) error {
-	nSelect.obj_id = idLabels[0]
-	nSelect.text = idLabels[1]
-	nSelect.Dimensions = Dimensions
-	nSelect.Position = Position
-	nSelect.Backend = backend
+func (ui_num_select *UI_Num_Select) Init(idLabels []string, backend *UI_Backend, style *UI_Object_Style, Position, Dimensions coords.CoordInts) error {
+	ui_num_select.obj_id = idLabels[0]
+	ui_num_select.text = idLabels[1]
+	ui_num_select.Dimensions = Dimensions
+	ui_num_select.Position = Position
+	ui_num_select.Backend = backend
 	if style != nil {
-		nSelect.Style = style
+		ui_num_select.Style = style
 	} else {
-		nSelect.Style = &nSelect.Backend.Style
+		ui_num_select.Style = &ui_num_select.Backend.Style
 	}
-	nSelect.State = 0
-	nSelect.Image = ebiten.NewImage(Dimensions.X, Dimensions.Y)
-	dimY := (nSelect.Dimensions.Y / 2)
-	thick := int(nSelect.Style.BorderThickness)
+	ui_num_select.State = 0
+	ui_num_select.Image = ebiten.NewImage(Dimensions.X, Dimensions.Y)
+	dimY := (ui_num_select.Dimensions.Y / 2)
+	thick := int(ui_num_select.Style.BorderThickness)
 	btnwidth := 16
-	nSelect.L_Button.Init([]string{"lbtn", "<"}, backend, nil, coords.CoordInts{X: (thick / 2), Y: dimY - (thick / 2)}, coords.CoordInts{X: btnwidth, Y: dimY})
-	nSelect.M_Button.Init([]string{"lbtn", "000"}, backend, nil, coords.CoordInts{X: btnwidth + (thick / 2), Y: dimY - (thick / 2)}, coords.CoordInts{X: nSelect.Dimensions.X - ((btnwidth * 2) + (thick)), Y: dimY})
-	nSelect.R_Button.Init([]string{"lbtn", ">"}, backend, nil, coords.CoordInts{X: nSelect.Dimensions.X - (btnwidth + thick - 1), Y: dimY - (thick / 2)}, coords.CoordInts{X: btnwidth, Y: dimY})
-	nSelect.Label.Init([]string{"lbtn", idLabels[1]}, backend, nil, coords.CoordInts{X: thick / 2, Y: thick / 2}, coords.CoordInts{X: nSelect.Dimensions.X - (thick), Y: dimY})
-	nSelect.Label.TextAlignMode = 10
-	nSelect.L_Button.Init_Parents(nSelect)
-	nSelect.M_Button.Init_Parents(nSelect)
-	nSelect.R_Button.Init_Parents(nSelect)
+	ui_num_select.L_Button.Init([]string{"lbtn", "<"}, backend, nil, coords.CoordInts{X: (thick / 2), Y: dimY - (thick / 2)}, coords.CoordInts{X: btnwidth, Y: dimY})
+	ui_num_select.M_Button.Init([]string{"lbtn", "000"}, backend, nil, coords.CoordInts{X: btnwidth + (thick / 2), Y: dimY - (thick / 2)}, coords.CoordInts{X: ui_num_select.Dimensions.X - ((btnwidth * 2) + (thick)), Y: dimY})
+	ui_num_select.R_Button.Init([]string{"lbtn", ">"}, backend, nil, coords.CoordInts{X: ui_num_select.Dimensions.X - (btnwidth + thick - 1), Y: dimY - (thick / 2)}, coords.CoordInts{X: btnwidth, Y: dimY})
+	ui_num_select.Label.Init([]string{"lbtn", idLabels[1]}, backend, nil, coords.CoordInts{X: thick / 2, Y: thick / 2}, coords.CoordInts{X: ui_num_select.Dimensions.X - (thick), Y: dimY})
+	ui_num_select.Label.TextAlignMode = 10
+	ui_num_select.L_Button.Init_Parents(ui_num_select)
+	ui_num_select.M_Button.Init_Parents(ui_num_select)
+	ui_num_select.R_Button.Init_Parents(ui_num_select)
 
-	nSelect.Label.Init_Parents(nSelect)
-	nSelect.Label.Redraw()
-	nSelect.SetVals(0, 1, -10, 10, 0)
-	// nSelect.R_Button.Init_00(backend, "->", coords.CoordInts{X: nSelect.Dimensions.X - 16, Y: 0}, coords.CoordInts{X: 16, Y: 16}, 0, nSelect)
+	ui_num_select.Label.Init_Parents(ui_num_select)
+	ui_num_select.Label.Redraw()
+	ui_num_select.SetVals(0, 1, -10, 10, 0)
+	// ui_num_select.R_Button.Init_00(backend, "->", coords.CoordInts{X: ui_num_select.Dimensions.X - 16, Y: 0}, coords.CoordInts{X: 16, Y: 16}, 0, ui_num_select)
 	//-------Setting up Image
-	nSelect.Redraw()
-	nSelect.ImageUpdate = true
+	ui_num_select.Redraw()
+	ui_num_select.ImageUpdate = true
 
 	//------Finishing Up
-	if !nSelect.init {
-		nSelect.init = true
+	if !ui_num_select.init {
+		ui_num_select.init = true
 	}
 	return nil
 }
 
 /*
  */
-func (nSelect *UI_Num_Select) Init_Parents(parent UI_Object) error {
-	nSelect.Parent = parent
-	nSelect.Parent.AddChild(nSelect)
-	nSelect.Redraw()
-	nSelect.Parent.Redraw()
+func (ui_num_select *UI_Num_Select) Init_Parents(parent UI_Object) error {
+	ui_num_select.Parent = parent
+	ui_num_select.Parent.AddChild(ui_num_select)
+	ui_num_select.Redraw()
+	ui_num_select.Parent.Redraw()
 	return nil
 }
 
 /*
  */
-func (nSelect *UI_Num_Select) SetVals(defVal, interator, min, max int, middlebtn uint8) {
-	nSelect.MaxValue = max
-	nSelect.MinValue = min
-	nSelect.DefaultValue = defVal
-	nSelect.CurrValue = defVal
-	nSelect.IterValue = interator
-	nSelect.MiddleButtonMode = middlebtn
+func (ui_num_select *UI_Num_Select) SetVals(defVal, interator, min, max int, middlebtn uint8) {
+	ui_num_select.MaxValue = max
+	ui_num_select.MinValue = min
+	ui_num_select.DefaultValue = defVal
+	ui_num_select.CurrValue = defVal
+	ui_num_select.IterValue = interator
+	ui_num_select.MiddleButtonMode = middlebtn
 }
 
 /*
  */
-func (nSelect *UI_Num_Select) Draw(screen *ebiten.Image) error {
+func (ui_num_select *UI_Num_Select) Draw(screen *ebiten.Image) error {
 	ops := ebiten.DrawImageOptions{}
 	scale := 1.0
 	ops.GeoM.Reset()
-	ops.GeoM.Translate(float64(nSelect.Position.X)*scale, float64(nSelect.Position.Y)*scale)
-	screen.DrawImage(nSelect.Image, &ops)
+	ops.GeoM.Translate(float64(ui_num_select.Position.X)*scale, float64(ui_num_select.Position.Y)*scale)
+	screen.DrawImage(ui_num_select.Image, &ops)
 	return nil
 }
 
 /*
  */
-func (nSelect *UI_Num_Select) Redraw() {
+func (ui_num_select *UI_Num_Select) Redraw() {
 
-	nSelect.M_Button.Redraw()
-	// nSelect.Image.Fill(color.RGBA{255, 0, 0, 255}) //nSelect.Style.BorderColor
-	nSelect.Image.Fill(nSelect.Style.BorderColor) //
+	ui_num_select.M_Button.Redraw()
+	// ui_num_select.Image.Fill(color.RGBA{255, 0, 0, 255}) //ui_num_select.Style.BorderColor
+	ui_num_select.Image.Fill(ui_num_select.Style.BorderColor) //
 
-	lineThick := nSelect.Style.BorderThickness
-	// vector.DrawFilledRect(nSelect.Image, lineThick, lineThick, float32(nSelect.Dimensions.X)-(2*lineThick), float32(nSelect.Dimensions.Y)-(2*lineThick), color.RGBA{255, 255, 0, 255}, true) //nSelect.Style.PanelColor
-	vector.DrawFilledRect(nSelect.Image, lineThick, lineThick, float32(nSelect.Dimensions.X)-(2*lineThick), float32(nSelect.Dimensions.Y)-(2*lineThick), nSelect.Style.PanelColor, true) //
+	lineThick := ui_num_select.Style.BorderThickness
+	// vector.DrawFilledRect(ui_num_select.Image, lineThick, lineThick, float32(ui_num_select.Dimensions.X)-(2*lineThick), float32(ui_num_select.Dimensions.Y)-(2*lineThick), color.RGBA{255, 255, 0, 255}, true) //ui_num_select.Style.PanelColor
+	vector.DrawFilledRect(ui_num_select.Image, lineThick, lineThick, float32(ui_num_select.Dimensions.X)-(2*lineThick), float32(ui_num_select.Dimensions.Y)-(2*lineThick), ui_num_select.Style.PanelColor, true) //
 
-	nSelect.L_Button.Draw(nSelect.Image)
-	nSelect.M_Button.Draw(nSelect.Image)
-	nSelect.R_Button.Draw(nSelect.Image)
-	nSelect.Label.Draw(nSelect.Image)
+	ui_num_select.L_Button.Draw(ui_num_select.Image)
+	ui_num_select.M_Button.Draw(ui_num_select.Image)
+	ui_num_select.R_Button.Draw(ui_num_select.Image)
+	ui_num_select.Label.Draw(ui_num_select.Image)
 }
 
 /*
 allows for the seleciton of middle button modes
 */
-func (nSelect *UI_Num_Select) SetMiddlebuttonMode(mode uint8, additionalLabels []string) {
-	nSelect.MiddleButtonMode = mode
+func (ui_num_select *UI_Num_Select) SetMiddlebuttonMode(mode uint8, additionalLabels []string) {
+	ui_num_select.MiddleButtonMode = mode
 }
 
 /*
  */
-func (nSelect *UI_Num_Select) Update() error {
-	nSelect.State = 0
+func (ui_num_select *UI_Num_Select) Update() error {
+	ui_num_select.State = 0
 	Mouse_Pos_X, Mouse_Pos_Y := ebiten.CursorPosition()
-	_, _, err := nSelect.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, 0)
+	_, _, err := ui_num_select.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, 0)
 
 	return err
 }
 
 /*
  */
-func (nSelect *UI_Num_Select) Update_Unactive() error {
+func (ui_num_select *UI_Num_Select) Update_Unactive() error {
 
 	return nil
 }
@@ -154,116 +154,98 @@ func (nSelect *UI_Num_Select) Update_Unactive() error {
 /*
 This will return false; Use Only Sparingly!
 */
-func (nSelect *UI_Num_Select) Update_Any() (any, error) {
+func (ui_num_select *UI_Num_Select) Update_Any() (any, error) {
 	return false, nil
 }
 
 /*
  */
-func (nSelect *UI_Num_Select) Update_Ret_State_Redraw_Status() (uint8, bool, error) {
-	nSelect.State = 0
+func (ui_num_select *UI_Num_Select) Update_Ret_State_Redraw_Status() (uint8, bool, error) {
+	ui_num_select.State = 0
 	Mouse_Pos_X, Mouse_Pos_Y := ebiten.CursorPosition()
-	return nSelect.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, 0)
-}
-
-/*
- */
-func (nSelect *UI_Num_Select) SetPosition(Position coords.CoordInts) { nSelect.Position = Position }
-
-/**/
-func (nSelect *UI_Num_Select) SetPosition_Int(X, Y int) {
-
-}
-
-/**/
-func (nSelect *UI_Num_Select) GetDimensions_Int() (int, int) {
-	return 0, 0
-} //
-/**/
-func (nSelect *UI_Num_Select) SetDimensions_Int(int, int) {
-
+	return ui_num_select.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, 0)
 }
 
 /*
 Update_Ret_State_Redraw_Status
 */
-func (nSelect *UI_Num_Select) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode int) (uint8, bool, error) {
-	nSelect.State = 0
-	state0, to_redraw0, err0 := nSelect.L_Button.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode)
+func (ui_num_select *UI_Num_Select) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode int) (uint8, bool, error) {
+	ui_num_select.State = 0
+	state0, to_redraw0, err0 := ui_num_select.L_Button.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode)
 	if err0 != nil {
 		log.Fatal(err0)
 	}
 
 	if state0 == 2 {
-		// log.Printf("BTN L is Clicked %d %t\n", nSelect.CurrValue, nSelect.CurrValue != nSelect.DefaultValue)
+		// log.Printf("BTN L is Clicked %d %t\n", ui_num_select.CurrValue, ui_num_select.CurrValue != ui_num_select.DefaultValue)
 
-		if nSelect.CurrValue > nSelect.MinValue {
-			nSelect.CurrValue -= nSelect.IterValue
+		if ui_num_select.CurrValue > ui_num_select.MinValue {
+			ui_num_select.CurrValue -= ui_num_select.IterValue
 		}
 	}
-	state1, to_redraw1, err1 := nSelect.M_Button.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode)
+	state1, to_redraw1, err1 := ui_num_select.M_Button.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode)
 	if err1 != nil {
 		log.Fatal(err1)
 	}
 
 	if state1 == 2 {
-		// log.Printf("BTN M is Clicked %d  %d %d %t\n", nSelect.CurrValue, nSelect.IterValue, nSelect.MinValue, nSelect.CurrValue != nSelect.DefaultValue)
-		if nSelect.MiddleButtonMode == 0 {
-			if nSelect.CurrValue != nSelect.DefaultValue {
-				nSelect.CurrValue = nSelect.DefaultValue
+		// log.Printf("BTN M is Clicked %d  %d %d %t\n", ui_num_select.CurrValue, ui_num_select.IterValue, ui_num_select.MinValue, ui_num_select.CurrValue != ui_num_select.DefaultValue)
+		if ui_num_select.MiddleButtonMode == 0 {
+			if ui_num_select.CurrValue != ui_num_select.DefaultValue {
+				ui_num_select.CurrValue = ui_num_select.DefaultValue
 			}
 		} else {
-			nSelect.State = 2
+			ui_num_select.State = 2
 		}
 	}
-	state2, to_redraw2, err2 := nSelect.R_Button.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode)
+	state2, to_redraw2, err2 := ui_num_select.R_Button.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode)
 	if err2 != nil {
 		log.Fatal(err2)
 	}
 
 	if state2 == 2 {
 
-		if nSelect.CurrValue < nSelect.MaxValue {
-			nSelect.CurrValue = nSelect.CurrValue + nSelect.IterValue
-			//log.Printf("BTN R is Clicked %d %t\n", nSelect.CurrValue, nSelect.CurrValue < nSelect.MaxValue)
+		if ui_num_select.CurrValue < ui_num_select.MaxValue {
+			ui_num_select.CurrValue = ui_num_select.CurrValue + ui_num_select.IterValue
+			//log.Printf("BTN R is Clicked %d %t\n", ui_num_select.CurrValue, ui_num_select.CurrValue < ui_num_select.MaxValue)
 		}
 	}
 
-	// if nSelect.IsMovable {
-	// 	if nSelect.IsCursorInBounds() {
+	// if ui_num_select.IsMovable {
+	// 	if ui_num_select.IsCursorInBounds() {
 
 	// 	}
 	// }
 	export_redraw := false
 	if to_redraw0 || to_redraw1 || to_redraw2 {
-		nSelect.M_Button.Label = fmt.Sprintf("%03d", nSelect.CurrValue)
-		nSelect.Redraw()
+		ui_num_select.M_Button.Label = fmt.Sprintf("%03d", ui_num_select.CurrValue)
+		ui_num_select.Redraw()
 		export_redraw = true
 	}
 
-	return nSelect.State, export_redraw, nil
+	return ui_num_select.State, export_redraw, nil
 }
 
 /*
 This returns the state of the object
 */
-func (nSelect *UI_Num_Select) GetState() uint8 { return nSelect.State }
+func (ui_num_select *UI_Num_Select) GetState() uint8 { return ui_num_select.State }
 
 /*
 this returns a basic to string message
 */
-func (nSelect *UI_Num_Select) ToString() string {
-	strngOut := fmt.Sprintf("UI_Object nSelect:%s\n\tPositon %s\t", nSelect.obj_id, nSelect.Position.ToString())
-	strngOut += fmt.Sprintf("\tDimensions: %s\n", nSelect.Dimensions.ToString())
+func (ui_num_select *UI_Num_Select) ToString() string {
+	strngOut := fmt.Sprintf("UI_Object ui_num_select:%s\n\tPositon %s\t", ui_num_select.obj_id, ui_num_select.Position.ToString())
+	strngOut += fmt.Sprintf("\tDimensions: %s\n", ui_num_select.Dimensions.ToString())
 	return strngOut
 }
 
 /*
  */
-func (nSelect *UI_Num_Select) IsCursorInBounds() bool {
-	if nSelect.IsActive && nSelect.IsVisible {
+func (ui_num_select *UI_Num_Select) IsCursorInBounds() bool {
+	if ui_num_select.IsActive && ui_num_select.IsVisible {
 		cX, cY := ebiten.CursorPosition()
-		return nSelect.IsCursorInBounds_MousePort(cX, cY, 0)
+		return ui_num_select.IsCursorInBounds_MousePort(cX, cY, 0)
 	}
 	return false
 }
@@ -274,34 +256,34 @@ This might be also a terrible idea overall I cannot tell quite yet
 
 enter 0 for it to default
 */
-func (nSelect *UI_Num_Select) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode int) bool {
-	if nSelect.IsActive && nSelect.IsVisible && (mode == 0 || mode == 10) {
+func (ui_num_select *UI_Num_Select) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode int) bool {
+	if ui_num_select.IsActive && ui_num_select.IsVisible && (mode == 0 || mode == 10) {
 		cX, cY := Mouse_Pos_X, Mouse_Pos_Y
 		//mode stuff
 		var x0, y0, x1, y1 int
 
-		if nSelect.Parent != nil {
-			px, py := nSelect.Parent.GetPosition_Int()
-			x0 = nSelect.Position.X + px
-			y0 = nSelect.Position.Y + py
-			x1 = nSelect.Position.X + nSelect.Dimensions.X + px
-			y1 = nSelect.Position.Y + nSelect.Dimensions.Y + py
+		if ui_num_select.Parent != nil {
+			px, py := ui_num_select.Parent.GetPosition_Int()
+			x0 = ui_num_select.Position.X + px
+			y0 = ui_num_select.Position.Y + py
+			x1 = ui_num_select.Position.X + ui_num_select.Dimensions.X + px
+			y1 = ui_num_select.Position.Y + ui_num_select.Dimensions.Y + py
 			if mode == 10 || mode == 0 {
-				x3, y3 := nSelect.Parent.Get_Internal_Position_Int()
+				x3, y3 := ui_num_select.Parent.Get_Internal_Position_Int()
 				x0 += x3
 				x1 += x3
 				y0 += y3
 				y1 += y3
-				// if !nSelect.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 10) {
+				// if !ui_num_select.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 10) {
 				// 	return false
 				// }
 			}
 
 		} else {
-			x0 = nSelect.Position.X
-			y0 = nSelect.Position.Y
-			x1 = nSelect.Position.X + nSelect.Dimensions.X
-			y1 = nSelect.Position.Y + nSelect.Dimensions.Y
+			x0 = ui_num_select.Position.X
+			y0 = ui_num_select.Position.Y
+			x1 = ui_num_select.Position.X + ui_num_select.Dimensions.X
+			y1 = ui_num_select.Position.Y + ui_num_select.Dimensions.Y
 		}
 		return (cX > x0 && cX < x1) && (cY > y0 && cY < y1)
 	}
@@ -310,70 +292,94 @@ func (nSelect *UI_Num_Select) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_
 }
 
 /**/
-func (nSelect *UI_Num_Select) Close() {}
+func (ui_num_select *UI_Num_Select) Close() {}
 
 /**/
-func (nSelect *UI_Num_Select) Open() {}
+func (ui_num_select *UI_Num_Select) Open() {}
 
 /**/
-func (nSelect *UI_Num_Select) Detoggle() {}
+func (ui_num_select *UI_Num_Select) Detoggle() {
+	ui_num_select.L_Button.Detoggle()
+	ui_num_select.M_Button.Detoggle()
+	ui_num_select.R_Button.Detoggle()
+}
 
 /**/
-func (nSelect *UI_Num_Select) Get_Internal_Position_Int() (x_pos int, y_pos int) {
-	// x_pos, y_pos = nSelect.GetPosition_Int()
-	if nSelect.Parent != nil {
-		x_pos, y_pos = nSelect.Parent.Get_Internal_Position_Int()
+func (ui_num_select *UI_Num_Select) Get_Internal_Position_Int() (x_pos int, y_pos int) {
+	// x_pos, y_pos = ui_num_select.GetPosition_Int()
+	if ui_num_select.Parent != nil {
+		x_pos, y_pos = ui_num_select.Parent.Get_Internal_Position_Int()
 	}
+	return x_pos, y_pos
+}
+
+/**/
+func (ui_num_select *UI_Num_Select) Get_Internal_Dimensions_Int() (x_pos int, y_pos int) {
+	x_pos, y_pos = ui_num_select.GetPosition_Int()
 	return x_pos, y_pos
 }
 
 /*
  */
-func (nSelect *UI_Num_Select) GetPosition_Int() (int, int) {
-	xx := nSelect.Position.X
-	yy := nSelect.Position.Y
-	if nSelect.Parent != nil {
-		px, py := nSelect.Parent.GetPosition_Int()
+func (ui_num_select *UI_Num_Select) GetPosition_Int() (int, int) {
+	xx := ui_num_select.Position.X
+	yy := ui_num_select.Position.Y
+	if ui_num_select.Parent != nil {
+		px, py := ui_num_select.Parent.GetPosition_Int()
 		xx += px
 		yy += py
 	}
 	return xx, yy
 }
 
+/**/
+func (ui_num_select *UI_Num_Select) SetPosition_Int(X, Y int) {
+
+}
+
+/**/
+func (ui_num_select *UI_Num_Select) GetDimensions_Int() (int, int) {
+	return 0, 0
+} //
+/**/
+func (ui_num_select *UI_Num_Select) SetDimensions_Int(int, int) {
+
+}
+
 /*
 this confirms the object is initilaized
 */
-func (nSelect *UI_Num_Select) IsInit() bool { return nSelect.init }
+func (ui_num_select *UI_Num_Select) IsInit() bool { return ui_num_select.init }
 
 /*
 this gets the object ID
 */
-func (nSelect *UI_Num_Select) GetID() string { return nSelect.obj_id }
+func (ui_num_select *UI_Num_Select) GetID() string { return ui_num_select.obj_id }
 
 /*
 This returns a string specifying the objects type
 */
-func (nSelect *UI_Num_Select) GetType() string { return "UI_Object nSelect" }
+func (ui_num_select *UI_Num_Select) GetType() string { return "UI_Object ui_num_select" }
 
 /*
  */
-func (nSelect *UI_Num_Select) GetNumber_Children() int { return 0 }
+func (ui_num_select *UI_Num_Select) GetNumber_Children() int { return 0 }
 
 /*
  */
-func (nSelect *UI_Num_Select) GetChild(index int) UI_Object { return nil }
+func (ui_num_select *UI_Num_Select) GetChild(index int) UI_Object { return nil }
 
 /*
  */
-func (nSelect *UI_Num_Select) AddChild(child UI_Object) error { return nil }
+func (ui_num_select *UI_Num_Select) AddChild(child UI_Object) error { return nil }
 
 /**/
-func (nSelect *UI_Num_Select) RemoveChild(index int) error { return nil }
+func (ui_num_select *UI_Num_Select) RemoveChild(index int) error { return nil }
 
 /**/
-func (nSelect *UI_Num_Select) HasParent() bool { return nSelect.Parent != nil }
+func (ui_num_select *UI_Num_Select) HasParent() bool { return ui_num_select.Parent != nil }
 
 /**/
-func (nSelect *UI_Num_Select) GetParent() UI_Object { return nSelect.Parent }
+func (ui_num_select *UI_Num_Select) GetParent() UI_Object { return ui_num_select.Parent }
 
 /**/

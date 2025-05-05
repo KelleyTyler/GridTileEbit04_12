@@ -255,6 +255,12 @@ func (lbl *UI_Label) Get_Internal_Position_Int() (x_pos int, y_pos int) {
 }
 
 /**/
+func (lbl *UI_Label) Get_Internal_Dimensions_Int() (x_pos int, y_pos int) {
+	x_pos, y_pos = lbl.GetPosition_Int()
+	return x_pos, y_pos
+}
+
+/**/
 func (lbl *UI_Label) GetPosition_Int() (int, int) { return lbl.Position.X, lbl.Position.Y }
 
 /**/

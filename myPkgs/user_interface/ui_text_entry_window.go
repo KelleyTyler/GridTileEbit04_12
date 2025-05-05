@@ -414,6 +414,7 @@ func (ui_tew_00 *UI_Text_Entry_Window_00) IsCursorInBounds_MousePort(Mouse_Pos_X
 	return false
 }
 
+/**/
 func (ui_tew_00 *UI_Text_Entry_Window_00) GetPosition_Int() (int, int) {
 	xx := ui_tew_00.Position.X
 	yy := ui_tew_00.Position.Y
@@ -427,6 +428,12 @@ func (ui_tew_00 *UI_Text_Entry_Window_00) GetPosition_Int() (int, int) {
 
 /**/
 func (ui_tew_00 *UI_Text_Entry_Window_00) Get_Internal_Position_Int() (x_pos int, y_pos int) {
+	return x_pos, y_pos
+}
+
+/**/
+func (ui_tew_00 *UI_Text_Entry_Window_00) Get_Internal_Dimensions_Int() (x_pos int, y_pos int) {
+	x_pos, y_pos = ui_tew_00.GetPosition_Int()
 	return x_pos, y_pos
 }
 

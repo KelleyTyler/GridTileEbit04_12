@@ -354,6 +354,12 @@ func (ui_scrollbar *UI_Scrollbar) Get_Internal_Position_Int() (x_pos int, y_pos 
 	return x_pos, y_pos
 }
 
+/**/
+func (ui_scrollbar *UI_Scrollbar) Get_Internal_Dimensions_Int() (x_pos int, y_pos int) {
+	x_pos, y_pos = ui_scrollbar.GetPosition_Int()
+	return x_pos, y_pos
+}
+
 /*
 this confirms the object is initilaized
 */

@@ -528,6 +528,12 @@ func (ui_win *UI_Window) Get_Internal_Position_Int() (x_pos int, y_pos int) {
 }
 
 /**/
+func (ui_win *UI_Window) Get_Internal_Dimensions_Int() (x_pos int, y_pos int) {
+	x_pos, y_pos = ui_win.GetPosition_Int()
+	return x_pos, y_pos
+}
+
+/**/
 func (ui_win *UI_Window) GetPosition_Int() (int, int) {
 	xx := ui_win.Position.X
 	yy := ui_win.Position.Y

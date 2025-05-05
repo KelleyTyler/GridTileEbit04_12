@@ -2,7 +2,6 @@ package user_interface
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/coords"
 	"github.com/hajimehoshi/ebiten/v2"
@@ -311,14 +310,14 @@ func (ui_scroll *UI_Scrollpane) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Po
 			y0 = ui_scroll.Position.Y + py
 			x1 = ui_scroll.Position.X + ui_scroll.Image.Bounds().Dx() + px
 			y1 = ui_scroll.Position.Y + ui_scroll.Image.Bounds().Dy() + py
-			if mode == 10 {
+			if mode == 10 { //|| mode == 0
 				x3, y3 = ui_scroll.Parent.Get_Internal_Position_Int()
 				x0 += x3
 				x1 += x3
 				y0 += y3
 				y1 += y3
 				if !ui_scroll.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode) {
-					log.Printf("OUT AT SCROLLPANE %d %d \n", x3, y3)
+					// log.Printf("OUT AT SCROLLPANE %d %d \n", x3, y3)
 					return false
 				}
 
@@ -353,11 +352,21 @@ func (ui_scroll *UI_Scrollpane) Open() {
 }
 
 /**/
-func (ui_scroll *UI_Scrollpane) Detoggle() {}
+func (ui_scroll *UI_Scrollpane) Detoggle() {
+	for i, _ := range ui_scroll.Children {
+		ui_scroll.Children[i].Detoggle()
+	}
+}
 
 /**/
 func (ui_scroll *UI_Scrollpane) Get_Internal_Position_Int() (x_pos int, y_pos int) {
 	x_pos, y_pos = ui_scroll.Internal_Position.X, ui_scroll.Internal_Position.Y
+	return x_pos, y_pos
+}
+
+/**/
+func (ui_scroll *UI_Scrollpane) Get_Internal_Dimensions_Int() (x_pos int, y_pos int) {
+	x_pos, y_pos = ui_scroll.GetPosition_Int()
 	return x_pos, y_pos
 }
 

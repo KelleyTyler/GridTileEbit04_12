@@ -69,194 +69,194 @@ type UI_TextEntryField struct {
 }
 
 /**/
-func (tef *UI_TextEntryField) Init(idLabels []string, backend *UI_Backend, style *UI_Object_Style, Position, Dimensions coords.CoordInts) error {
-	tef.Position = Position
-	tef.Dimensions = Dimensions
-	tef.Backend = backend
-	tef.maxLines = 1
-	tef.Image = ebiten.NewImage(Dimensions.X, Dimensions.Y)
-	tef.Text_Input_Image = ebiten.NewImage(Dimensions.X-2, Dimensions.Y-2)
+func (ui_tef *UI_TextEntryField) Init(idLabels []string, backend *UI_Backend, style *UI_Object_Style, Position, Dimensions coords.CoordInts) error {
+	ui_tef.Position = Position
+	ui_tef.Dimensions = Dimensions
+	ui_tef.Backend = backend
+	ui_tef.maxLines = 1
+	ui_tef.Image = ebiten.NewImage(Dimensions.X, Dimensions.Y)
+	ui_tef.Text_Input_Image = ebiten.NewImage(Dimensions.X-2, Dimensions.Y-2)
 	if style != nil {
-		tef.Style = style
+		ui_tef.Style = style
 	} else {
-		tef.Style = &tef.Backend.Style
+		ui_tef.Style = &ui_tef.Backend.Style
 	}
-	tef.IsVisible = true
-	// tef.Redraw()
+	ui_tef.IsVisible = true
+	// ui_tef.Redraw()
 	return nil
 }
 
 /**/
-func (tef *UI_TextEntryField) Init_Parents(Parent UI_Object) error {
-	tef.Parent = Parent
-	tef.Parent.AddChild(tef)
-	tef.Redraw()
-	tef.Parent.Redraw()
+func (ui_tef *UI_TextEntryField) Init_Parents(Parent UI_Object) error {
+	ui_tef.Parent = Parent
+	ui_tef.Parent.AddChild(ui_tef)
+	ui_tef.Redraw()
+	ui_tef.Parent.Redraw()
 	return nil
 }
 
 /**/
-func (tef *UI_TextEntryField) Draw(screen *ebiten.Image) error {
-	// tef.Redraw()
-	if tef.IsVisible {
+func (ui_tef *UI_TextEntryField) Draw(screen *ebiten.Image) error {
+	// ui_tef.Redraw()
+	if ui_tef.IsVisible {
 		ops := ebiten.DrawImageOptions{}
 		scale := 1.0
 		ops.GeoM.Reset()
-		ops.GeoM.Translate(float64(tef.Position.X)*scale, float64(tef.Position.Y)*scale)
-		tef.Predraw()
-		screen.DrawImage(tef.Image, &ops)
+		ops.GeoM.Translate(float64(ui_tef.Position.X)*scale, float64(ui_tef.Position.Y)*scale)
+		ui_tef.Predraw()
+		screen.DrawImage(ui_tef.Image, &ops)
 
 	}
 	return nil
 } //--
 /**/
-func (tef *UI_TextEntryField) Redraw() {
+func (ui_tef *UI_TextEntryField) Redraw() {
 
-	tef.Image.Fill(color.Black)
-	vector.DrawFilledRect(tef.Image, 2, 2, float32(tef.Dimensions.X-4), float32(tef.Dimensions.Y-4), tef.Style.PanelColor, true)
+	ui_tef.Image.Fill(color.Black)
+	vector.DrawFilledRect(ui_tef.Image, 2, 2, float32(ui_tef.Dimensions.X-4), float32(ui_tef.Dimensions.Y-4), ui_tef.Style.PanelColor, true)
 
 } //--
 
-func (tef *UI_TextEntryField) Predraw() {
+func (ui_tef *UI_TextEntryField) Predraw() {
 	//log.Printf("PREDRAW")
-	// tef.Image.Fill(color.RGBA{255, 255, 255, 255})
-	tef.Redraw()
+	// ui_tef.Image.Fill(color.RGBA{255, 255, 255, 255})
+	ui_tef.Redraw()
 
 	scaler := 1.0 //1.75
 	tops := &text.DrawOptions{}
 	tops.GeoM.Reset()
-	// tops.GeoM.Translate(float64(tef.Position.X+2)*scaler, float64(tef.Position.Y)*scaler)
+	// tops.GeoM.Translate(float64(ui_tef.Position.X+2)*scaler, float64(ui_tef.Position.Y)*scaler)
 	tops.GeoM.Translate(float64(2)*scaler, float64(2)*scaler)
 
 	tops.GeoM.Scale(1/scaler, 1/scaler)
 	tops.ColorScale.ScaleWithColor(color.Black)
 	tops.LineSpacing = float64(20)
-	t := tef.DataField
-	if tef.counter%60 < 30 {
+	t := ui_tef.DataField
+	if ui_tef.counter%60 < 30 {
 		t += "_"
-		tef.counter = 0
+		ui_tef.counter = 0
 	}
-	text.Draw(tef.Image, t, *tef.Backend.GetTextFace(0, 20), tops)
+	text.Draw(ui_tef.Image, t, *ui_tef.Backend.GetTextFace(0, 20), tops)
 }
 
 /**/
-func (tef *UI_TextEntryField) Get_String_Output() (strng string) {
+func (ui_tef *UI_TextEntryField) Get_String_Output() (strng string) {
 
-	strng = tef.DataField
+	strng = ui_tef.DataField
 
-	tef.DataField = ""
-	log.Printf("DATAFIELD : %s\n", tef.DataField)
+	ui_tef.DataField = ""
+	log.Printf("DATAFIELD : %s\n", ui_tef.DataField)
 	return strng
 }
 
 /*
 This used to be "clear" but in the interests of making this whole shitshow make sense I've changed it to detoggle; then again i might change it back because it could make a bit more sense;
 */
-func (tef *UI_TextEntryField) Detoggle() {
-	// tef.IsActive = false
-	// tef.IsActive = false
-	tef.DataField = ""
+func (ui_tef *UI_TextEntryField) Detoggle() {
+	// ui_tef.IsActive = false
+	// ui_tef.IsActive = false
+	ui_tef.DataField = ""
 
 }
 
 /*
  */
-func (tef *UI_TextEntryField) Close() {
-	tef.IsActive = false
-	tef.IsVisible = false
-	tef.Detoggle()
+func (ui_tef *UI_TextEntryField) Close() {
+	ui_tef.IsActive = false
+	ui_tef.IsVisible = false
+	ui_tef.Detoggle()
 }
 
 /*
  */
-func (tef *UI_TextEntryField) Open() {
-	tef.IsActive = true
-	tef.IsVisible = true
-	tef.Detoggle()
+func (ui_tef *UI_TextEntryField) Open() {
+	ui_tef.IsActive = true
+	ui_tef.IsVisible = true
+	ui_tef.Detoggle()
 }
 
 /*
  */
-func (tef *UI_TextEntryField) Update() error {
-	if tef.IsCursorInBounds() {
+func (ui_tef *UI_TextEntryField) Update() error {
+	if ui_tef.IsCursorInBounds() {
 
 	}
 
-	if tef.IsActive {
-		// tef.counter++
-		tef.Data = ebiten.AppendInputChars(tef.Data[:0])
-		tef.DataField += string(tef.Data)
+	if ui_tef.IsActive {
+		// ui_tef.counter++
+		ui_tef.Data = ebiten.AppendInputChars(ui_tef.Data[:0])
+		ui_tef.DataField += string(ui_tef.Data)
 
-		ss := strings.Split(tef.DataField, "\n")
-		// if len(ss) > tef.maxLines {
-		// 	tef.DataStrng = strings.Join(ss[len(ss)-tef.maxLines:], "\n")
-		// } else if len(tef.DataStrng) > 10 {
+		ss := strings.Split(ui_tef.DataField, "\n")
+		// if len(ss) > ui_tef.maxLines {
+		// 	ui_tef.DataStrng = strings.Join(ss[len(ss)-ui_tef.maxLines:], "\n")
+		// } else if len(ui_tef.DataStrng) > 10 {
 		// 	log.Printf("%d \n", len(ss))
 		// }
-		if len(ss) > int(tef.maxLines) {
-			tef.DataField = strings.Join(ss[len(ss)-int(tef.maxLines):], "\n")
+		if len(ss) > int(ui_tef.maxLines) {
+			ui_tef.DataField = strings.Join(ss[len(ss)-int(ui_tef.maxLines):], "\n")
 		}
 
 		if inpututil.IsKeyJustPressed(ebiten.KeyEnter) {
-			tef.DataField += "\n"
+			ui_tef.DataField += "\n"
 		}
 		if inpututil.IsKeyJustPressed(ebiten.KeyBackspace) {
-			if len(tef.DataField) >= 1 {
-				tef.DataField = tef.DataField[:len(tef.DataField)-1]
+			if len(ui_tef.DataField) >= 1 {
+				ui_tef.DataField = ui_tef.DataField[:len(ui_tef.DataField)-1]
 			}
 		}
-		tef.counter++
+		ui_tef.counter++
 	}
 	return nil
 } //--
 /**/
-func (tef *UI_TextEntryField) Update_Unactive() error { return nil } //
+func (ui_tef *UI_TextEntryField) Update_Unactive() error { return nil } //
 /**/
-func (tef *UI_TextEntryField) Update_Any() (any, error)       { return 0, nil }
-func (tef *UI_TextEntryField) AddChild(child UI_Object) error { return nil }
+func (ui_tef *UI_TextEntryField) Update_Any() (any, error)       { return 0, nil }
+func (ui_tef *UI_TextEntryField) AddChild(child UI_Object) error { return nil }
 
 /**/
-func (tef UI_TextEntryField) Update_Ret_State_Redraw_Status() (uint8, bool, error) {
+func (ui_tef UI_TextEntryField) Update_Ret_State_Redraw_Status() (uint8, bool, error) {
 	return 0, false, nil
 }
 
 /**/
-func (tef *UI_TextEntryField) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode int) (uint8, bool, error) {
+func (ui_tef *UI_TextEntryField) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode int) (uint8, bool, error) {
 	return 0, false, nil
 }
 
 /**/
-func (tef *UI_TextEntryField) IsCursorInBounds() bool {
+func (ui_tef *UI_TextEntryField) IsCursorInBounds() bool {
 	Mouse_Pos_X, Mouse_Pos_Y := ebiten.CursorPosition()
-	return tef.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 10)
+	return ui_tef.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 10)
 }
 
 /**/
-func (tef *UI_TextEntryField) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode int) bool {
-	if tef.IsVisible {
+func (ui_tef *UI_TextEntryField) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode int) bool {
+	if ui_tef.IsVisible {
 		var x0, y0, x1, y1 int
 
-		if tef.Parent != nil {
-			px, py := tef.Parent.GetPosition_Int()
-			x0 = tef.Position.X + px
-			y0 = tef.Position.Y + py
-			x1 = tef.Position.X + tef.Dimensions.X + px
-			y1 = tef.Position.Y + tef.Dimensions.Y + py
+		if ui_tef.Parent != nil {
+			px, py := ui_tef.Parent.GetPosition_Int()
+			x0 = ui_tef.Position.X + px
+			y0 = ui_tef.Position.Y + py
+			x1 = ui_tef.Position.X + ui_tef.Dimensions.X + px
+			y1 = ui_tef.Position.Y + ui_tef.Dimensions.Y + py
 			if mode == 10 {
-				x3, y3 := tef.Parent.Get_Internal_Position_Int()
+				x3, y3 := ui_tef.Parent.Get_Internal_Position_Int()
 				x0 += x3
 				x1 += x3
 				y0 += y3
 				y1 += y3
-				if !tef.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 10) {
+				if !ui_tef.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 10) {
 					return false
 				}
 			}
 		} else {
-			x0 = tef.Position.X
-			y0 = tef.Position.Y
-			x1 = tef.Position.X + tef.Dimensions.X
-			y1 = tef.Position.Y + tef.Dimensions.Y
+			x0 = ui_tef.Position.X
+			y0 = ui_tef.Position.Y
+			x1 = ui_tef.Position.X + ui_tef.Dimensions.X
+			y1 = ui_tef.Position.Y + ui_tef.Dimensions.Y
 		}
 		return (Mouse_Pos_X > x0 && Mouse_Pos_X < x1) && (Mouse_Pos_Y > y0 && Mouse_Pos_Y < y1)
 	}
@@ -267,47 +267,53 @@ func (tef *UI_TextEntryField) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_
 
  */
 /**/
-func (tef *UI_TextEntryField) GetPosition_Int() (int, int) {
-	if tef.Parent != nil {
-		xx, yy := tef.Parent.GetPosition_Int()
-		return tef.Position.X + xx, tef.Position.Y + yy
+func (ui_tef *UI_TextEntryField) GetPosition_Int() (int, int) {
+	if ui_tef.Parent != nil {
+		xx, yy := ui_tef.Parent.GetPosition_Int()
+		return ui_tef.Position.X + xx, ui_tef.Position.Y + yy
 	} else {
-		return tef.Position.X, tef.Position.Y
+		return ui_tef.Position.X, ui_tef.Position.Y
 	}
 }
 
 /**/
-func (tef *UI_TextEntryField) Get_Internal_Position_Int() (x_pos int, y_pos int) {
-	return tef.GetPosition_Int()
+func (ui_tef *UI_TextEntryField) Get_Internal_Position_Int() (x_pos int, y_pos int) {
+	return ui_tef.GetPosition_Int()
 }
 
 /**/
-func (tef *UI_TextEntryField) SetPosition_Int(x_point, y_point int) {
-	tef.Position = coords.CoordInts{X: x_point, Y: y_point}
+func (ui_tef *UI_TextEntryField) Get_Internal_Dimensions_Int() (x_pos int, y_pos int) {
+	x_pos, y_pos = ui_tef.GetPosition_Int()
+	return x_pos, y_pos
 }
 
 /**/
-func (tef *UI_TextEntryField) GetDimensions_Int() (int, int) {
-	return tef.Dimensions.X, tef.Dimensions.Y
+func (ui_tef *UI_TextEntryField) SetPosition_Int(x_point, y_point int) {
+	ui_tef.Position = coords.CoordInts{X: x_point, Y: y_point}
 }
 
 /**/
-func (tef *UI_TextEntryField) SetDimensions_Int(x_point, y_point int) {
-	tef.Dimensions = coords.CoordInts{X: x_point, Y: y_point}
+func (ui_tef *UI_TextEntryField) GetDimensions_Int() (int, int) {
+	return ui_tef.Dimensions.X, ui_tef.Dimensions.Y
+}
+
+/**/
+func (ui_tef *UI_TextEntryField) SetDimensions_Int(x_point, y_point int) {
+	ui_tef.Dimensions = coords.CoordInts{X: x_point, Y: y_point}
 	//---Redraw The S
 }
 
 /**/
-func (tef *UI_TextEntryField) GetState() uint8          { return 0 }
-func (tef *UI_TextEntryField) ToString() string         { return "" }
-func (tef *UI_TextEntryField) IsInit() bool             { return false }
-func (tef *UI_TextEntryField) GetID() string            { return "" }
-func (tef *UI_TextEntryField) GetType() string          { return "Text Entry Field" }
-func (tef *UI_TextEntryField) GetNumber_Children() int  { return 0 }
-func (tef *UI_TextEntryField) GetChild(n int) UI_Object { return nil }
-func (tef *UI_TextEntryField) RemoveChild(n int) error  { return nil }
-func (tef *UI_TextEntryField) GetParent() UI_Object     { return tef.Parent }
-func (tef *UI_TextEntryField) HasParent() bool          { return tef.Parent != nil }
+func (ui_tef *UI_TextEntryField) GetState() uint8          { return 0 }
+func (ui_tef *UI_TextEntryField) ToString() string         { return "" }
+func (ui_tef *UI_TextEntryField) IsInit() bool             { return false }
+func (ui_tef *UI_TextEntryField) GetID() string            { return "" }
+func (ui_tef *UI_TextEntryField) GetType() string          { return "Text Entry Field" }
+func (ui_tef *UI_TextEntryField) GetNumber_Children() int  { return 0 }
+func (ui_tef *UI_TextEntryField) GetChild(n int) UI_Object { return nil }
+func (ui_tef *UI_TextEntryField) RemoveChild(n int) error  { return nil }
+func (ui_tef *UI_TextEntryField) GetParent() UI_Object     { return ui_tef.Parent }
+func (ui_tef *UI_TextEntryField) HasParent() bool          { return ui_tef.Parent != nil }
 
 type UI_TextEntryWindow struct {
 	Position                coords.CoordInts
