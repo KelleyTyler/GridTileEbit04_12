@@ -274,17 +274,19 @@ func (ui_win *UI_Window) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse
 		// 	log.Printf("%3d %3d\n", xx, yy)
 		// } ui_win.CloseButton.GetState() == 2
 		if ui_win.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode) {
-			if state, redraw, _ := ui_win.CloseButton.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, 5); state == 2 {
-				ui_win.State = 90
-				// ui_win.IsActive = false
-				// ui_win.IsVisible = false
-				ui_win.IsMoving = false
-				ui_win.oldMouse = coords.CoordInts{X: 0, Y: 0}
-				if redraw {
-					ui_win.Redraw()
+			if state, redraw, _ := ui_win.CloseButton.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, 5); redraw {
+				ui_win.CloseButton.Redraw()
+				ui_win.Redraw()
+
+				if state == 2 {
+					ui_win.State = 90
+					// ui_win.IsActive = false
+					// ui_win.IsVisible = false
+					ui_win.IsMoving = false
+					ui_win.oldMouse = coords.CoordInts{X: 0, Y: 0}
 				}
 			}
-			if state, _, _ := ui_win.Button_Thing_Zero.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, 10); state == 2 {
+			if state := ui_win.Button_Thing_Zero.GetState(); state == 2 { //state, _, _ := ui_win.Button_Thing_Zero.Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, 0)
 				x0, y0 := ui_win.Button_Thing_Zero.GetPosition_Int()
 				x1, y1 := ui_win.Button_Thing_Zero.GetDimensions_Int()
 
@@ -295,6 +297,10 @@ func (ui_win *UI_Window) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse
 				x5, y5 := ui_win.Button_Thing_Zero.Parent.GetParent().Get_Internal_Position_Int()
 				log.Printf("%14s:%3d,%3d\t%14s:%3d,%3d\n", "Position", x0, y0, "Dimensions", x1, y1)
 				log.Printf("%14s:%3d,%3d\t%14s:%3d,%3d\t%14s:%3d,%3d\n", "Par_Pos", x2, y2, "par_Int_Pos", x3, y3, "par_par_int_pos", x5, y5)
+				log.Printf("OUT 0: %5t\t%5t\n", ui_win.ScrollPane.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 0), ui_win.Prim.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 0))
+				log.Printf("OUT 5: %5t\t%5t\n", ui_win.ScrollPane.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 5), ui_win.Prim.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 5))
+				log.Printf("OUT 10: %5t\t%5t\n", ui_win.ScrollPane.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 10), ui_win.Prim.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 10))
+
 				// log.Printf("%10s:%3d,%3d\n")
 				// log.Printf("%10s:%3d,%3d\n")
 			}
@@ -310,10 +316,15 @@ func (ui_win *UI_Window) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse
 			// }
 			if len(ui_win.Children) > 0 {
 				for i := 0; i < len(ui_win.Children); i++ {
-					err := ui_win.Children[i].Update()
-					if err != nil {
-						log.Fatal(err)
+					name := ui_win.Children[i].GetID()
+					if name != "window_close_button" || name == "window_submit_button" {
+						_, _, err := ui_win.Children[i].Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, 0)
+						// err := ui_win.Children[i].Update()
+						if err != nil {
+							log.Fatal(err)
+						}
 					}
+
 				}
 			}
 			// if ui_win.IsMovable {

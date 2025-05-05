@@ -373,7 +373,7 @@ func (ui_scrollbar *UI_Scrollbar) GetID() string { return ui_scrollbar.obj_id }
 /*
 This returns a string specifying the objects type
 */
-func (ui_scrollbar *UI_Scrollbar) GetType() string { return "UI_Object ui_scrollbar" }
+func (ui_scrollbar *UI_Scrollbar) GetType() string { return "ui_scrollbar" }
 
 /*
  */

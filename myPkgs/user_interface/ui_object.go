@@ -6,7 +6,6 @@ import (
 
 	"github.com/KelleyTyler/GridTileEbit04_12/myPkgs/basic_geometry/coords"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
@@ -211,10 +210,10 @@ func (ui_panel *UI_Object_Primitive) Update_Ret_State_Redraw_Status_Mport(Mouse_
 			}
 		}
 		if ui_panel.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode) {
-			if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
-				log.Printf("%d %d %t\n", Mouse_Pos_X, Mouse_Pos_Y, ui_panel.HasParent())
+			// if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
+			// 	log.Printf("%d %d %t\n", Mouse_Pos_X, Mouse_Pos_Y, ui_panel.HasParent())
 
-			}
+			// }
 		}
 	}
 	return ui_panel.State, false, nil
@@ -313,6 +312,9 @@ func (ui_panel *UI_Object_Primitive) IsCursorInBounds_MousePort(Mouse_Pos_X, Mou
 			x1 = ui_panel.Position.X + ui_panel.Dimensions.X + px
 			y1 = ui_panel.Position.Y + ui_panel.Dimensions.Y + py
 			if mode == 10 {
+				// if ui_panel.Parent.GetType() == "ui_scrollpane" {
+
+				// }
 				x3, y3 := ui_panel.Parent.Get_Internal_Position_Int()
 				x0 += x3
 				x1 += x3

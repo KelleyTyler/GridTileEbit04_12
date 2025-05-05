@@ -59,10 +59,11 @@ type UI_Scrollpane struct {
 	ShowLabel, Scrollable, Resizable bool
 	IsActive, IsVisible              bool
 	State                            uint8
-
-	Scrollbar_Vertical   UI_Scrollbar
-	Scrollbar_Horizontal UI_Scrollbar
-	Children             []UI_Object
+	Can_Scroll_V                     bool //Can_Scroll_V
+	Can_Scroll_H                     bool //Can_Scroll_H
+	Scrollbar_Vertical               UI_Scrollbar
+	Scrollbar_Horizontal             UI_Scrollbar
+	Children                         []UI_Object
 }
 
 /**/
@@ -143,11 +144,14 @@ func (ui_scroll *UI_Scrollpane) Init_Parents(parent UI_Object) error {
 /**/
 func (ui_scroll *UI_Scrollpane) Draw(screen *ebiten.Image) error {
 	if ui_scroll.IsVisible {
+		// vector.StrokeRect(ui_scroll.Image, float32(0), float32(0), float32(ui_scroll.DisplayImage.Bounds().Dx()), float32(ui_scroll.DisplayImage.Bounds().Dy()), 0.5, color.RGBA{255, 0, 0, 255}, true)
+
 		ops := ebiten.DrawImageOptions{}
 		scale := 1.0
 		ops.GeoM.Reset()
 		ops.GeoM.Translate(float64(ui_scroll.Position.X)*scale, float64(ui_scroll.Position.Y)*scale)
 		screen.DrawImage(ui_scroll.Image, &ops)
+
 	}
 	return nil
 }
@@ -188,10 +192,11 @@ func (ui_scroll *UI_Scrollpane) Redraw() {
 	ui_scroll.DisplayImage.DrawImage(ui_scroll.UnderImage, &opts)
 
 	opts.GeoM.Reset()
-
 	ui_scroll.Image.DrawImage(ui_scroll.DisplayImage, &opts)
 	ui_scroll.Scrollbar_Vertical.Draw(ui_scroll.Image)
 	ui_scroll.Scrollbar_Horizontal.Draw(ui_scroll.Image)
+	// vector.StrokeRect(ui_scroll.Image, float32(0), float32(0), float32(ui_scroll.DisplayImage.Bounds().Dx()), float32(ui_scroll.DisplayImage.Bounds().Dy()), 0.5, color.RGBA{255, 0, 0, 255}, true)
+
 	// log.Printf("%d %d\n", ui_scroll.Scrollbar_Horizontal.CurrValue, ui_scroll.Scrollbar_Vertical.CurrValue)
 
 	// ui_scroll.DisplayImage.Draw
@@ -238,7 +243,9 @@ func (ui_scroll *UI_Scrollpane) Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X
 		// }
 		if ui_scroll.IsActive {
 			for i, _ := range ui_scroll.Children {
-				ui_scroll.Children[i].Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode)
+				if ui_scroll.Children[i].GetID() != ui_scroll.Scrollbar_Vertical.obj_id && ui_scroll.Children[i].GetID() != ui_scroll.Scrollbar_Horizontal.obj_id {
+					ui_scroll.Children[i].Update_Ret_State_Redraw_Status_Mport(Mouse_Pos_X, Mouse_Pos_Y, mode)
+				}
 			}
 		}
 	}
@@ -312,6 +319,10 @@ func (ui_scroll *UI_Scrollpane) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Po
 			y1 = ui_scroll.Position.Y + ui_scroll.Image.Bounds().Dy() + py
 			if mode == 10 { //|| mode == 0
 				x3, y3 = ui_scroll.Parent.Get_Internal_Position_Int()
+
+				x1, y1 = ui_scroll.Get_Internal_Dimensions_Int()
+				x1 += x0
+				y1 += y0
 				x0 += x3
 				x1 += x3
 				y0 += y3
@@ -366,7 +377,8 @@ func (ui_scroll *UI_Scrollpane) Get_Internal_Position_Int() (x_pos int, y_pos in
 
 /**/
 func (ui_scroll *UI_Scrollpane) Get_Internal_Dimensions_Int() (x_pos int, y_pos int) {
-	x_pos, y_pos = ui_scroll.GetPosition_Int()
+	x_pos = ui_scroll.DisplayImage.Bounds().Dx()
+	y_pos = ui_scroll.DisplayImage.Bounds().Dy()
 	return x_pos, y_pos
 }
 
@@ -407,7 +419,11 @@ func (ui_scroll *UI_Scrollpane) GetChild(index int) UI_Object { return ui_scroll
 /**/
 func (ui_scroll *UI_Scrollpane) AddChild(child UI_Object) error {
 
-	ui_scroll.Children = append(ui_scroll.Children, child)
+	thing := child.GetType()
+	if thing != "ui_scrollpane" {
+		ui_scroll.Children = append(ui_scroll.Children, child)
+	}
+	// ui_scroll.Children = append(ui_scroll.Children, child)
 	// log.Printf("UI_SCROLL CHILDREN %d\n", len(ui_scroll.Children))
 	return nil
 }

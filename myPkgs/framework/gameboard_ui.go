@@ -103,7 +103,7 @@ func (gb *GameBoard) PerpsecitveDraw(screen *ebiten.Image) {
 	gb.Img.Fill(color.RGBA{20, 20, 20, 255})
 	gb.Img.DrawImage(gb.Board_Buffer_Img, op)
 	gb.Img.DrawImage(gb.Board_Overlay_Buffer_Img, op)
-	w, h := gb.Board_Buffer_Img.Bounds().Dx(), gb.Board_Buffer_Img.Bounds().Dy()
+	w, h := gb.Img.Bounds().Dx(), gb.Img.Bounds().Dy()
 	for i := 0; i < h; i++ {
 		op.GeoM.Reset()
 
@@ -117,7 +117,7 @@ func (gb *GameBoard) PerpsecitveDraw(screen *ebiten.Image) {
 		op.GeoM.Translate(x, float64(i))
 
 		// Move the image's center to the screen's center.
-		op.GeoM.Translate(float64(gb.Position.X), float64(gb.Position.Y))
+		op.GeoM.Translate((float64(gb.UI_Backend.Settings.ScreenResX)/2)-158, float64(gb.UI_Backend.Settings.ScreenResY)/2)
 
 		screen.DrawImage(gb.Img.SubImage(image.Rect(0, i, w, i+1)).(*ebiten.Image), op)
 	}

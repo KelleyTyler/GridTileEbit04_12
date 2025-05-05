@@ -338,7 +338,8 @@ func (ui_button *UI_Button) IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y,
 				y2 += y3
 				// if !ui_button.Parent.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, mode) {
 				// 	return false
-				// } else {
+				// }
+				// else {
 				// 	// if pp := ui_button.Parent.GetParent(); pp != nil {
 				// 	// 	if !pp.IsCursorInBounds_MousePort(Mouse_Pos_X, Mouse_Pos_Y, 0) {
 				// 	// 		return false
