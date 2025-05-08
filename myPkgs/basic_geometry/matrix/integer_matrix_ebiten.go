@@ -26,11 +26,15 @@ type Integer_Matrix_Ebiten_DrawOptions struct {
 	AABody            bool
 	AALines           bool
 	//--------------------------------
+	Scale    float64
+	Rotation float64
+
 	/*
 		BONUS OPTIONS:
 		SubDivisions (basically allowing the grid to be divided up into little bitty segments)
 
 	*/
+	//-------
 
 	SubDiv_00_Size_X, SubDiv_00_Size_Y     uint8
 	SubDiv_00_Offset_X, SubDiv_00_Offset_Y uint8

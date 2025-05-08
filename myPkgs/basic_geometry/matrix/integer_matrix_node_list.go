@@ -104,7 +104,7 @@ func NodeList_RemoveDuplicates_ToReturn(inList []*ImatNode) (outList []*ImatNode
 		if val == 0 {
 			posmap[a.Position] = (a.GetHValue())
 		} else {
-			if val > (a.GetHValue()) {
+			if val < (a.GetHValue()) {
 				outList = NodeList_RemoveByPosition_Return(outList, a.Position)
 				outList = append(outList, a)
 				posmap[a.Position] = (a.GetHValue())

@@ -75,42 +75,6 @@ func Pathfind_Phase1A(start, target coords.CoordInts, imat IntegerMatrix2D, floo
 			closedList_LastLength = len(ClosedList)
 		}
 	}
-	// dur := time.Since(start_time)
-	// if isFinished {
-	// 	log.Printf("FINISHED! TIME:%d FAILS: %d\tCLOSEDLIST: %d\tBLOCKED:%3d\n", dur.Milliseconds(), curr_fails, len(ClosedList), len(BlockedList))
-	// 	if EndNode != nil {
-	// 		EndNode.Set_Heads_Tails_On_Up()
-	// 	}
-	// 	path_is_found = true
-	// } else {
-	// 	log.Printf("FAILED! TIME:%d  FAILS: %d\t CLOSEDLIST: %d\t BLOCKED:%3d\n", dur.Milliseconds(), curr_fails, len(ClosedList), len(BlockedList))
-	// 	var BLNode, CLNode *ImatNode
-	// 	if len(BlockedList) > 0 {
-	// 		BlockedList = NodeList_SortByHValue_Ascending_toReturn(BlockedList)
-	// 		BLNode = BlockedList[0]
-	// 	}
-	// 	if len(ClosedList) > 0 {
-	// 		ClosedList = NodeList_SortByHValue_Ascending_toReturn(ClosedList)
-	// 		CLNode = ClosedList[0]
-	// 	}
-
-	// 	if CLNode != nil && BLNode != nil {
-	// 		if CLNode.GetHValue() < BLNode.GetHValue() {
-	// 			EndNode = CLNode
-	// 		} else {
-	// 			EndNode = BLNode
-	// 		}
-	// 	} else if CLNode != nil {
-	// 		EndNode = CLNode
-	// 	} else if BLNode != nil {
-	// 		EndNode = BLNode
-	// 	} else {
-	// 		log.Printf("SOMETHING FUCKED\n")
-	// 	}
-
-	// 	return path_is_found, EndNode
-
-	// }
 	path_is_found, EndNode, _ = Pathfind_Phase1_Wrapup(OpenList, ClosedList, BlockedList, start, target, EndNode, curr_fails, start_time, isFinished)
 	return path_is_found, EndNode
 }

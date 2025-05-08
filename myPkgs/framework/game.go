@@ -95,6 +95,10 @@ func (g *Game) Update() error {
 		// if inpututil.IsMouseButtonJustPressed(ebiten.MouseButton0) {
 		// 	log.Printf("SCROLL PANE: %d %d \n", g.scroll_pane.Internal_Position.X, g.scroll_pane.Internal_Position.Y)
 		// }
+
+		// if inpututil.IsKeyJustPressed(ebiten.KeyM) {
+		// 	log.Printf("%d\n",inpututil.Mouse)
+		// }
 	} else {
 		go g.Init()
 	}

@@ -54,9 +54,9 @@ func (pfind *Pathfind_Tester) Reset() {
 	pfind.IsFinished = false
 	pfind.IsReady = false
 	pfind.HasStarted = false
-	pfind.ClosedList = nil
-	pfind.OpenList = nil
-	pfind.BlockedList = nil
+	pfind.ClosedList = make([]*mat.ImatNode, 0)
+	pfind.OpenList = make([]*mat.ImatNode, 0)
+	pfind.BlockedList = make([]*mat.ImatNode, 0)
 	pfind.EndNode = nil
 	pfind.max_fails = 100
 	pfind.curr_fails = 0
@@ -66,7 +66,7 @@ func (pfind *Pathfind_Tester) Reset() {
 
 /**/
 func (pfind *Pathfind_Tester) UI_Init(parent ui.UI_Object, pfindBtnRow int) {
-	pfind.Button_Panel_Frame.Init([]string{"primitive_scroll_primitive", "PRIMITIVE"}, pfind.UI_Backend, nil, coords.CoordInts{X: 0, Y: pfindBtnRow}, coords.CoordInts{X: 204, Y: 140})
+	pfind.Button_Panel_Frame.Init([]string{"primitive_scroll_primitive", "PRIMITIVE"}, pfind.UI_Backend, nil, coords.CoordInts{X: 0, Y: pfindBtnRow}, coords.CoordInts{X: 204, Y: 140 + 34})
 
 	pfind.Button_Panel_Label.Init([]string{"pfind_b_panel_label", "Pathfind"}, pfind.UI_Backend, nil, coords.CoordInts{X: 0, Y: 0}, coords.CoordInts{X: 204, Y: 16})
 	pfind.Button_Panel_Label.TextAlignMode = 10
@@ -83,20 +83,20 @@ func (pfind *Pathfind_Tester) UI_Init(parent ui.UI_Object, pfindBtnRow int) {
 	pfind.Button_Pathfind_Auto.Init([]string{"pfind_Auto", "AUTO\nPathfind"}, pfind.UI_Backend, nil, coords.CoordInts{X: 4, Y: 0 + 68}, coords.CoordInts{X: 64, Y: 32})
 	pfind.Button_Pathfind_Auto.Btn_Type = 10
 	pfind.Button_Pathfind_Auto.Init_Parents(&pfind.Button_Panel_Frame)
-
-	pfind.Button_SHOW_OPENLIST.Init([]string{"pfind_Auto", "SHOW\nO_LIST"}, pfind.UI_Backend, nil, coords.CoordInts{X: 4, Y: 0 + 102}, coords.CoordInts{X: 48, Y: 32})
+	show_Row := 138
+	pfind.Button_SHOW_OPENLIST.Init([]string{"pfind_Auto", "SHOW\nO_LIST"}, pfind.UI_Backend, nil, coords.CoordInts{X: 4, Y: show_Row}, coords.CoordInts{X: 48, Y: 32})
 	pfind.Button_SHOW_OPENLIST.Btn_Type = 10
 	pfind.Button_SHOW_OPENLIST.Init_Parents(&pfind.Button_Panel_Frame)
 
-	pfind.Button_SHOW_CLOSEDLIST.Init([]string{"pfind_Auto", "SHOW\nC_LIST"}, pfind.UI_Backend, nil, coords.CoordInts{X: 53, Y: 0 + 102}, coords.CoordInts{X: 48, Y: 32})
+	pfind.Button_SHOW_CLOSEDLIST.Init([]string{"pfind_Auto", "SHOW\nC_LIST"}, pfind.UI_Backend, nil, coords.CoordInts{X: 53, Y: show_Row}, coords.CoordInts{X: 48, Y: 32})
 	pfind.Button_SHOW_CLOSEDLIST.Btn_Type = 10
 	pfind.Button_SHOW_CLOSEDLIST.Init_Parents(&pfind.Button_Panel_Frame)
 
-	pfind.Button_SHOW_BLOCKEDLIST.Init([]string{"pfind_Auto", "SHOW\nB_LIST"}, pfind.UI_Backend, nil, coords.CoordInts{X: 103, Y: 0 + 102}, coords.CoordInts{X: 48, Y: 32})
+	pfind.Button_SHOW_BLOCKEDLIST.Init([]string{"pfind_Auto", "SHOW\nB_LIST"}, pfind.UI_Backend, nil, coords.CoordInts{X: 103, Y: show_Row}, coords.CoordInts{X: 48, Y: 32})
 	pfind.Button_SHOW_BLOCKEDLIST.Btn_Type = 10
 	pfind.Button_SHOW_BLOCKEDLIST.Init_Parents(&pfind.Button_Panel_Frame)
 
-	pfind.Button_SHOW_PATH.Init([]string{"pfind_Auto", "SHOW\nPATH"}, pfind.UI_Backend, nil, coords.CoordInts{X: 152, Y: 0 + 102}, coords.CoordInts{X: 48, Y: 32})
+	pfind.Button_SHOW_PATH.Init([]string{"pfind_Auto", "SHOW\nPATH"}, pfind.UI_Backend, nil, coords.CoordInts{X: 152, Y: show_Row}, coords.CoordInts{X: 48, Y: 32})
 	pfind.Button_SHOW_PATH.Btn_Type = 10
 	pfind.Button_SHOW_PATH.Init_Parents(&pfind.Button_Panel_Frame)
 	pfind.Button_Panel_Frame.Init_Parents(parent)
